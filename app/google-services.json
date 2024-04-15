@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473842539882",
+    "project_id": "gtrack-c93ad",
+    "storage_bucket": "gtrack-c93ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473842539882:android:4f29e2ebd675178f825913",
+        "android_client_info": {
+          "package_name": "com.trace.gtrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-g8-k4xD5Jcw22Qt7B_gJHtY2h454rYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

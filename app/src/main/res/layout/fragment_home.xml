@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isUserLoggedIn"
+            type="boolean" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/mainScroll"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/login_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/colorPrimary"
+                            android:paddingLeft="@dimen/margin_large"
+                            android:paddingTop="@dimen/margin_large"
+                            android:paddingRight="@dimen/margin_large"
+                            android:paddingBottom="@dimen/input_field_radius">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardView"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_small"
+                                app:cardBackgroundColor="@color/colorSecondary"
+                                app:cardCornerRadius="@dimen/margin_normal"
+                                app:cardElevation="@dimen/margin_large"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <TableLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/margin_normal">
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            style="@style/regularText"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/user" />
+
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            style="@style/regularTextBlack"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="end"
+                                            android:text="&quot;Admin&quot;" />
+                                    </TableRow>
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/margin_normal">
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            style="@style/regularText"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/title_project" />
+
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            style="@style/regularTextBlack"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="end"
+                                            android:text="&quot;Savan&quot;" />
+                                    </TableRow>
+
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/margin_normal">
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            style="@style/regularText"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/title_site" />
+
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            style="@style/regularTextBlack"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="end"
+                                            android:text="&quot;Savan&quot;" />
+                                    </TableRow>
+                                </TableLayout>
+                            </androidx.cardview.widget.CardView>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alignmentMode="alignMargins"
+                            android:columnCount="2"
+                            android:columnOrderPreserved="false"
+                            android:padding="@dimen/margin_normal"
+                            android:rowCount="2">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_assign_qr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="1"
+                                android:layout_columnWeight="3"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_assign_qr"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="@dimen/margin_normal"
+                                        android:src="@drawable/ic_scan_qr"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/assign_qr" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_unassign_qr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="2"
+                                android:layout_columnWeight="2"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_unassign_qr"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="@dimen/margin_normal"
+                                        android:src="@drawable/ic_unassign_qr"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/unassign_qr" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </GridLayout>
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alignmentMode="alignMargins"
+                            android:columnCount="2"
+                            android:columnOrderPreserved="false"
+                            android:padding="@dimen/margin_normal"
+                            android:rowCount="2">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_search_material"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="1"
+                                android:layout_columnWeight="1.5"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_search_material"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="@dimen/margin_normal"
+                                        android:src="@drawable/ic_search"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/search_material" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_track_material"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="2"
+                                android:layout_columnWeight="2"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_track_material"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/ic_track_material"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/track_material" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                        </GridLayout>
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

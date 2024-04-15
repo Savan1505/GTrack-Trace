@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/main_toolbar"
+            layout="@layout/app_toolbar" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/mainScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/login_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorPrimary"
+                        android:paddingLeft="@dimen/margin_large"
+                        android:paddingTop="@dimen/margin_large"
+                        android:paddingRight="@dimen/margin_large"
+                        android:paddingBottom="@dimen/header_margin_top">
+
+                        <FrameLayout
+                            android:id="@+id/fl_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/iv_profile"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
+                                android:layout_gravity="bottom|center_horizontal"
+                                android:background="@drawable/circle_profile_bg"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_profile_grey"
+                                app:layout_constraintEnd_toStartOf="@+id/imvCircularWithStroke"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:shapeAppearanceOverlay="@style/Circular" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_camera"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="bottom|end"
+                                android:background="@drawable/circle_profile_bg"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_photo_camera" />
+                        </FrameLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/titleColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/fl_profile"
+                            app:layout_constraintVertical_bias="1.0" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/screen_internal_padding">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_normal"
+                            android:layout_marginBottom="@dimen/input_field_radius"
+                            android:hint="@string/hint_email"
+                            android:inputType="textEmailAddress"
+                            android:textColorHint="@color/grey_100"
+                            app:boxBackgroundColor="@color/colorSecondary"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopStart="@dimen/input_field_radius"
+                            app:boxStrokeColor="@color/colorPrimary"
+                            app:boxStrokeWidth="@dimen/divider_width"
+                            app:cursorColor="@color/colorPrimary"
+                            app:hintTextColor="@color/colorPrimary"
+                            app:layout_constraintBottom_toBottomOf="@id/til_email"
+                            app:startIconDrawable="@android:drawable/ic_dialog_email"
+                            app:startIconTint="@color/colorBlack">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edt_email"
+                                style="@style/smallText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_user_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_normal"
+                            android:layout_marginBottom="@dimen/input_field_radius"
+                            android:hint="@string/hint_user_name"
+                            android:textColorHint="@color/grey_100"
+                            app:boxBackgroundColor="@color/colorSecondary"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopStart="@dimen/input_field_radius"
+                            app:boxStrokeColor="@color/colorPrimary"
+                            app:boxStrokeWidth="@dimen/divider_width"
+                            app:cursorColor="@color/colorPrimary"
+                            app:hintTextColor="@color/colorPrimary"
+                            app:layout_constraintTop_toBottomOf="@id/til_email"
+                            app:startIconDrawable="@drawable/ic_person"
+                            app:startIconTint="@color/colorBlack">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edt_user_name"
+                                style="@style/smallText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_phone_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_normal"
+                            android:layout_marginBottom="@dimen/input_field_radius"
+                            android:hint="@string/phone_number"
+                            android:textColorHint="@color/grey_100"
+                            app:boxBackgroundColor="@color/colorSecondary"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopStart="@dimen/input_field_radius"
+                            app:boxStrokeColor="@color/colorPrimary"
+                            app:boxStrokeWidth="@dimen/divider_width"
+                            app:cursorColor="@color/colorPrimary"
+                            app:hintTextColor="@color/colorPrimary"
+                            app:layout_constraintTop_toBottomOf="@+id/til_user_name"
+                            app:startIconDrawable="@drawable/ic_phone"
+                            app:startIconTint="@color/colorBlack">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edt_phone_number"
+                                style="@style/smallText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:inputType="number"
+                                android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_update_profile"
+                            style="@style/AppButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_large"
+                            android:layout_marginTop="@dimen/margin_big"
+                            android:layout_marginRight="@dimen/margin_large"
+                            android:layout_marginBottom="@dimen/margin_large"
+                            android:gravity="center"
+                            android:padding="@dimen/input_field_radius"
+                            android:text="@string/btn_update_profile"
+                            app:layout_constraintTop_toBottomOf="@id/til_phone_number"
+                            app:layout_constraintVertical_bias="1.0" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

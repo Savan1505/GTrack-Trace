@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home" />
+        <item
+            android:id="@+id/nav_assign_qr"
+            android:icon="@drawable/ic_scan_qr"
+            android:title="@string/assign_qr" />
+        <item
+            android:id="@+id/nav_unassign_qr"
+            android:icon="@drawable/ic_unassign_qr"
+            android:title="@string/unassign_qr" />
+        <item
+            android:id="@+id/nav_search_material"
+            android:icon="@drawable/ic_search"
+            android:title="@string/search_material" />
+        <item
+            android:id="@+id/nav_track_material"
+            android:icon="@drawable/ic_track_material"
+            android:title="@string/track_material" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_person"
+            android:title="@string/profile" />
+        <item
+            android:id="@+id/nav_change_password"
+            android:icon="@drawable/ic_lock"
+            android:title="@string/change_password" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/logout" />
+    </group>
+</menu>

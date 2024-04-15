@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/login_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/AuthHeaderTextWhite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/size_back_button"
+                    android:paddingBottom="@dimen/height_games_play_poster"
+                    android:text="@string/material_tracker"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                app:cardBackgroundColor="@color/colorSecondary"
+                app:cardCornerRadius="@dimen/app_button_radius"
+                app:cardElevation="@dimen/margin_large"
+                app:layout_constraintBottom_toBottomOf="@+id/login_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_header">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/screen_internal_padding">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_project"
+                        style="@style/bigText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:gravity="start"
+                        android:text="@string/title_project"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1.0" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_project"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/dropdown_background"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_project">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/select_project"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/hellix_medium"
+                            android:hint="@string/title_project"
+                            android:maxLines="1"
+                            android:paddingStart="@dimen/margin_small"
+                            android:paddingTop="@dimen/margin_normal"
+                            android:paddingBottom="@dimen/margin_normal"
+                            android:singleLine="true"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/grey_100"
+                            android:textSize="@dimen/font_size_regular" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivDropDownProject"
+                            android:layout_width="0dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:layout_marginEnd="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/margin_small"
+                            android:layout_weight="0.1"
+                            android:src="@android:drawable/arrow_down_float"
+                            android:tint="@color/grey_100" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_site"
+                        style="@style/bigText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:gravity="start"
+                        android:text="@string/title_site"
+                        app:layout_constraintTop_toBottomOf="@+id/ll_project"
+                        app:layout_constraintVertical_bias="1.0" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_site"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/dropdown_background"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_site">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/select_site"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/hellix_medium"
+                            android:hint="@string/title_site"
+                            android:maxLines="1"
+                            android:paddingStart="@dimen/margin_small"
+                            android:paddingTop="@dimen/margin_normal"
+                            android:paddingBottom="@dimen/margin_normal"
+                            android:singleLine="true"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/grey_100"
+                            android:textSize="@dimen/font_size_regular" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivDropDownSite"
+                            android:layout_width="0dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:layout_marginEnd="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/margin_small"
+                            android:layout_weight="0.1"
+                            android:src="@android:drawable/arrow_down_float"
+                            android:tint="@color/grey_100" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_continue"
+                        style="@style/AppButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_large"
+                        android:gravity="center"
+                        android:padding="@dimen/input_field_radius"
+                        android:text="@string/btn_continue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ll_site"
+                        app:layout_constraintVertical_bias="1.0" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

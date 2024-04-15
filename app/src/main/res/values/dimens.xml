@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_margin_top">50dp</dimen>
+    <dimen name="header_margin_bottom_login">70dp</dimen>
+
+    <dimen name="font_size_ex_big">32sp</dimen>
+    <dimen name="font_size_big">24sp</dimen>
+    <dimen name="font_size_large">20sp</dimen>
+    <dimen name="font_size_medium">18sp</dimen>
+    <dimen name="font_size_regular">16sp</dimen>
+    <dimen name="font_size_small">14sp</dimen>
+    <dimen name="font_size_tiny">12sp</dimen>
+
+    <dimen name="screen_internal_padding">16dp</dimen>
+
+    <dimen name="login_mobile_label_margin_top">40dp</dimen>
+    <dimen name="login_mobile_field_margin_top">8dp</dimen>
+
+    <dimen name="input_field_radius">10dp</dimen>
+
+    <dimen name="margin_normal">16dp</dimen>
+    <dimen name="margin_large">20dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_tiny">8dp</dimen>
+    <dimen name="margin_extra_tiny">4dp</dimen>
+    <dimen name="margin_extra_small">6dp</dimen>
+    <dimen name="margin_big">24dp</dimen>
+    <dimen name="margin_huge">32dp</dimen>
+
+    <dimen name="divider_width">1dp</dimen>
+
+    <dimen name="login_mobile_divdier_height">30dp</dimen>
+
+    <dimen name="app_button_radius">10dp</dimen>
+    <dimen name="radius_extra_small">5dp</dimen>
+    <dimen name="app_button_radius_big">30dp</dimen>
+    <dimen name="margin_bottom_register_button">45dp</dimen>
+    <dimen name="margin_end_registration_welcome_desc">40dp</dimen>
+    <dimen name="margin_top_label_payment_details">32dp</dimen>
+    <dimen name="drop_down_item_height">48dp</dimen>
+    <dimen name="header_margin_bottom_registration">50dp</dimen>
+    <dimen name="widget_my_fomo_icons">24dp</dimen>
+    <dimen name="icon_size_big">40dp</dimen>
+
+    <dimen name="tab_active_text_size">12.5sp</dimen>
+    <dimen name="tab_in_active_text_size">12sp</dimen>
+    <dimen name="otp_box_size">45dp</dimen>
+    <dimen name="otp_box_spacing">18dp</dimen>
+
+    <dimen name="font_size_home_label">20sp</dimen>
+    <dimen name="font_size_quiz_question">20sp</dimen>
+    <dimen name="font_size_film_char">30sp</dimen>
+    <dimen name="height_today_fim_poster">176dp</dimen>
+    <dimen name="width_today_fim_poster">117dp</dimen>
+    <dimen name="width_124dp">124dp</dimen>
+    <dimen name="width_movie_image_with_timing">164dp</dimen>
+    <dimen name="heigh_movie_image_with_timing">240dp</dimen>
+    <dimen name="image_width_height_high_core_profile">40dp</dimen>
+    <dimen name="image_width_height_game_score">50dp</dimen>
+    <dimen name="height_games_video_poster">175dp</dimen>
+    <dimen name="height_185dp">185dp</dimen>
+    <dimen name="height_195dp">195dp</dimen>
+    <dimen name="height_215dp">215dp</dimen>
+    <dimen name="height_games_play_poster">155dp</dimen>
+    <dimen name="height165">165dp</dimen>
+    <dimen name="height_166dp">166dp</dimen>
+    <dimen name="btn_play_width">114dp</dimen>
+    <dimen name="height_100dp">100dp</dimen>
+    <dimen name="dash_width">1dp</dimen>
+    <dimen name="dash_gap">6dp</dimen>
+    <dimen name="size_back_button">40dp</dimen>
+
+
+    <dimen name="font_size_alert_dialog_title">20sp</dimen>
+    <dimen name="font_size_alert_dialog_message">16sp</dimen>
+    <dimen name="alert_dialog_bg_radius">16dp</dimen>
+
+
+    <dimen name="height_140dp">140dp</dimen>
+
+</resources>

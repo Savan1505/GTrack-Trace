@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/main_toolbar"
+            layout="@layout/app_toolbar" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/mainScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/login_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/AuthHeaderTextWhite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="@dimen/size_back_button"
+                        android:paddingBottom="@dimen/height_215dp"
+                        android:text="@string/assign_qr_to"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    app:cardBackgroundColor="@color/colorSecondary"
+                    app:cardCornerRadius="@dimen/app_button_radius"
+                    app:cardElevation="@dimen/margin_large"
+                    app:layout_constraintBottom_toBottomOf="@+id/login_header"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/login_header">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alignmentMode="alignMargins"
+                            android:columnCount="2"
+                            android:columnOrderPreserved="false"
+                            android:padding="@dimen/margin_normal"
+                            android:rowCount="2">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_material_code"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="1"
+                                android:layout_columnWeight="2"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_material_code"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="@dimen/margin_normal"
+                                        android:src="@drawable/ic_material_code"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/material_code" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_rfid"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="2"
+                                android:layout_columnWeight="2"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_rfid_code"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="@dimen/margin_normal"
+                                        android:src="@drawable/ic_rfid"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/rfid" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </GridLayout>
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alignmentMode="alignMargins"
+                            android:columnCount="3"
+                            android:columnOrderPreserved="false"
+                            android:padding="@dimen/margin_normal"
+                            android:rowCount="2">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="0"
+                                android:layout_columnWeight="1"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cv_iot"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="2"
+                                android:layout_columnWeight="0.5"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/margin_tiny">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:id="@+id/iv_iot_code"
+                                        android:layout_width="@dimen/height_100dp"
+                                        android:layout_height="@dimen/height_100dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="@dimen/margin_normal"
+                                        android:src="@drawable/ic_iot_code"
+                                        android:tint="@color/colorPrimary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        style="@style/smallTextMedium"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/iot_code" />
+                                </LinearLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_rowWeight="0"
+                                android:layout_columnWeight="1"
+                                android:layout_marginLeft="@dimen/margin_normal"
+                                android:layout_marginRight="@dimen/margin_normal"
+                                android:layout_marginBottom="@dimen/margin_normal"
+                                app:cardCornerRadius="@dimen/margin_tiny"
+                                app:cardElevation="@dimen/margin_tiny">
+
+
+                            </androidx.cardview.widget.CardView>
+                        </GridLayout>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
