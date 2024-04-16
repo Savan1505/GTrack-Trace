@@ -5,6 +5,7 @@ import com.trace.gtrack.data.model.AssignedMaterialResult
 import com.trace.gtrack.data.model.CommonResult
 import com.trace.gtrack.data.model.ListResult
 import com.trace.gtrack.data.model.LocationAssignMaterialResult
+import com.trace.gtrack.data.model.LoginAzureResult
 import com.trace.gtrack.data.model.LoginResult
 import com.trace.gtrack.data.model.MaterialCodeResult
 import com.trace.gtrack.data.model.ProjectDetailsResult
@@ -69,11 +70,12 @@ class AppRepository @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : IAppRepository {
 
-    override suspend fun postAppLogin(userName: String, password: String): LoginResult {
+    override suspend fun postAppLogin(userName: String, password: String): LoginResult? {
         return when (val response: ResponseWrapper<LoginResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
                 apiService.postAppLoginAPI(1, 1, 1, LoginRequest(userName, password))
             }) {
+
             is ResponseWrapper.GenericError -> LoginResult.Error(
                 response.error?.message ?: oopsMessage
             )
@@ -82,7 +84,12 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<LoginResponse<CommonResponse>> -> {
                 val data = response.value
                 when {
-                    !(response.value.commonResponse?.isSuccess())!! -> LoginResult.Error(oopsMessage)
+                    !(response.value.commonResponse?.isSuccess())!! -> response.value.commonResponse.Message?.let {
+                        LoginResult.Error(
+                            it
+                        )
+                    }
+
                     data == null -> LoginResult.Error(oopsMessage)
                     else -> LoginResult.Success(data)
                 }
@@ -91,22 +98,27 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun postAzureLogin(azureUserID: String): LoginResult {
+    override suspend fun postAzureLogin(azureUserID: String): LoginAzureResult? {
         return when (val response: ResponseWrapper<LoginResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
                 apiService.postAzureLoginAPI(1, 1, 1, LoginAzureRequest(azureUserID))
             }) {
-            is ResponseWrapper.GenericError -> LoginResult.Error(
+            is ResponseWrapper.GenericError -> LoginAzureResult.Error(
                 response.error?.message ?: oopsMessage
             )
 
-            ResponseWrapper.NetworkError -> LoginResult.Error(networkErrorMessage)
+            ResponseWrapper.NetworkError -> LoginAzureResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<LoginResponse<CommonResponse>> -> {
                 val data = response.value
                 when {
-                    !(response.value.commonResponse?.isSuccess())!! -> LoginResult.Error(oopsMessage)
-                    data == null -> LoginResult.Error(oopsMessage)
-                    else -> LoginResult.Success(data)
+                    !(response.value.commonResponse?.isSuccess())!! -> response.value.commonResponse.Message?.let {
+                        LoginAzureResult.Error(
+                            it
+                        )
+                    }
+
+                    data == null -> LoginAzureResult.Error(oopsMessage)
+                    else -> LoginAzureResult.SuccessAzure(data)
                 }
             }
         }
@@ -147,7 +159,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -172,7 +184,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -202,7 +214,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -232,7 +244,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -325,7 +337,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -368,7 +380,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -422,7 +434,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -451,7 +463,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -687,7 +699,7 @@ class AppRepository @Inject constructor(
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonResponse> -> {
-                val data = response.value.message.toString()
+                val data = response.value.Message.toString()
                 when {
                     !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
                     data == null -> CommonResult.Error(oopsMessage)
@@ -697,14 +709,10 @@ class AppRepository @Inject constructor(
         }
 
     }
-    /*
-        override suspend fun logout(): Boolean {
-            persistenceManager.logout()
-            firebaseAuth.signOut()
-            return true
-        }
 
-        override fun getLoginUserState(): Pair<UserLoginState, LoginModel?> {
-            TODO("Not yet implemented")
-        }*/
+    override suspend fun logout(): Boolean {
+        /* persistenceManager.logout()
+         firebaseAuth.signOut()*/
+        return true
+    }
 }

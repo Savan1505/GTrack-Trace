@@ -61,7 +61,8 @@ android {
             buildConfigField(
                 "String",
                 "API_URL",
-                "\"https://gtrackntraceapi.garimasystem.com/\""
+                "\"http://gtrackntraceapi.garimasystem.com/\""
+//                "\"https://gtrackntraceapi.garimasystem.com/\""
 //                "\"https://garimaapi.linde-le.com/\""
 
 //            "Instance": "https://login.microsoftonline.com/",

@@ -20,6 +20,11 @@ sealed class LoginResult {
     data class Error(val message: String) : LoginResult()
 }
 
+sealed class LoginAzureResult {
+    data class SuccessAzure(val loginResponse: LoginResponse<CommonResponse>?) : LoginAzureResult()
+    data class Error(val message: String) : LoginAzureResult()
+}
+
 sealed class SearchMaterialResult {
     data class Success(val lstSearchMaterialResponse: List<SearchMaterialResponse>?) :
         SearchMaterialResult()
@@ -61,13 +66,15 @@ sealed class AssignedMaterialResult {
 }
 
 sealed class LocationAssignMaterialResult {
-    data class Success(val lstLocationAssignMaterialResponse: List<LocationAssignMaterialResponse>?) : LocationAssignMaterialResult()
+    data class Success(val lstLocationAssignMaterialResponse: List<LocationAssignMaterialResponse>?) :
+        LocationAssignMaterialResult()
 
     data class Error(val message: String) : LocationAssignMaterialResult()
 }
 
 sealed class ProjectDetailsResult {
-    data class Success(val lstProjectDetailsResponse: List<ProjectDetailsResponse>?) : ProjectDetailsResult()
+    data class Success(val lstProjectDetailsResponse: List<ProjectDetailsResponse>?) :
+        ProjectDetailsResult()
 
     data class Error(val message: String) : ProjectDetailsResult()
 }

@@ -45,4 +45,6 @@
     <string name="logout">Logout</string>
     <string name="loading">Loading...</string>
     <string name="error_message">Error! Something went wrong</string>
+    <string name="error_username">Please enter the username</string>
+    <string name="error_password">Please enter the password</string>
 </resources>

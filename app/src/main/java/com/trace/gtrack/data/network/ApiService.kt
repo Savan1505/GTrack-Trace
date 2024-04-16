@@ -6,7 +6,6 @@ import com.trace.gtrack.data.network.base.CommonProjectDetailsResponse
 import com.trace.gtrack.data.network.base.CommonResponse
 import com.trace.gtrack.data.network.base.CommonSendMaterialResponse
 import com.trace.gtrack.data.network.request.AssignMaterialCodeRequest
-import com.trace.gtrack.data.network.request.AssignMaterialRequest
 import com.trace.gtrack.data.network.request.DeAssignMaterialCodeRequest
 import com.trace.gtrack.data.network.request.IOTCodeRequest
 import com.trace.gtrack.data.network.request.InsertHandheldRequest
@@ -18,7 +17,6 @@ import com.trace.gtrack.data.network.request.QRCodeRequest
 import com.trace.gtrack.data.network.request.RFIDCodeRequest
 import com.trace.gtrack.data.network.request.SearchMaterialRequest
 import com.trace.gtrack.data.network.request.SearchStrRequest
-import com.trace.gtrack.data.network.request.SendMaterialRequest
 import com.trace.gtrack.data.network.request.SiteDetailsRequest
 import com.trace.gtrack.data.network.response.IOTCodeResponse
 import com.trace.gtrack.data.network.response.LocationAssignMaterialResponse
@@ -49,7 +47,7 @@ interface ApiService {
     ): LoginResponse<CommonResponse>
 
     @Headers("Accept: application/json")
-    @GET("api/GTrackAPI/AzureLogin")
+    @POST("api/GTrackAPI/AzureLogin")
     suspend fun postAzureLoginAPI(
         @Header("APIKey") apiKey: Int,
         @Header("ProjectId") projectId: Int,

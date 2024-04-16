@@ -4,6 +4,7 @@ import com.trace.gtrack.data.model.AssignedMaterialResult
 import com.trace.gtrack.data.model.CommonResult
 import com.trace.gtrack.data.model.ListResult
 import com.trace.gtrack.data.model.LocationAssignMaterialResult
+import com.trace.gtrack.data.model.LoginAzureResult
 import com.trace.gtrack.data.model.LoginResult
 import com.trace.gtrack.data.model.MaterialCodeResult
 import com.trace.gtrack.data.model.ProjectDetailsResult
@@ -17,7 +18,7 @@ import com.trace.gtrack.data.network.request.SendMaterialRequest
 
 interface IAppRepository {
     suspend fun postAppLogin(userName: String, password: String): LoginResult?
-    suspend fun postAzureLogin(azureUserID: String): LoginResult?
+    suspend fun postAzureLogin(azureUserID: String): LoginAzureResult?
     suspend fun postSearchMaterialCodeAPI(materialCode: String): SearchMaterialResult?
     suspend fun postRfidQRCodeMappingAPI(qRCode: String, rfidCode: String): CommonResult?
     suspend fun postRfidQRCodeReMappingAPI(qRCode: String, rfidCode: String): CommonResult?
@@ -42,6 +43,6 @@ interface IAppRepository {
         materialCode: String,
         totalSearchTime: String
     ): CommonResult?
-//    suspend fun logout(): Boolean
-//    fun getLoginUserState(): Pair<UserLoginState, LoginModel?>
+
+    suspend fun logout(): Boolean
 }
