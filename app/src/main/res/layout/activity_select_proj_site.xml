@@ -24,7 +24,7 @@
                     android:gravity="center"
                     android:paddingTop="@dimen/size_back_button"
                     android:paddingBottom="@dimen/height_games_play_poster"
-                    android:text="@string/material_tracker"
+                    android:text="@string/app_name"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

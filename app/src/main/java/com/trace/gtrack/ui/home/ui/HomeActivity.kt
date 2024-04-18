@@ -112,10 +112,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun logoutDialog() {
-        val mDialog = MaterialAlertDialogBuilder(this)
-        mDialog.setPositiveButton("No") { dialogInterface, _ ->
+        val mDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Background)
+        mDialog.setPositiveButton(R.string.btn_no) { dialogInterface, _ ->
             dialogInterface.dismiss()
-        }.setNegativeButton("Yes") { dialogInterface, _ ->
+        }.setNegativeButton(R.string.btn_yes) { dialogInterface, _ ->
             dialogInterface.dismiss()
             persistenceManager.setLoginState(false)
             persistenceManager.saveUserId("")
@@ -125,8 +125,8 @@ class HomeActivity : AppCompatActivity() {
             persistenceManager.saveSiteId("")
             persistenceManager.saveSiteName("")
             LoginActivity.launch(this@HomeActivity)
-        }.setMessage("Are you sure, you want to logout?")
-            .setTitle("Alert Dialog").create()
+        }.setMessage(R.string.logout_msg)
+            .setTitle(R.string.logout).create()
         mDialog.show()
     }
 }

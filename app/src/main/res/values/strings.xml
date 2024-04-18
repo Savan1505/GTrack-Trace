@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">GTrack&amp;Trace</string>
-    <string name="material_tracker">Material Tracker</string>
     <string name="btn_login">Login</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_continue">Continue</string>
@@ -44,8 +43,12 @@
     <string name="close">Close</string>
     <string name="home">Home</string>
     <string name="logout">Logout</string>
+    <string name="btn_no">NO</string>
+    <string name="btn_yes">YES</string>
+    <string name="logout_msg">Are you sure, you want to logout?</string>
     <string name="loading">Loading...</string>
     <string name="error_message">Error! Something went wrong</string>
     <string name="error_username">Please enter the username</string>
     <string name="error_password">Please enter the password</string>
+    <string name="powered_by">Powered By</string>
 </resources>

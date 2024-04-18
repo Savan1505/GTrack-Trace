@@ -35,6 +35,25 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="ThemeOverlay.MaterialComponents.MaterialAlertDialog_Background" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!-- Background Color-->
+        <item name="android:background">@color/colorOnPrimary</item>
+        <!-- Text Color for title and message -->
+        <item name="colorOnSurface">@color/colorBlack</item>
+        <!-- Style for positive button -->
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <!-- Style for negative button -->
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+
+    </style>
+
+    <style name="DialogButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <!-- text color for the button -->
+        <item name="android:textColor">@color/colorPrimary</item>
+        <!-- Background tint for the button -->
+        <item name="backgroundTint">@color/colorOnPrimary</item>
+    </style>
+
     <style name="AuthHeaderText">
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">@dimen/font_size_big</item>
@@ -69,6 +88,7 @@
     <style name="regularText" parent="bigText">
         <item name="android:textSize">@dimen/font_size_medium</item>
     </style>
+
     <style name="regularTextBlack" parent="regularText">
         <item name="android:textColor">@color/colorBlack</item>
     </style>
@@ -103,6 +123,7 @@
         <item name="android:textSize">@dimen/font_size_medium</item>
         <item name="android:fontFamily">@font/hellix_regular</item>
     </style>
+
     <style name="NavSubSite" parent="NavSubTitle">
         <item name="android:textSize">@dimen/font_size_small</item>
         <item name="android:fontFamily">@font/hellix_regular</item>

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <!--<androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/header_margin_top"
@@ -28,6 +28,17 @@
             android:text="@string/app_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_get_in_touch"
+            style="@style/AuthHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@color/colorPrimary"
+            android:text="@string/app_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

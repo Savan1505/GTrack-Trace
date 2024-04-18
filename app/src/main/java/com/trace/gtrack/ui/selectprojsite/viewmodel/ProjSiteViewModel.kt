@@ -8,10 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.safeLaunch
 import com.trace.gtrack.data.IAppRepository
-import com.trace.gtrack.data.model.ProjectDetailsResult
 import com.trace.gtrack.data.model.ProjectKeysResult
 import com.trace.gtrack.data.model.SiteDetailByProjectResult
-import com.trace.gtrack.data.network.response.ProjectDetailsResponse
 import com.trace.gtrack.data.network.response.ProjectKeysResponse
 import com.trace.gtrack.data.network.response.SiteDetailsByProjectResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,10 +24,16 @@ class ProjSiteViewModel @Inject constructor(
     val state: LiveData<SiteDetailByProjectState> = mState
     val stateProj: LiveData<ProjDetailByProjectState> = mStateProj
 
-    fun postSiteDetailByProjectAPI(context: Context, apiKey:String,projectId:String, userId: String) {
+    fun postSiteDetailByProjectAPI(
+        context: Context,
+        apiKey: String,
+        projectId: String,
+        userId: String
+    ) {
         mState.value = SiteDetailByProjectState.Loading
         viewModelScope.safeLaunch {
-            when (val result = iAppRepository.postSiteDetailByProjectAPI(apiKey,projectId,userId)) {
+            when (val result =
+                iAppRepository.postSiteDetailByProjectAPI(apiKey, projectId, userId)) {
                 is SiteDetailByProjectResult.Error -> {
                     mState.value = SiteDetailByProjectState.Error(result.message)
                 }
