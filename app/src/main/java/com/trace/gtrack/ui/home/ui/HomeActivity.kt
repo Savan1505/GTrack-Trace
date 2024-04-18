@@ -1,4 +1,4 @@
-package com.trace.gtrack.ui.home
+package com.trace.gtrack.ui.home.ui
 
 import android.content.Context
 import android.content.Intent
@@ -7,15 +7,18 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.trace.gtrack.R
-import com.trace.gtrack.ui.assignqr.AssignQRActivity
-import com.trace.gtrack.ui.assignqr.materialcode.MaterialCodeActivity
-import com.trace.gtrack.ui.changepwd.ChangePasswordActivity
+import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityHomeBinding
+import com.trace.gtrack.databinding.NavHeaderBinding
+import com.trace.gtrack.ui.assignqr.AssignQRActivity
+import com.trace.gtrack.ui.assignqr.materialcodetracker.ui.MaterialCodeActivity
+import com.trace.gtrack.ui.changepwd.ChangePasswordActivity
 import com.trace.gtrack.ui.login.ui.LoginActivity
 import com.trace.gtrack.ui.profile.ProfileActivity
-import com.trace.gtrack.ui.searchmaterial.SearchMaterialActivity
-import com.trace.gtrack.ui.unassignqr.UnAssignQRActivity
+import com.trace.gtrack.ui.searchmaterial.ui.SearchMaterialActivity
+import com.trace.gtrack.ui.unassignqr.ui.UnAssignQRActivity
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -23,10 +26,18 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var actionBarToggle: ActionBarDrawerToggle
 
+    @Inject
+    internal lateinit var persistenceManager: IPersistenceManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val viewHeader = binding.navView.getHeaderView(0)
+        val navViewHeaderBinding: NavHeaderBinding = NavHeaderBinding.bind(viewHeader)
+        navViewHeaderBinding.tvUsername.text = persistenceManager.getUserName()
+        navViewHeaderBinding.tvProject.text = persistenceManager.getProjectName()
+        navViewHeaderBinding.tvSite.text = persistenceManager.getSiteName()
         binding.apply {
             actionBarToggle = ActionBarDrawerToggle(
                 this@HomeActivity, drawerLayout, mainToolbar.toolBar,
@@ -85,9 +96,13 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun homeFragmentLoad() {
+        val bundle = Bundle()
+        bundle.putString("userName", persistenceManager.getUserName())
+        bundle.putString("projectName", persistenceManager.getProjectName())
+        bundle.putString("siteName", persistenceManager.getSiteName())
         val fragmentManager = supportFragmentManager
         val fragment = HomeFragment.newInstance(this@HomeActivity)
-
+        fragment.arguments = bundle
         fragmentManager.beginTransaction().replace(
             R.id.nav_host_fragment,
             fragment,
@@ -102,6 +117,13 @@ class HomeActivity : AppCompatActivity() {
             dialogInterface.dismiss()
         }.setNegativeButton("Yes") { dialogInterface, _ ->
             dialogInterface.dismiss()
+            persistenceManager.setLoginState(false)
+            persistenceManager.saveUserId("")
+            persistenceManager.saveUserName("")
+            persistenceManager.saveProjectId("")
+            persistenceManager.saveProjectName("")
+            persistenceManager.saveSiteId("")
+            persistenceManager.saveSiteName("")
             LoginActivity.launch(this@HomeActivity)
         }.setMessage("Are you sure, you want to logout?")
             .setTitle("Alert Dialog").create()

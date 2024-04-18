@@ -57,13 +57,13 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.selectprojsite.SelectProSiteActivity"
+            android:name=".ui.selectprojsite.ui.SelectProSiteActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name=".ui.home.ui.HomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"
@@ -76,7 +76,7 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.assignqr.materialcode.MaterialCodeActivity"
+            android:name=".ui.assignqr.materialcodetracker.ui.MaterialCodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"
@@ -88,19 +88,19 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.assignqr.iotcode.IOTCodeActivity"
+            android:name=".ui.assignqr.iotcode.ui.IOTCodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.unassignqr.UnAssignQRActivity"
+            android:name=".ui.unassignqr.ui.UnAssignQRActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.searchmaterial.SearchMaterialActivity"
+            android:name=".ui.searchmaterial.ui.SearchMaterialActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"

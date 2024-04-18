@@ -23,7 +23,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingTop="@dimen/size_back_button"
-                    android:paddingBottom="@dimen/height_185dp"
+                    android:paddingBottom="@dimen/height_205dp"
                     android:text="@string/material_tracker"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,6 +145,17 @@
                         android:padding="@dimen/input_field_radius"
                         android:text="@string/btn_login"
                         app:layout_constraintTop_toBottomOf="@id/tv_forgot_pwd"
+                        app:layout_constraintVertical_bias="1.0" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_linde_login"
+                        style="@style/hintTextColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:padding="@dimen/input_field_radius"
+                        android:text="@string/hint_linde_login"
+                        app:layout_constraintTop_toBottomOf="@+id/btn_login"
                         app:layout_constraintVertical_bias="1.0" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

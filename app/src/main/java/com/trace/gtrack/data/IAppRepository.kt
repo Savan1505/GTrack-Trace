@@ -19,26 +19,128 @@ import com.trace.gtrack.data.network.request.SendMaterialRequest
 interface IAppRepository {
     suspend fun postAppLogin(userName: String, password: String): LoginResult?
     suspend fun postAzureLogin(azureUserID: String): LoginAzureResult?
-    suspend fun postSearchMaterialCodeAPI(materialCode: String): SearchMaterialResult?
-    suspend fun postRfidQRCodeMappingAPI(qRCode: String, rfidCode: String): CommonResult?
-    suspend fun postRfidQRCodeReMappingAPI(qRCode: String, rfidCode: String): CommonResult?
-    suspend fun postAssignMaterialTagAPI(qRCode: String, materialCode: String): CommonResult?
-    suspend fun postDeAssignMaterialTagAPI(userId: String, materialCode: String): CommonResult?
-    suspend fun postMaterialCodeByQRCodeAPI(qRCode: String): MaterialCodeResult?
-    suspend fun postAssignedMaterialListAPI(searchString: String): ListResult?
-    suspend fun postInsertRFIDDataAPI(lstInsertHandHeldData: List<InsertHandHeldDataRequest>): CommonResult?
-    suspend fun postInsertHandheldDataAPI(lstInsertHandHeldData: List<InsertHandHeldDataRequest>): CommonResult?
-    suspend fun getIOTCodeAPI(): ListResult?
-    suspend fun postIotQRCodeMappingAPI(iotCode: String, qRCode: String): CommonResult?
-    suspend fun postIotQRCodeReMappingAPI(iotCode: String, qRCode: String): CommonResult?
-    suspend fun postSiteDetailByProjectAPI(userId: String): SiteDetailByProjectResult?
-    suspend fun postSendMaterialAPI(lstSendMaterialRequest: List<SendMaterialRequest>): SendMaterialResult?
-    suspend fun postAssignedMaterialAPI(qRCode: String): AssignedMaterialResult?
-    suspend fun getLocationOfAllMaterialsAPI(): LocationAssignMaterialResult?
-    suspend fun postLocationOfAssignMaterialsAPI(lstAssignMaterialRequest: List<AssignMaterialRequest>): LocationAssignMaterialResult?
+    suspend fun postSearchMaterialCodeAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        materialCode: String
+    ): SearchMaterialResult?
+
+    suspend fun postRfidQRCodeMappingAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String,
+        rfidCode: String
+    ): CommonResult?
+
+    suspend fun postRfidQRCodeReMappingAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String,
+        rfidCode: String
+    ): CommonResult?
+
+    suspend fun postAssignMaterialTagAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String,
+        materialCode: String
+    ): CommonResult?
+
+    suspend fun postDeAssignMaterialTagAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        userId: String,
+        materialCode: String
+    ): CommonResult?
+
+    suspend fun postMaterialCodeByQRCodeAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String
+    ): MaterialCodeResult?
+
+    suspend fun postAssignedMaterialListAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        searchString: String
+    ): ListResult?
+
+    suspend fun postInsertRFIDDataAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        lstInsertHandHeldData: List<InsertHandHeldDataRequest>
+    ): CommonResult?
+
+    suspend fun postInsertHandheldDataAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        lstInsertHandHeldData: List<InsertHandHeldDataRequest>
+    ): CommonResult?
+
+    suspend fun getIOTCodeAPI(apiKey: String): ListResult?
+    suspend fun postIotQRCodeMappingAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        iotCode: String,
+        qRCode: String
+    ): CommonResult?
+
+    suspend fun postIotQRCodeReMappingAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        iotCode: String,
+        qRCode: String
+    ): CommonResult?
+
+    suspend fun postSiteDetailByProjectAPI(
+        apiKey: String,
+        projectId: String,
+        userId: String
+    ): SiteDetailByProjectResult?
+
+    suspend fun postSendMaterialAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        lstSendMaterialRequest: List<SendMaterialRequest>
+    ): SendMaterialResult?
+
+    suspend fun postAssignedMaterialAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String
+    ): AssignedMaterialResult?
+
+    suspend fun getLocationOfAllMaterialsAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+    ): LocationAssignMaterialResult?
+
+    suspend fun postLocationOfAssignMaterialsAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        lstAssignMaterialRequest: List<AssignMaterialRequest>
+    ): LocationAssignMaterialResult?
+
     suspend fun getProjectDetailAPI(): ProjectDetailsResult?
     suspend fun getProjectKeysAPI(): ProjectKeysResult?
     suspend fun postInsertMAPSearchResultAPI(
+
+        apiKey: String, projectId: String, siteId: String,
         userId: String,
         materialCode: String,
         totalSearchTime: String

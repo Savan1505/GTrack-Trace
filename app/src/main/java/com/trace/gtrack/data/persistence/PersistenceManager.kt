@@ -7,29 +7,87 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.trace.gtrack.ui.login.model.LoginModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import timber.log.Timber
 import javax.inject.Inject
 
 class PersistenceManager @Inject constructor(@ApplicationContext val context: Context) :
     IPersistenceManager {
 
-    private val sharePref = context.getSharedPreferences("ForwardForm", Context.MODE_PRIVATE)
+    val sharePref = context.getSharedPreferences("ForwardForm", Context.MODE_PRIVATE)
 
     companion object {
-//        private const val KEY_TOKEN = "token"
-//        private const val KEY_USER = "user"
-//        private const val KEY_USER_LOGIN_STATE = "userLoginState"
+        private const val KEY_USER_ID = "userId"
+        private const val KEY_USER_NAME = "userName"
+        private const val KEY_API_KEYS = "apiKeys"
+        private const val KEY_PROJ_ID = "projId"
+        private const val KEY_SITE_ID = "siteId"
+        private const val KEY_PROJ_NAME = "projName"
+        private const val KEY_SITE_NAME = "siteName"
+        private const val KEY_USER_LOGIN_STATE = "userLoginState"
 
     }
 
-    /*override fun saveToken(token: String) {
-        sharePref[KEY_TOKEN] = "Bearer $token"
+    override fun saveUserId(userId: String) {
+        sharePref[KEY_USER_ID] = userId
     }
 
-    override fun getToken(): String {
-        return sharePref[KEY_TOKEN, ""]
+    override fun getUserId(): String {
+        return sharePref[KEY_USER_ID, ""]
 
-    }*/
+    }
+
+    override fun saveUserName(userName: String) {
+        sharePref[KEY_USER_NAME] = userName
+    }
+
+    override fun getUserName(): String {
+        return sharePref[KEY_USER_NAME, ""]
+
+    }
+
+    override fun saveAPIKeys(apiKeys: String) {
+        sharePref[KEY_API_KEYS] = apiKeys
+    }
+
+    override fun getAPIKeys(): String {
+        return sharePref[KEY_API_KEYS, ""]
+
+    }
+
+    override fun saveProjectId(projectId: String) {
+        sharePref[KEY_PROJ_ID] = projectId
+    }
+
+    override fun getProjectId(): String {
+        return sharePref[KEY_PROJ_ID, ""]
+
+    }
+
+    override fun saveProjectName(projectName: String) {
+        sharePref[KEY_PROJ_NAME] = projectName
+    }
+
+    override fun getProjectName(): String {
+        return sharePref[KEY_PROJ_NAME, ""]
+
+    }
+
+    override fun saveSiteId(siteId: String) {
+        sharePref[KEY_SITE_ID] = siteId
+    }
+
+    override fun getSiteId(): String {
+        return sharePref[KEY_SITE_ID, ""]
+
+    }
+
+    override fun saveSiteName(siteName: String) {
+        sharePref[KEY_SITE_NAME] = siteName
+    }
+
+    override fun getSiteName(): String {
+        return sharePref[KEY_SITE_NAME, ""]
+
+    }
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -42,13 +100,13 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
         setLoginState(UserLoginState.Login)
     }*/
 
-    /*override fun getLoginState(): UserLoginState {
-        TODO("Not yet implemented")
+    override fun getLoginState(): Boolean {
+        return sharePref[KEY_USER_LOGIN_STATE, false]
     }
 
-    override fun setLoginState(state: UserLoginState) {
-        sharePref[KEY_USER_LOGIN_STATE] = state.state
-    }*/
+    override fun setLoginState(isLogin: Boolean) {
+        sharePref[KEY_USER_LOGIN_STATE] = isLogin
+    }
 
     private inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
         val editor = this.edit()

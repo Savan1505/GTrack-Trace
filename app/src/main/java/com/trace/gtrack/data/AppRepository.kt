@@ -73,7 +73,7 @@ class AppRepository @Inject constructor(
     override suspend fun postAppLogin(userName: String, password: String): LoginResult? {
         return when (val response: ResponseWrapper<LoginResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
-                apiService.postAppLoginAPI(1, 1, 1, LoginRequest(userName, password))
+                apiService.postAppLoginAPI("TGluZGUgUHZ0IEx0ZA==", LoginRequest(userName, password))
             }) {
 
             is ResponseWrapper.GenericError -> LoginResult.Error(
@@ -91,7 +91,11 @@ class AppRepository @Inject constructor(
                     }
 
                     data == null -> LoginResult.Error(oopsMessage)
-                    else -> LoginResult.Success(data)
+                    else -> {
+                        persistenceManager.saveUserId(data.UserId ?: "")
+                        persistenceManager.saveUserName(data.UserName ?: "")
+                        LoginResult.Success(data)
+                    }
                 }
             }
         }
@@ -101,7 +105,7 @@ class AppRepository @Inject constructor(
     override suspend fun postAzureLogin(azureUserID: String): LoginAzureResult? {
         return when (val response: ResponseWrapper<LoginResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
-                apiService.postAzureLoginAPI(1, 1, 1, LoginAzureRequest(azureUserID))
+                apiService.postAzureLoginAPI("TGluZGUgUHZ0IEx0ZA==", LoginAzureRequest(azureUserID))
             }) {
             is ResponseWrapper.GenericError -> LoginAzureResult.Error(
                 response.error?.message ?: oopsMessage
@@ -118,16 +122,30 @@ class AppRepository @Inject constructor(
                     }
 
                     data == null -> LoginAzureResult.Error(oopsMessage)
-                    else -> LoginAzureResult.SuccessAzure(data)
+                    else -> {
+                        persistenceManager.saveUserId(data.UserId ?: "")
+                        persistenceManager.saveUserName(data.UserName ?: "")
+                        LoginAzureResult.SuccessAzure(data)
+                    }
                 }
             }
         }
     }
 
-    override suspend fun postSearchMaterialCodeAPI(materialCode: String): SearchMaterialResult {
+    override suspend fun postSearchMaterialCodeAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        materialCode: String
+    ): SearchMaterialResult {
         return when (val response: ResponseWrapper<CommonMaterialResponse<List<SearchMaterialResponse>>> =
             safeApiCall(dispatcher) {
-                apiService.postSearchMaterialCodeAPI(1, 1, 1, SearchMaterialRequest(materialCode))
+                apiService.postSearchMaterialCodeAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    SearchMaterialRequest(materialCode)
+                )
             }) {
             is ResponseWrapper.GenericError -> SearchMaterialResult.Error(
                 response.error?.message ?: oopsMessage
@@ -148,10 +166,21 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun postRfidQRCodeMappingAPI(qRCode: String, rfidCode: String): CommonResult {
+    override suspend fun postRfidQRCodeMappingAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String,
+        rfidCode: String
+    ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
-                apiService.postRfidQRCodeMappingAPI(1, 1, 1, RFIDCodeRequest(qRCode, rfidCode))
+                apiService.postRfidQRCodeMappingAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    RFIDCodeRequest(qRCode, rfidCode)
+                )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
                 response.error?.message ?: oopsMessage
@@ -171,12 +200,18 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postRfidQRCodeReMappingAPI(
+        apiKey: String, projectId: String, siteId: String,
         qRCode: String,
         rfidCode: String
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
-                apiService.postRfidQRCodeReMappingAPI(1, 1, 1, RFIDCodeRequest(qRCode, rfidCode))
+                apiService.postRfidQRCodeReMappingAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    RFIDCodeRequest(qRCode, rfidCode)
+                )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
                 response.error?.message ?: oopsMessage
@@ -196,15 +231,14 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postAssignMaterialTagAPI(
+        apiKey: String, projectId: String, siteId: String,
         qRCode: String,
         materialCode: String
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
                 apiService.postAssignMaterialTagAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     AssignMaterialCodeRequest(qRCode, materialCode)
                 )
             }) {
@@ -226,15 +260,14 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postDeAssignMaterialTagAPI(
+        apiKey: String, projectId: String, siteId: String,
         userId: String,
         materialCode: String
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
                 apiService.postDeAssignMaterialTagAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     DeAssignMaterialCodeRequest(userId, materialCode)
                 )
             }) {
@@ -255,10 +288,20 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun postMaterialCodeByQRCodeAPI(qRCode: String): MaterialCodeResult {
+    override suspend fun postMaterialCodeByQRCodeAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        qRCode: String
+    ): MaterialCodeResult {
         return when (val response: ResponseWrapper<MaterialCodeResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
-                apiService.postMaterialCodeByQRCodeAPI(1, 1, 1, QRCodeRequest(qRCode))
+                apiService.postMaterialCodeByQRCodeAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    QRCodeRequest(qRCode)
+                )
             }) {
             is ResponseWrapper.GenericError -> MaterialCodeResult.Error(
                 response.error?.message ?: oopsMessage
@@ -280,10 +323,20 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun postAssignedMaterialListAPI(searchString: String): ListResult {
+    override suspend fun postAssignedMaterialListAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        searchString: String
+    ): ListResult {
         return when (val response: ResponseWrapper<MaterialCodeListResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
-                apiService.postAssignedMaterialListAPI(1, 1, 1, SearchStrRequest(searchString))
+                apiService.postAssignedMaterialListAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    SearchStrRequest(searchString)
+                )
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(
                 response.error?.message ?: oopsMessage
@@ -298,7 +351,7 @@ class AppRepository @Inject constructor(
                     )
 
                     data == null -> ListResult.Error(oopsMessage)
-                    else -> ListResult.Success(data.materialCode)
+                    else -> ListResult.Success(data.MaterialCode)
                 }
             }
         }
@@ -306,6 +359,7 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postInsertRFIDDataAPI(
+        apiKey: String, projectId: String, siteId: String,
         lstInsertHandHeldData: List<InsertHandHeldDataRequest>,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
@@ -325,9 +379,7 @@ class AppRepository @Inject constructor(
                     e.printStackTrace()
                 }
                 apiService.postInsertRFIDDataAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     InsertRFIDRequest(jsonObjData.toString())
                 )
             }) {
@@ -349,6 +401,7 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postInsertHandheldDataAPI(
+        apiKey: String, projectId: String, siteId: String,
         lstInsertHandHeldData: List<InsertHandHeldDataRequest>,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
@@ -368,9 +421,7 @@ class AppRepository @Inject constructor(
                     e.printStackTrace()
                 }
                 apiService.postInsertHandheldDataAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     InsertHandheldRequest(jsonObjData.toString())
                 )
             }) {
@@ -391,10 +442,10 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun getIOTCodeAPI(): ListResult {
+    override suspend fun getIOTCodeAPI(apiKey: String): ListResult {
         return when (val response: ResponseWrapper<IOTCodeResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
-                apiService.getIOTCodeAPI("1")
+                apiService.getIOTCodeAPI(apiKey)
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(
                 response.error?.message ?: oopsMessage
@@ -417,14 +468,13 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postIotQRCodeMappingAPI(
+        apiKey: String, projectId: String, siteId: String,
         iotCode: String, qRCode: String
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
                 apiService.postIotQRCodeMappingAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     IOTCodeRequest(iotCode, qRCode)
                 )
             }) {
@@ -446,14 +496,13 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postIotQRCodeReMappingAPI(
+        apiKey: String, projectId: String, siteId: String,
         iotCode: String, qRCode: String
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
                 apiService.postIotQRCodeReMappingAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     IOTCodeRequest(iotCode, qRCode)
                 )
             }) {
@@ -474,10 +523,18 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun postSiteDetailByProjectAPI(userId: String): SiteDetailByProjectResult {
+    override suspend fun postSiteDetailByProjectAPI(
+        apiKey: String,
+        projectId: String,
+        userId: String
+    ): SiteDetailByProjectResult {
         return when (val response: ResponseWrapper<SiteDetailsCommonResponse<CommonResponse>> =
             safeApiCall(dispatcher) {
-                apiService.postSiteDetailByProjectAPI(1, 1, SiteDetailsRequest(userId))
+                apiService.postSiteDetailByProjectAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    SiteDetailsRequest(userId)
+                )
             }) {
             is ResponseWrapper.GenericError -> SiteDetailByProjectResult.Error(
                 response.error?.message ?: oopsMessage
@@ -499,7 +556,12 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun postSendMaterialAPI(lstSendMaterialRequest: List<SendMaterialRequest>): SendMaterialResult {
+    override suspend fun postSendMaterialAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        lstSendMaterialRequest: List<SendMaterialRequest>
+    ): SendMaterialResult {
         return when (val response: ResponseWrapper<CommonSendMaterialResponse<List<SendMaterialResponse>>> =
             safeApiCall(dispatcher) {
                 var jsonArraySendData = JSONArray()
@@ -527,7 +589,12 @@ class AppRepository @Inject constructor(
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
-                apiService.postSendMaterialAPI(1, 1, 1, jsonArraySendData)
+                apiService.postSendMaterialAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    jsonArraySendData
+                )
             }) {
             is ResponseWrapper.GenericError -> SendMaterialResult.Error(
                 response.error?.message ?: oopsMessage
@@ -549,14 +616,13 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postAssignedMaterialAPI(
+        apiKey: String, projectId: String, siteId: String,
         qRCode: String
     ): AssignedMaterialResult {
         return when (val response: ResponseWrapper<String> =
             safeApiCall(dispatcher) {
                 apiService.postAssignedMaterialAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     QRCodeRequest(qRCode)
                 )
             }) {
@@ -576,10 +642,18 @@ class AppRepository @Inject constructor(
 
     }
 
-    override suspend fun getLocationOfAllMaterialsAPI(): LocationAssignMaterialResult? {
+    override suspend fun getLocationOfAllMaterialsAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+    ): LocationAssignMaterialResult? {
         return when (val response: ResponseWrapper<CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>> =
             safeApiCall(dispatcher) {
-                apiService.getLocationOfAllMaterialsAPI(1, 1, 1)
+                apiService.getLocationOfAllMaterialsAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                )
             }) {
             is ResponseWrapper.GenericError -> LocationAssignMaterialResult.Error(
                 response.error?.message ?: oopsMessage
@@ -597,7 +671,12 @@ class AppRepository @Inject constructor(
         }
     }
 
-    override suspend fun postLocationOfAssignMaterialsAPI(lstAssignMaterialRequest: List<AssignMaterialRequest>): LocationAssignMaterialResult {
+    override suspend fun postLocationOfAssignMaterialsAPI(
+        apiKey: String,
+        projectId: String,
+        siteId: String,
+        lstAssignMaterialRequest: List<AssignMaterialRequest>
+    ): LocationAssignMaterialResult {
         return when (val response: ResponseWrapper<CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>> =
             safeApiCall(dispatcher) {
                 var jsonArrayAssignCodeData = JSONArray()
@@ -611,7 +690,12 @@ class AppRepository @Inject constructor(
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
-                apiService.postLocationOfAssignMaterialsAPI(1, 1, 1, jsonArrayAssignCodeData)
+                apiService.postLocationOfAssignMaterialsAPI(
+                    apiKey,
+                    Integer.parseInt(projectId),
+                    Integer.parseInt(siteId),
+                    jsonArrayAssignCodeData
+                )
             }) {
             is ResponseWrapper.GenericError -> LocationAssignMaterialResult.Error(
                 response.error?.message ?: oopsMessage
@@ -635,7 +719,7 @@ class AppRepository @Inject constructor(
     override suspend fun getProjectDetailAPI(): ProjectDetailsResult {
         return when (val response: ResponseWrapper<CommonProjectDetailsResponse<List<ProjectDetailsResponse>>> =
             safeApiCall(dispatcher) {
-                apiService.getProjectDetailAPI("1")
+                apiService.getProjectDetailAPI("TGluZGUgUHZ0IEx0ZA==")
             }) {
             is ResponseWrapper.GenericError -> ProjectDetailsResult.Error(
                 response.error?.message ?: oopsMessage
@@ -659,7 +743,7 @@ class AppRepository @Inject constructor(
     override suspend fun getProjectKeysAPI(): ProjectKeysResult {
         return when (val response: ResponseWrapper<CommonProjectDetailsResponse<List<ProjectKeysResponse>>> =
             safeApiCall(dispatcher) {
-                apiService.getProjectKeysAPI("1")
+                apiService.getProjectKeysAPI("TGluZGUgUHZ0IEx0ZA==")
             }) {
             is ResponseWrapper.GenericError -> ProjectKeysResult.Error(
                 response.error?.message ?: oopsMessage
@@ -680,6 +764,7 @@ class AppRepository @Inject constructor(
     }
 
     override suspend fun postInsertMAPSearchResultAPI(
+        apiKey: String, projectId: String, siteId: String,
         userId: String,
         materialCode: String,
         totalSearchTime: String
@@ -687,9 +772,7 @@ class AppRepository @Inject constructor(
         return when (val response: ResponseWrapper<CommonResponse> =
             safeApiCall(dispatcher) {
                 apiService.postInsertMAPSearchResultAPI(
-                    1,
-                    1,
-                    1,
+                    apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     MapSearchResultRequest(userId, materialCode, totalSearchTime)
                 )
             }) {

@@ -6,8 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.databinding.ActivityAssignqrBinding
-import com.trace.gtrack.ui.assignqr.iotcode.IOTCodeActivity
-import com.trace.gtrack.ui.assignqr.materialcode.MaterialCodeActivity
+import com.trace.gtrack.ui.assignqr.iotcode.ui.IOTCodeActivity
+import com.trace.gtrack.ui.assignqr.materialcodetracker.ui.MaterialCodeActivity
 import com.trace.gtrack.ui.assignqr.rfid.RFIDActivity
 import dagger.hilt.android.AndroidEntryPoint
 

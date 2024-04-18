@@ -62,6 +62,10 @@
         <item name="android:fontFamily">@font/hellix_semi_bold</item>
     </style>
 
+    <style name="hintTextColor" parent="bigText">
+        <item name="android:textColor">@color/colorPrimaryVariant</item>
+    </style>
+
     <style name="regularText" parent="bigText">
         <item name="android:textSize">@dimen/font_size_medium</item>
     </style>
@@ -89,9 +93,18 @@
         <item name="android:fontFamily">@font/hellix_bold</item>
     </style>
 
+    <style name="NavTitle" parent="NavSubTitle">
+        <item name="android:textSize">@dimen/font_size_large</item>
+        <item name="android:fontFamily">@font/hellix_semi_bold</item>
+    </style>
+
     <style name="NavSubTitle">
         <item name="android:textColor">@color/colorSecondary</item>
         <item name="android:textSize">@dimen/font_size_medium</item>
+        <item name="android:fontFamily">@font/hellix_regular</item>
+    </style>
+    <style name="NavSubSite" parent="NavSubTitle">
+        <item name="android:textSize">@dimen/font_size_small</item>
         <item name="android:fontFamily">@font/hellix_regular</item>
     </style>
 

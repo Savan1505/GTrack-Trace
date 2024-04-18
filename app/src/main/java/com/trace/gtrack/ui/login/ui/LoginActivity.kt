@@ -12,7 +12,7 @@ import com.trace.gtrack.databinding.ActivityLoginBinding
 import com.trace.gtrack.ui.forgotpassword.ForgotPasswordActivity
 import com.trace.gtrack.ui.login.viewmodel.LoginState
 import com.trace.gtrack.ui.login.viewmodel.LoginViewModel
-import com.trace.gtrack.ui.selectprojsite.SelectProSiteActivity
+import com.trace.gtrack.ui.selectprojsite.ui.SelectProSiteActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,6 +33,13 @@ class LoginActivity : AppCompatActivity() {
                 this@LoginActivity,
                 binding.edtUserName.text.toString(),
                 binding.edtPassword.text.toString()
+            )
+        }
+
+        binding.tvLindeLogin.setOnClickListener {
+            loginViewModel.postAzureLoginAPI(
+                this@LoginActivity,
+                "d1a4fef9-89af-4837-bc3d-5018ce81b83f"
             )
         }
     }
@@ -58,10 +65,9 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 LoginState.SuccessLogin -> {
-                    loginViewModel.postAzureLoginAPI(
-                        this@LoginActivity,
-                        "d1a4fef9-89af-4837-bc3d-5018ce81b83f"
-                    )
+                    AppProgressDialog.hide()
+                    SelectProSiteActivity.launch(this@LoginActivity)
+                    finish()
                 }
 
                 LoginState.SuccessAzureLogin -> {
@@ -79,19 +85,4 @@ class LoginActivity : AppCompatActivity() {
             context.startActivity(Intent(context, LoginActivity::class.java))
         }
     }
-
-    /*private fun createAuthRequest(loginHint: String?) {
-        val authRequestBuilder = AuthorizationRequest.Builder(
-            authStateManager.current.authorizationServiceConfiguration!!,
-            clientId.get(),
-            ResponseTypeValues.CODE,
-            configuration.redirectUri
-        )
-            .setScope(configuration.scope)
-            .setPromptValues("login")
-        if (!TextUtils.isEmpty(loginHint)) {
-            authRequestBuilder.setLoginHint(loginHint)
-        }
-        authRequest.set(authRequestBuilder.build())
-    }*/
 }

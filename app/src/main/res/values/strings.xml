@@ -10,6 +10,7 @@
     <string name="hint_new_password">New Password</string>
     <string name="hint_confirm_password">Confirm Password</string>
     <string name="hint_email">Email</string>
+    <string name="hint_linde_login">Login With Linde Account</string>
     <string name="hint_forgot_password">Forgot Password ?</string>
     <string name="title_forgot_password">Forgot Password</string>
     <string name="title_project">Project</string>

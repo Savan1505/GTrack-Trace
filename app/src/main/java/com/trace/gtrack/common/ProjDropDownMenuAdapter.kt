@@ -6,17 +6,18 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.trace.gtrack.R
+import com.trace.gtrack.data.network.response.ProjectKeysResponse
 
-class CommonDropDownMenuAdapter(
-    private var list: List<String>,
-    val onClick: (String) -> Unit,
+class ProjDropDownMenuAdapter(
+    private var list: List<ProjectKeysResponse>?,
+    val onClick: (ProjectKeysResponse?) -> Unit,
 ) :
-    RecyclerView.Adapter<CommonDropDownMenuAdapter.ItemViewHolder>() {
+    RecyclerView.Adapter<ProjDropDownMenuAdapter.ItemViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CommonDropDownMenuAdapter.ItemViewHolder {
+    ): ProjDropDownMenuAdapter.ItemViewHolder {
         val view: View =
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.dd_menu_item, parent, false)
@@ -24,17 +25,17 @@ class CommonDropDownMenuAdapter(
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return list?.size ?: -1
     }
 
-    override fun onBindViewHolder(holder: CommonDropDownMenuAdapter.ItemViewHolder, position: Int) {
-        holder.bind(list[position])
+    override fun onBindViewHolder(holder: ProjDropDownMenuAdapter.ItemViewHolder, position: Int) {
+        list?.get(position)?.let { holder.bind(it) }
     }
 
     inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var tvTitle: AppCompatTextView = view.findViewById(R.id.tv_status)
-        fun bind(item: String) {
-            tvTitle.text = item
+        fun bind(item: ProjectKeysResponse) {
+            tvTitle.text = item.projectName
             itemView.setOnClickListener {
                 onClick(item)
             }
