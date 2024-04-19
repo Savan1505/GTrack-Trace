@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.text.toUpperCase
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.trace.gtrack.R
 import com.trace.gtrack.data.persistence.IPersistenceManager
@@ -18,6 +19,7 @@ import com.trace.gtrack.ui.profile.ProfileActivity
 import com.trace.gtrack.ui.searchmaterial.ui.SearchMaterialActivity
 import com.trace.gtrack.ui.unassignqr.ui.UnAssignQRActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -97,7 +99,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun homeFragmentLoad() {
         val bundle = Bundle()
-        bundle.putString("userName", persistenceManager.getUserName())
+        bundle.putString("userName", persistenceManager.getUserName().uppercase(Locale.ROOT))
         bundle.putString("projectName", persistenceManager.getProjectName())
         bundle.putString("siteName", persistenceManager.getSiteName())
         val fragmentManager = supportFragmentManager

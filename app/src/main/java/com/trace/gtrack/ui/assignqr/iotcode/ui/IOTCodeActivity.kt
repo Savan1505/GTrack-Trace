@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -18,10 +19,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.IOTCodeAdapter
+import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityIotCodeBinding
+import com.trace.gtrack.ui.assignqr.iotcode.viewmodel.IOTAssignState
 import com.trace.gtrack.ui.assignqr.iotcode.viewmodel.IOTCodeState
 import com.trace.gtrack.ui.assignqr.iotcode.viewmodel.IOTViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +38,7 @@ import javax.inject.Inject
 class IOTCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityIotCodeBinding
-    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::showSnackBar)
+    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
     private val iOTViewModel: IOTViewModel by viewModels()
 
     @Inject
@@ -92,7 +95,7 @@ class IOTCodeActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        iOTViewModel.state.observe(this) {
+        iOTViewModel.state.observe(this@IOTCodeActivity) {
             when (it) {
                 is IOTCodeState.Error -> {
                     AppProgressDialog.hide()
@@ -100,12 +103,32 @@ class IOTCodeActivity : AppCompatActivity() {
                 }
 
                 IOTCodeState.Loading -> {
-                    AppProgressDialog.show(this)
+                    AppProgressDialog.show(this@IOTCodeActivity)
                 }
 
                 is IOTCodeState.Success -> {
                     AppProgressDialog.hide()
                     handleIOTCodePopUp(it.lstIOTResponse)
+                }
+            }
+        }
+
+        iOTViewModel.stateAS.observe(this@IOTCodeActivity) {
+            when (it) {
+                is IOTAssignState.Error -> {
+                    AppProgressDialog.hide()
+                    makeWarningToast(it.msg)
+                }
+
+                IOTAssignState.Loading -> {
+                    AppProgressDialog.show(this@IOTCodeActivity)
+                }
+
+                is IOTAssignState.Success -> {
+                    AppProgressDialog.hide()
+                    makeSuccessToast(it.toString())
+                    binding.selectIotCode.text = ""
+                    binding.edtScanQrHere.text?.clear()
                 }
             }
         }
@@ -137,7 +160,7 @@ class IOTCodeActivity : AppCompatActivity() {
         popup.isOutsideTouchable = true
         popup.setBackgroundDrawable(
             ContextCompat.getDrawable(
-                this,
+                this@IOTCodeActivity,
                 R.drawable.ic_transparent
             )
         )
@@ -158,12 +181,15 @@ class IOTCodeActivity : AppCompatActivity() {
     }
 
 
-    private fun showSnackBar(result: QRResult) {
-        val text = when (result) {
+    private fun scanQRCodeResult(result: QRResult) {
+        when (result) {
             is QRResult.QRSuccess -> {
-                result.content.rawValue
-                // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                    ?: result.content.rawBytes?.let { String(it) }.orEmpty()
+                binding.edtScanQrHere.text =
+                    Editable.Factory.getInstance().newEditable(
+                        result.content.rawValue
+                        // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                            ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    )
             }
 
             QRResult.QRUserCanceled -> "User canceled"
@@ -171,27 +197,5 @@ class IOTCodeActivity : AppCompatActivity() {
             is QRResult.QRError -> "${result.exception.javaClass.simpleName}: ${result.exception.localizedMessage}"
         }
 
-        Snackbar.make(binding.root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.run {
-                maxLines = 5
-                setTextIsSelectable(true)
-            }
-            if (result is QRResult.QRSuccess) {
-                val content = result.content
-                if (content is QRContent.Url) {
-                    setAction(R.string.open_action) { openUrl(content.url) }
-                    return@apply
-                }
-            }
-            setAction(R.string.ok_action) { }
-        }.show()
-    }
-
-    private fun openUrl(url: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (ignored: ActivityNotFoundException) {
-            // no Activity found to run the given Intent
-        }
     }
 }

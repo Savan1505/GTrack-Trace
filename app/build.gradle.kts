@@ -4,7 +4,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
-    id ("com.google.gms.google-services")
+    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }
 
@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.trace.gtrack"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
@@ -50,8 +50,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    buildFeatures {
         viewBinding = true
         dataBinding = true
     }
@@ -67,9 +65,9 @@ android {
 
 //            "Instance": "https://login.microsoftonline.com/",
 //
-//            "TenantId": "1562f007-09a4-4fcb-936b-e79246571fc7",
+//            "TenantId": "a9fa6622-2e54-4be3-96c8-90188b4dadd4",
 //
-//            "ClientId": "7e51e960-b3dc-4902-aa26-512764761a35",
+//            "ClientId": "828119da-6946-4389-8f16-73930463cc09",
 //
 //            "RedirectUri": "https://www.garima.linde-le.com/",
             )
@@ -88,6 +86,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/io.netty.versions.properties"
         }
     }
 }
@@ -140,7 +140,7 @@ dependencies {
     debugImplementation("com.github.chuckerteam.chucker:library:3.5.2")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:3.5.2")
 
-    implementation ("com.google.firebase:firebase-core:21.1.1")
+    implementation("com.google.firebase:firebase-core:21.1.1")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("com.google.firebase:firebase-crashlytics-ktx:18.6.4")
 
@@ -149,7 +149,15 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.45")
     implementation("androidx.activity:activity-ktx:1.8.2")
 
-    //open id connect
-    implementation("net.openid:appauth:0.7.1")
-    implementation("com.squareup.okio:okio:1.17.5")//do not upgrade to version 2.x.x
+    //Azure connect
+    implementation("com.microsoft.identity.client:msal:5.+")
+    {
+        exclude(group = "io.opentelemetry")
+        exclude(group = "com.microsoft.device.display")
+    }
+    implementation("com.microsoft.graph:microsoft-graph:5.80.0")
+    implementation("com.azure:azure-identity:1.10.0")
+    implementation("org.objenesis:objenesis:3.3")
+    implementation("io.opentelemetry:opentelemetry-api:1.18.0")
+    implementation("io.opentelemetry:opentelemetry-context:1.18.0")
 }

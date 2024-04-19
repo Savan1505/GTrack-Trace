@@ -155,7 +155,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonMaterialResponse<List<SearchMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> SearchMaterialResult.Error(oopsMessage)
+                    !(data.isSuccess()) -> SearchMaterialResult.Error(data.message.toString())
                     data == null -> SearchMaterialResult.Error(oopsMessage)
                     else -> {
                         data.materialDetail.let { SearchMaterialResult.Success(it) }
@@ -190,7 +190,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -221,7 +221,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -250,7 +250,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -279,7 +279,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -312,7 +312,7 @@ class AppRepository @Inject constructor(
                 val data = response.value
                 when {
                     !(response.value.commonResponse?.isSuccess())!! -> MaterialCodeResult.Error(
-                        oopsMessage
+                        response.value.commonResponse.Message.toString()
                     )
 
                     data == null -> MaterialCodeResult.Error(oopsMessage)
@@ -347,7 +347,7 @@ class AppRepository @Inject constructor(
                 val data = response.value
                 when {
                     !(data.commonResponse?.isSuccess())!! -> ListResult.Error(
-                        oopsMessage
+                        data.commonResponse.Message.toString()
                     )
 
                     data == null -> ListResult.Error(oopsMessage)
@@ -391,7 +391,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -433,7 +433,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -456,7 +456,7 @@ class AppRepository @Inject constructor(
                 val data = response.value
                 when {
                     !(data.commonResponse?.isSuccess())!! -> ListResult.Error(
-                        oopsMessage
+                        data.commonResponse.Message.toString()
                     )
 
                     data == null -> ListResult.Error(oopsMessage)
@@ -486,7 +486,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -514,7 +514,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }
@@ -545,7 +545,7 @@ class AppRepository @Inject constructor(
                 val data = response.value
                 when {
                     !(response.value.commonResponse?.isSuccess())!! -> SiteDetailByProjectResult.Error(
-                        oopsMessage
+                        data.commonResponse?.Message.toString()
                     )
 
                     data == null -> SiteDetailByProjectResult.Error(oopsMessage)
@@ -604,7 +604,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonSendMaterialResponse<List<SendMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> SendMaterialResult.Error(oopsMessage)
+                    !(data.isSuccess()) -> SendMaterialResult.Error(data.message.toString())
                     data == null -> SendMaterialResult.Error(oopsMessage)
                     else -> {
                         data.sendMaterial.let { SendMaterialResult.Success(it) }
@@ -663,7 +663,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(oopsMessage)
+                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(data.message.toString())
                     data == null -> LocationAssignMaterialResult.Error(oopsMessage)
                     else -> data.materialDetails?.let { LocationAssignMaterialResult.Success(it) }
                 }
@@ -705,7 +705,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(oopsMessage)
+                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(data.message.toString())
                     data == null -> LocationAssignMaterialResult.Error(oopsMessage)
                     else -> {
                         data.materialDetails.let { LocationAssignMaterialResult.Success(it) }
@@ -729,7 +729,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonProjectDetailsResponse<List<ProjectDetailsResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> ProjectDetailsResult.Error(oopsMessage)
+                    !(data.isSuccess()) -> ProjectDetailsResult.Error(data.message.toString())
                     data == null -> ProjectDetailsResult.Error(oopsMessage)
                     else -> {
                         data.projectDetails.let { ProjectDetailsResult.Success(it) }
@@ -753,7 +753,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonProjectDetailsResponse<List<ProjectKeysResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> ProjectKeysResult.Error(oopsMessage)
+                    !(data.isSuccess()) -> ProjectKeysResult.Error(data.message.toString())
                     data == null -> ProjectKeysResult.Error(oopsMessage)
                     else -> {
                         data.projectDetails.let { ProjectKeysResult.Success(it) }
@@ -784,7 +784,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonResponse> -> {
                 val data = response.value.Message.toString()
                 when {
-                    !(response.value.isSuccess()) -> CommonResult.Error(oopsMessage)
+                    !(response.value.isSuccess()) -> CommonResult.Error(data)
                     data == null -> CommonResult.Error(oopsMessage)
                     else -> CommonResult.Success(data)
                 }

@@ -31,7 +31,7 @@ import javax.inject.Inject
 class UnAssignQRActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUnassignQrBinding
-    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::showSnackBar)
+    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
     private val unAssignViewModel: UnAssignViewModel by viewModels()
 
     @Inject
@@ -94,12 +94,14 @@ class UnAssignQRActivity : AppCompatActivity() {
     }
 
 
-    private fun showSnackBar(result: QRResult) {
-        val text = when (result) {
+    private fun scanQRCodeResult(result: QRResult) {
+        when (result) {
             is QRResult.QRSuccess -> {
-                result.content.rawValue
-                // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                    ?: result.content.rawBytes?.let { String(it) }.orEmpty()
+                binding.edtScanQrHere.text =
+                    Editable.Factory.getInstance().newEditable(result.content.rawValue
+                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    )
             }
 
             QRResult.QRUserCanceled -> "User canceled"
@@ -107,28 +109,6 @@ class UnAssignQRActivity : AppCompatActivity() {
             is QRResult.QRError -> "${result.exception.javaClass.simpleName}: ${result.exception.localizedMessage}"
         }
 
-        Snackbar.make(binding.root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.run {
-                maxLines = 5
-                setTextIsSelectable(true)
-            }
-            if (result is QRResult.QRSuccess) {
-                val content = result.content
-                if (content is QRContent.Url) {
-                    setAction(R.string.open_action) { openUrl(content.url) }
-                    return@apply
-                }
-            }
-            setAction(R.string.ok_action) { }
-        }.show()
-    }
-
-    private fun openUrl(url: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (ignored: ActivityNotFoundException) {
-            // no Activity found to run the given Intent
-        }
     }
 
     private fun observe() {
@@ -170,6 +150,9 @@ class UnAssignQRActivity : AppCompatActivity() {
 
                 is UnAssignMaterialState.Success -> {
                     makeSuccessToast(it.message)
+                    binding.edtScanQrHere.text?.clear()
+                    binding.edtSearchMaterialCode.text?.clear()
+                    AppProgressDialog.hide()
                 }
             }
         }

@@ -1,18 +1,13 @@
 package com.trace.gtrack.ui.assignqr.materialcodetracker.ui
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.View
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
-import com.google.android.material.snackbar.Snackbar
-import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.MaterialCodeAdapter
 import com.trace.gtrack.common.utils.makeSuccessToast
@@ -27,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
 import io.github.g00fy2.quickie.config.ScannerConfig
-import io.github.g00fy2.quickie.content.QRContent
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,7 +30,7 @@ class MaterialCodeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMaterialCodeBinding
     private lateinit var materialCodeAdapter: MaterialCodeAdapter
 
-    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::showSnackBar)
+    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
     private val assignViewModel: AssignViewModel by viewModels()
 
     @Inject
@@ -117,22 +111,25 @@ class MaterialCodeActivity : AppCompatActivity() {
                     materialCodeAdapter.updateSearchMaterialCodeList(it.lstMaterialCode)
                 }
             }
+        }
 
-            assignViewModel.stateAM.observe(this@MaterialCodeActivity) {
-                when (it) {
+        assignViewModel.stateAM.observe(this@MaterialCodeActivity) {
+            when (it) {
 
-                    is AssignMaterialState.Error -> {
-                        AppProgressDialog.hide()
-                        makeWarningToast(it.msg)
-                    }
+                is AssignMaterialState.Error -> {
+                    AppProgressDialog.hide()
+                    makeWarningToast(it.msg)
+                }
 
-                    AssignMaterialState.Loading -> {
-                        AppProgressDialog.show(this)
-                    }
+                AssignMaterialState.Loading -> {
+                    AppProgressDialog.show(this)
+                }
 
-                    is AssignMaterialState.Success -> {
-                        makeSuccessToast(it.message)
-                    }
+                is AssignMaterialState.Success -> {
+                    AppProgressDialog.hide()
+                    makeSuccessToast(it.message)
+                    binding.edtScanQrHere.text?.clear()
+                    binding.edtSearchMaterialCode.text?.clear()
                 }
             }
         }
@@ -147,12 +144,14 @@ class MaterialCodeActivity : AppCompatActivity() {
         const val OPEN_SCANNER = "open_scanner"
     }
 
-    private fun showSnackBar(result: QRResult) {
-        val text = when (result) {
+    private fun scanQRCodeResult(result: QRResult) {
+        when (result) {
             is QRResult.QRSuccess -> {
-                result.content.rawValue
-                // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                    ?: result.content.rawBytes?.let { String(it) }.orEmpty()
+                binding.edtScanQrHere.text =
+                    Editable.Factory.getInstance().newEditable(result.content.rawValue
+                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    )
             }
 
             QRResult.QRUserCanceled -> "User canceled"
@@ -160,27 +159,5 @@ class MaterialCodeActivity : AppCompatActivity() {
             is QRResult.QRError -> "${result.exception.javaClass.simpleName}: ${result.exception.localizedMessage}"
         }
 
-        Snackbar.make(binding.root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.run {
-                maxLines = 5
-                setTextIsSelectable(true)
-            }
-            if (result is QRResult.QRSuccess) {
-                val content = result.content
-                if (content is QRContent.Url) {
-                    setAction(R.string.open_action) { openUrl(content.url) }
-                    return@apply
-                }
-            }
-            setAction(R.string.ok_action) { }
-        }.show()
-    }
-
-    private fun openUrl(url: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (ignored: ActivityNotFoundException) {
-            // no Activity found to run the given Intent
-        }
     }
 }

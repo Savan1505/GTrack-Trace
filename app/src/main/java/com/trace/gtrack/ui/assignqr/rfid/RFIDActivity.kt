@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +22,7 @@ import io.github.g00fy2.quickie.content.QRContent
 class RFIDActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRfidBinding
-    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::showSnackBar)
+    private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRfidBinding.inflate(layoutInflater)
@@ -58,12 +59,14 @@ class RFIDActivity : AppCompatActivity() {
         const val OPEN_SCANNER = "open_scanner"
     }
 
-    private fun showSnackBar(result: QRResult) {
-        val text = when (result) {
+    private fun scanQRCodeResult(result: QRResult) {
+        when (result) {
             is QRResult.QRSuccess -> {
-                result.content.rawValue
-                // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                    ?: result.content.rawBytes?.let { String(it) }.orEmpty()
+                binding.edtScanQrHere.text =
+                    Editable.Factory.getInstance().newEditable(result.content.rawValue
+                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    )
             }
 
             QRResult.QRUserCanceled -> "User canceled"
@@ -71,28 +74,5 @@ class RFIDActivity : AppCompatActivity() {
             is QRResult.QRError -> "${result.exception.javaClass.simpleName}: ${result.exception.localizedMessage}"
         }
 
-        Snackbar.make(binding.root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.run {
-                maxLines = 5
-                setTextIsSelectable(true)
-            }
-            if (result is QRResult.QRSuccess) {
-                val content = result.content
-                if (content is QRContent.Url) {
-                    setAction(R.string.open_action) { openUrl(content.url) }
-                    return@apply
-                }
-            }
-            setAction(R.string.ok_action) { }
-        }.show()
     }
-
-    private fun openUrl(url: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (ignored: ActivityNotFoundException) {
-            // no Activity found to run the given Intent
-        }
-    }
-
 }
