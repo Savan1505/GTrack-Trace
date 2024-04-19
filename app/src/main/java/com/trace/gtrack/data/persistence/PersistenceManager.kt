@@ -23,6 +23,7 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
         private const val KEY_PROJ_NAME = "projName"
         private const val KEY_SITE_NAME = "siteName"
         private const val KEY_USER_LOGIN_STATE = "userLoginState"
+        private const val KEY_IOT_CODE = "iotCode"
 
     }
 
@@ -86,6 +87,15 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
 
     override fun getSiteName(): String {
         return sharePref[KEY_SITE_NAME, ""]
+
+    }
+
+    override fun saveIOTCode(iotCode: String) {
+        sharePref[KEY_IOT_CODE] = iotCode
+    }
+
+    override fun getIOTCode(): String {
+        return sharePref[KEY_IOT_CODE, ""]
 
     }
 

@@ -127,6 +127,7 @@ class UnAssignQRActivity : AppCompatActivity() {
                 }
 
                 is UnAssignState.Success -> {
+                    AppProgressDialog.hide()
                     binding.tilSearchMaterialCode.show()
                     binding.tilSearchMaterialCode.editText?.text =
                         Editable.Factory.getInstance().newEditable(it.materialCode)
@@ -151,7 +152,6 @@ class UnAssignQRActivity : AppCompatActivity() {
                 is UnAssignMaterialState.Success -> {
                     makeSuccessToast(it.message)
                     binding.edtScanQrHere.text?.clear()
-                    binding.edtSearchMaterialCode.text?.clear()
                     AppProgressDialog.hide()
                 }
             }

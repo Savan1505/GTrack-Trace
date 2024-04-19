@@ -22,6 +22,9 @@ interface IPersistenceManager {
     fun saveSiteName(siteName: String)
     fun getSiteName(): String
 
+    fun saveIOTCode(iotCode: String)
+    fun getIOTCode(): String
+
     fun getLoginState(): Boolean
     fun setLoginState(isLogin: Boolean)
 }

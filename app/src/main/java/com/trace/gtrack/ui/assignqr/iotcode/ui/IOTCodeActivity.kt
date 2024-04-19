@@ -74,14 +74,27 @@ class IOTCodeActivity : AppCompatActivity() {
             })
 
         binding.btnAssignQr.setOnClickListener {
-            iOTViewModel.postIotQRCodeMappingAPI(
-                this@IOTCodeActivity,
-                persistenceManager.getAPIKeys(),
-                persistenceManager.getProjectId(),
-                persistenceManager.getSiteId(),
-                binding.selectIotCode.text.toString(),
-                binding.edtScanQrHere.text.toString()
-            )
+            if (persistenceManager.getIOTCode() == binding.selectIotCode.text.toString() && binding.edtScanQrHere.text.toString()
+                    .isNotEmpty()
+            ) {
+                iOTViewModel.postIotQRCodeReMappingAPI(
+                    this@IOTCodeActivity,
+                    persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                    binding.selectIotCode.text.toString(),
+                    binding.edtScanQrHere.text.toString()
+                )
+            } else {
+                iOTViewModel.postIotQRCodeMappingAPI(
+                    this@IOTCodeActivity,
+                    persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                    binding.selectIotCode.text.toString(),
+                    binding.edtScanQrHere.text.toString()
+                )
+            }
         }
     }
 
@@ -126,9 +139,9 @@ class IOTCodeActivity : AppCompatActivity() {
 
                 is IOTAssignState.Success -> {
                     AppProgressDialog.hide()
+                    persistenceManager.saveIOTCode(binding.selectIotCode.text.toString())
                     makeSuccessToast(it.toString())
                     binding.selectIotCode.text = ""
-                    binding.edtScanQrHere.text?.clear()
                 }
             }
         }

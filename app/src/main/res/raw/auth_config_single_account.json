@@ -1,8 +1,7 @@
 {
-  "cache-control": "no-cache",
   "client_id" : "828119da-6946-4389-8f16-73930463cc09",
   "authorization_user_agent" : "WEBVIEW",
-  "redirect_uri" : "msauth://com.azuresamples.msalandroidkotlinapp/1wIqXSqBj7w%2Bh11ZifsnqwgyKrY%3D",
+  "redirect_uri" : "msauth://com.trace.gtrack/qvN2Ha%2BVW%2BfhJR4fdJlzLDkkkS4%3D",
   "account_mode" : "SINGLE",
   "content-type": "application/json",
   "broker_redirect_uri_registered": true,
@@ -11,7 +10,7 @@
       "type": "AAD",
       "authority_url": "https://login.microsoftonline.com/",
       "audience": {
-        "type": "AzureADandPersonalMicrosoftAccount",
+        "type": "AzureADMyOrg",
         "tenant_id": "a9fa6622-2e54-4be3-96c8-90188b4dadd4"
       }
     }

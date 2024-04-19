@@ -129,7 +129,6 @@ class MaterialCodeActivity : AppCompatActivity() {
                     AppProgressDialog.hide()
                     makeSuccessToast(it.message)
                     binding.edtScanQrHere.text?.clear()
-                    binding.edtSearchMaterialCode.text?.clear()
                 }
             }
         }

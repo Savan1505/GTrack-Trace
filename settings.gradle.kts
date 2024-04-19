@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "GTrack&Trace"
 include(":app")
+include(":RFIDAPI3Library")

@@ -4,16 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.microsoft.identity.client.AuthenticationCallback
 import com.microsoft.identity.client.IAccount
 import com.microsoft.identity.client.IAuthenticationResult
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication
-import com.microsoft.identity.client.IPublicClientApplication
+import com.microsoft.identity.client.IPublicClientApplication.ISingleAccountApplicationCreatedListener
 import com.microsoft.identity.client.ISingleAccountPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
-import com.microsoft.identity.client.SignInParameters
 import com.microsoft.identity.client.exception.MsalClientException
 import com.microsoft.identity.client.exception.MsalException
 import com.microsoft.identity.client.exception.MsalServiceException
@@ -26,7 +26,7 @@ import com.trace.gtrack.ui.login.viewmodel.LoginState
 import com.trace.gtrack.ui.login.viewmodel.LoginViewModel
 import com.trace.gtrack.ui.selectprojsite.ui.SelectProSiteActivity
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Arrays
+
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -36,27 +36,45 @@ class LoginActivity : AppCompatActivity() {
 
     private var mSingleAccountApp: ISingleAccountPublicClientApplication? = null
     private var mAccount: IAccount? = null
+    private var uUID: String? = null
     private lateinit var b2cApp: IMultipleAccountPublicClientApplication
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observe()
-        PublicClientApplication.createSingleAccountPublicClientApplication(
+        /*PublicClientApplication.createSingleAccountPublicClientApplication(
             this@LoginActivity,
             R.raw.auth_config_single_account,
             object : IPublicClientApplication.ISingleAccountApplicationCreatedListener {
                 override fun onCreated(application: ISingleAccountPublicClientApplication) {
-                    /*
+                    *//*
                          * This test app assumes that the app is only going to support one account.
                          * This requires "account_mode" : "SINGLE" in the config json file.
-                         */
+                         *//*
                     mSingleAccountApp = application
                     loadAccount()
                 }
 
                 override fun onError(exception: MsalException) {
                     makeWarningToast(exception.toString())
+                }
+            })*/
+        PublicClientApplication.createSingleAccountPublicClientApplication(
+            this@LoginActivity,
+            R.raw.auth_config_single_account,
+            object : ISingleAccountApplicationCreatedListener {
+                override fun onCreated(application: ISingleAccountPublicClientApplication) {
+                    /**
+                     * This test app assumes that the app is only going to support one account.
+                     * This requires "account_mode" : "SINGLE" in the config json file.
+                     */
+                    mSingleAccountApp = application
+                    loadAccount()
+                }
+
+                override fun onError(exception: MsalException) {
+                    Log.e("GTrack AD : ", exception.toString())
                 }
             })
         binding.tvForgotPwd.setOnClickListener {
@@ -71,18 +89,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.tvLindeLogin.setOnClickListener {
-            /*loginViewModel.postAzureLoginAPI(
-            this@LoginActivity,
-            "d1a4fef9-89af-4837-bc3d-5018ce81b83f"
-        )*/
-            AppProgressDialog.show(this@LoginActivity)
-            val signInParameters: SignInParameters = SignInParameters.builder()
-                .withActivity(this@LoginActivity)
-                .withLoginHint(null)
-                .withScopes(listOf(*scopes))
-                .withCallback(authInteractiveCallback)
-                .build()
-            mSingleAccountApp!!.signIn(signInParameters)
+            if (mSingleAccountApp != null) {
+                mSingleAccountApp!!.signIn(
+                    this@LoginActivity,
+                    null,
+                    scopes,
+                    authInteractiveCallback
+                )
+            }
         }
     }
 
@@ -110,7 +124,7 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onError(exception: MsalException) {
                 AppProgressDialog.hide()
-                makeWarningToast(exception.toString())
+                Log.e("GTrack AD : ", exception.toString())
             }
         })
     }
@@ -121,26 +135,30 @@ class LoginActivity : AppCompatActivity() {
                 AppProgressDialog.hide()
                 /* Successfully got a token, use it to call a protected resource - MSGraph */
                 Log.d("Savan", "Successfully authenticated")
-                Log.d("Savan", "ID Token: " + authenticationResult.account.claims!!["id_token"])
+                Log.d("Savan", "ID Token: " + authenticationResult.account.id)
 
                 /* Update account */mAccount = authenticationResult.account
                 //updateUI()
-
-                /* call graph */callGraphAPI(authenticationResult)
+                uUID = authenticationResult.correlationId.toString()
+                /* call graph */callGraphAPI()
             }
 
             override fun onError(exception: MsalException) {
                 AppProgressDialog.hide()
                 /* Failed to acquireToken */
-                Log.d(
-                    "Savan",
-                    "Authentication failed: $exception"
-                )
-                makeWarningToast(exception.toString())
-                if (exception is MsalClientException) {
-                    /* Exception inside MSAL, more info inside MsalError.java */
-                } else if (exception is MsalServiceException) {
-                    /* Exception when communicating with the STS, likely config issue */
+                if (exception.message.toString() == "An account is already signed in.") {
+                    callGraphAPI()
+                } else {
+                    Log.d(
+                        "Savan",
+                        "Authentication failed: $exception"
+                    )
+                    makeWarningToast(exception.toString())
+                    if (exception is MsalClientException) {
+                        /* Exception inside MSAL, more info inside MsalError.java */
+                    } else if (exception is MsalServiceException) {
+                        /* Exception when communicating with the STS, likely config issue */
+                    }
                 }
             }
 
@@ -151,19 +169,11 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-    private fun callGraphAPI(authenticationResult: IAuthenticationResult) {
-        /*callGraphAPIUsingVolley(
-            context!!,
-            graphResourceTextView!!.text.toString(),
-            authenticationResult.accessToken,
-            Response.Listener<JSONObject> { response -> *//* Successfully called graph, process data and send to UI *//*
-                Log.d(TAG, "Response: $response")
-                displayGraphResult(response)
-            },
-            Response.ErrorListener { error ->
-                Log.d(TAG, "Error: $error")
-                displayError(error)
-            })*/
+    private fun callGraphAPI() {
+        loginViewModel.postAzureLoginAPI(
+            this@LoginActivity,
+            uUID!!
+        )
     }
 
     override fun onResume() {
@@ -174,7 +184,8 @@ class LoginActivity : AppCompatActivity() {
          *
          * In shared device mode, the account might be signed in/out by other apps while this app is not in focus.
          * Therefore, we want to update the account state by invoking loadAccount() here.
-         */loadAccount()
+         */
+        loadAccount()
     }
 
     private fun observe() {

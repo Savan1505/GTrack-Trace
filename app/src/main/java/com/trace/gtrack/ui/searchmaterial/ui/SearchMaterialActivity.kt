@@ -110,7 +110,7 @@ class SearchMaterialActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        searchMaterialViewModel.state.observe(this@SearchMaterialActivity) { it ->
+        searchMaterialViewModel.state.observe(this@SearchMaterialActivity) {
             when (it) {
 
                 is SearchMaterialState.Error -> {

@@ -37,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         val viewHeader = binding.navView.getHeaderView(0)
         val navViewHeaderBinding: NavHeaderBinding = NavHeaderBinding.bind(viewHeader)
-        navViewHeaderBinding.tvUsername.text = persistenceManager.getUserName()
+        navViewHeaderBinding.tvUsername.text = persistenceManager.getUserName().uppercase(Locale.ROOT)
         navViewHeaderBinding.tvProject.text = persistenceManager.getProjectName()
         navViewHeaderBinding.tvSite.text = persistenceManager.getSiteName()
         binding.apply {

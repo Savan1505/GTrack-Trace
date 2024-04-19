@@ -9,6 +9,7 @@ import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,7 +25,8 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.mainToolbar.ivBackButton.show()
-        binding.edtUserName.text = Editable.Factory.getInstance().newEditable(persistenceManager.getUserName())
+        binding.edtUserName.text = Editable.Factory.getInstance().newEditable(persistenceManager.getUserName().uppercase(
+            Locale.ROOT))
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
         }

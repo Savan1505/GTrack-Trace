@@ -66,7 +66,37 @@ class IOTViewModel @Inject constructor(
                 }
 
                 is CommonResult.Success -> {
-                    result.strMsg?.let { IOTAssignState.Success(it) }
+                    mStateAS.value = result.strMsg?.let { IOTAssignState.Success(it) }
+                }
+
+                null -> mStateAS.value =
+                    IOTAssignState.Error(context.getString(R.string.error_message))
+            }
+        }
+    }
+
+    fun postIotQRCodeReMappingAPI(
+        context: Context, apiKey: String,
+        projectId: String,
+        siteId: String,
+        iotCode: String,
+        qRCode: String
+    ) {
+        mStateAS.value = IOTAssignState.Loading
+        viewModelScope.safeLaunch {
+            when (val result = iAppRepository.postIotQRCodeReMappingAPI(
+                apiKey,
+                projectId,
+                siteId,
+                iotCode,
+                qRCode
+            )) {
+                is CommonResult.Error -> {
+                    mStateAS.value = IOTAssignState.Error(result.message)
+                }
+
+                is CommonResult.Success -> {
+                    mStateAS.value = result.strMsg?.let { IOTAssignState.Success(it) }
                 }
 
                 null -> mStateAS.value =
