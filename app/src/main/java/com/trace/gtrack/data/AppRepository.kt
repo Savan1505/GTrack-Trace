@@ -327,6 +327,8 @@ class AppRepository @Inject constructor(
         apiKey: String,
         projectId: String,
         siteId: String,
+        pageNumber: Int,
+        pageSize: Int,
         searchString: String
     ): ListResult {
         return when (val response: ResponseWrapper<MaterialCodeListResponse<CommonResponse>> =
@@ -335,7 +337,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    SearchStrRequest(searchString)
+                    SearchStrRequest(searchString,pageNumber,pageSize)
                 )
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(

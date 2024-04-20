@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.text.toUpperCase
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.trace.gtrack.R
 import com.trace.gtrack.data.persistence.IPersistenceManager
@@ -73,13 +72,13 @@ class HomeActivity : AppCompatActivity() {
                         MaterialCodeActivity.launch(this@HomeActivity)
                     }
 
-                    R.id.nav_profile -> {
+                    /*R.id.nav_profile -> {
                         ProfileActivity.launch(this@HomeActivity)
                     }
 
                     R.id.nav_change_password -> {
                         ChangePasswordActivity.launch(this@HomeActivity)
-                    }
+                    }*/
 
                     R.id.nav_logout -> {
                         logoutDialog()
@@ -127,6 +126,7 @@ class HomeActivity : AppCompatActivity() {
             persistenceManager.saveSiteId("")
             persistenceManager.saveSiteName("")
             LoginActivity.launch(this@HomeActivity)
+            finish()
         }.setMessage(R.string.logout_msg)
             .setTitle(R.string.logout).create()
         mDialog.show()

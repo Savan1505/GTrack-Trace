@@ -36,30 +36,11 @@ class LoginActivity : AppCompatActivity() {
 
     private var mSingleAccountApp: ISingleAccountPublicClientApplication? = null
     private var mAccount: IAccount? = null
-    private var uUID: String? = null
-    private lateinit var b2cApp: IMultipleAccountPublicClientApplication
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observe()
-        /*PublicClientApplication.createSingleAccountPublicClientApplication(
-            this@LoginActivity,
-            R.raw.auth_config_single_account,
-            object : IPublicClientApplication.ISingleAccountApplicationCreatedListener {
-                override fun onCreated(application: ISingleAccountPublicClientApplication) {
-                    *//*
-                         * This test app assumes that the app is only going to support one account.
-                         * This requires "account_mode" : "SINGLE" in the config json file.
-                         *//*
-                    mSingleAccountApp = application
-                    loadAccount()
-                }
-
-                override fun onError(exception: MsalException) {
-                    makeWarningToast(exception.toString())
-                }
-            })*/
         PublicClientApplication.createSingleAccountPublicClientApplication(
             this@LoginActivity,
             R.raw.auth_config_single_account,
@@ -139,7 +120,6 @@ class LoginActivity : AppCompatActivity() {
 
                 /* Update account */mAccount = authenticationResult.account
                 //updateUI()
-                uUID = authenticationResult.correlationId.toString()
                 /* call graph */callGraphAPI()
             }
 
@@ -170,10 +150,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
     private fun callGraphAPI() {
-        loginViewModel.postAzureLoginAPI(
-            this@LoginActivity,
-            uUID!!
-        )
+        if(mAccount != null) {
+            loginViewModel.postAzureLoginAPI(
+                this@LoginActivity,
+                mAccount!!.id
+            )
+        }else{
+            makeWarningToast("Authentication failed,Please try again!")
+        }
     }
 
     override fun onResume() {

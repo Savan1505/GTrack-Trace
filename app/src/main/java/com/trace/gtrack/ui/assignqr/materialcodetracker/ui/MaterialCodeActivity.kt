@@ -1,13 +1,17 @@
 package com.trace.gtrack.ui.assignqr.materialcodetracker.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.View
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
+import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.MaterialCodeAdapter
 import com.trace.gtrack.common.utils.makeSuccessToast
@@ -18,6 +22,7 @@ import com.trace.gtrack.databinding.ActivityMaterialCodeBinding
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignMaterialState
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignState
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignViewModel
+import com.trace.gtrack.ui.home.ui.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
@@ -28,7 +33,6 @@ import javax.inject.Inject
 class MaterialCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMaterialCodeBinding
-    private lateinit var materialCodeAdapter: MaterialCodeAdapter
 
     private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
     private val assignViewModel: AssignViewModel by viewModels()
@@ -45,18 +49,17 @@ class MaterialCodeActivity : AppCompatActivity() {
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
         }
-        binding.edtSearchMaterialCode.doAfterTextChanged {
-            if (binding.edtSearchMaterialCode.text.toString().length > 3) {
-                assignViewModel.postAssignedMaterialListAPI(
-                    this@MaterialCodeActivity,
-                    persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                    binding.edtSearchMaterialCode.text.toString()
-                )
+        binding.edtSearchMaterialCode.setOnClickListener {
+            if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
+//                SearchActivity.launch(this@MaterialCodeActivity)
+                Intent(this@MaterialCodeActivity, SearchActivity::class.java).apply {
+                    launcher.launch(this)
+                }
+            } else {
+                makeWarningToast(resources.getString(R.string.error_qrcode))
             }
+
         }
-        setupPopMaterialCode()
         binding.ivScanQr.setOnClickListener {
             scanQrCode.launch(
                 ScannerConfig.build {
@@ -86,33 +89,16 @@ class MaterialCodeActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupPopMaterialCode() {
-        materialCodeAdapter = MaterialCodeAdapter {
-            binding.rlItemList.visibility = View.GONE
-            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(it)
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data?.getStringExtra("material_code")
+            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                intent.toString()
+            )
+            // Handle the Intent
         }
-        binding.rlItemList.adapter = materialCodeAdapter
     }
-
     private fun observe() {
-        assignViewModel.state.observe(this@MaterialCodeActivity) { it ->
-            when (it) {
-
-                is AssignState.Error -> {
-                    AppProgressDialog.hide()
-                    makeWarningToast(it.msg)
-                }
-
-                AssignState.Loading -> {
-                    AppProgressDialog.show(this)
-                }
-
-                is AssignState.Success -> {
-                    materialCodeAdapter.updateSearchMaterialCodeList(it.lstMaterialCode)
-                }
-            }
-        }
-
         assignViewModel.stateAM.observe(this@MaterialCodeActivity) {
             when (it) {
 
@@ -147,9 +133,10 @@ class MaterialCodeActivity : AppCompatActivity() {
         when (result) {
             is QRResult.QRSuccess -> {
                 binding.edtScanQrHere.text =
-                    Editable.Factory.getInstance().newEditable(result.content.rawValue
-                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    Editable.Factory.getInstance().newEditable(
+                        result.content.rawValue
+                        // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                            ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
                     )
             }
 

@@ -69,6 +69,8 @@ interface IAppRepository {
         apiKey: String,
         projectId: String,
         siteId: String,
+        pageNumber: Int,
+        pageSize: Int,
         searchString: String
     ): ListResult?
 

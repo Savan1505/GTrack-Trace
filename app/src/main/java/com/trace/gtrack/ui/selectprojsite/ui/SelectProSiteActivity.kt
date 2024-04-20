@@ -21,6 +21,7 @@ import com.trace.gtrack.data.network.response.SiteDetailsByProjectResponse
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySelectProjSiteBinding
 import com.trace.gtrack.ui.home.ui.HomeActivity
+import com.trace.gtrack.ui.login.viewmodel.LoginState
 import com.trace.gtrack.ui.selectprojsite.viewmodel.ProjDetailByProjectState
 import com.trace.gtrack.ui.selectprojsite.viewmodel.ProjSiteViewModel
 import com.trace.gtrack.ui.selectprojsite.viewmodel.SiteDetailByProjectState
@@ -42,6 +43,14 @@ class SelectProSiteActivity : AppCompatActivity() {
         projSiteViewModel.getProjectKeysAPI(this@SelectProSiteActivity)
         observe()
         binding.btnContinue.setOnClickListener {
+            if (binding.selectProject.text.toString().trim().isEmpty()) {
+                makeWarningToast(resources.getString(R.string.error_project))
+                return@setOnClickListener
+            }
+            if (binding.selectSite.text.toString().trim().isEmpty()) {
+                makeWarningToast(resources.getString(R.string.error_site))
+                return@setOnClickListener
+            }
             persistenceManager.setLoginState(true)
             HomeActivity.launch(this@SelectProSiteActivity)
             finish()
@@ -51,6 +60,7 @@ class SelectProSiteActivity : AppCompatActivity() {
     private fun observe() {
         projSiteViewModel.state.observe(this) {
             when (it) {
+
                 is SiteDetailByProjectState.Error -> {
                     AppProgressDialog.hide()
                     makeWarningToast(it.msg)
