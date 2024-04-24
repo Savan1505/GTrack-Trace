@@ -2,154 +2,187 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/login_header"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorPrimary">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/AuthHeaderTextWhite"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/size_back_button"
-                    android:paddingBottom="@dimen/height_185dp"
-                    android:text="@string/material_tracker"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                app:cardBackgroundColor="@color/colorSecondary"
-                app:cardCornerRadius="@dimen/app_button_radius"
-                app:cardElevation="@dimen/margin_large"
-                app:layout_constraintBottom_toBottomOf="@+id/login_header"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/login_header">
+                android:layout_height="match_parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/login_header"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="@dimen/screen_internal_padding">
+                    android:background="@color/colorPrimary">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/AuthHeaderLabel"
+                        style="@style/AuthHeaderTextWhite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin_large"
                         android:gravity="center"
-                        android:text="@string/btn_login"
-                        app:layout_constraintBottom_toTopOf="@id/til_user_name"
-                        app:layout_constraintVertical_bias="1.0" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_user_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/input_field_radius"
-                        android:hint="@string/hint_user_name"
-                        android:textColorHint="@color/grey_100"
-                        app:boxBackgroundColor="@color/colorSecondary"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
-                        app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
-                        app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
-                        app:boxCornerRadiusTopStart="@dimen/input_field_radius"
-                        app:boxStrokeColor="@color/colorPrimary"
-                        app:boxStrokeWidth="@dimen/divider_width"
-                        app:cursorColor="@color/colorPrimary"
-                        app:hintTextColor="@color/colorPrimary"
-                        app:layout_constraintBottom_toTopOf="@id/til_password"
-                        app:startIconDrawable="@drawable/ic_person"
-                        app:startIconTint="@color/colorBlack">
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/edt_user_name"
-                            style="@style/smallText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/input_field_radius"
-                        android:hint="@string/hint_password"
-
-                        android:textColorHint="@color/grey_100"
-                        app:boxBackgroundColor="@color/colorSecondary"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
-                        app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
-                        app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
-                        app:boxCornerRadiusTopStart="@dimen/input_field_radius"
-                        app:boxStrokeColor="@color/colorPrimary"
-                        app:boxStrokeWidth="@dimen/divider_width"
-                        app:cursorColor="@color/colorPrimary"
-
-                        app:endIconMode="password_toggle"
-                        app:endIconTint="@color/grey_100"
-                        app:hintTextColor="@color/colorPrimary"
-                        app:layout_constraintBottom_toBottomOf="@id/til_user_name"
-                        app:layout_constraintBottom_toTopOf="@id/til_password"
-                        app:layout_constraintTop_toBottomOf="@id/tv_forgot_pwd"
-                        app:layout_constraintVertical_bias="1.0"
-                        app:startIconDrawable="@drawable/ic_lock"
-                        app:startIconTint="@color/colorBlack">
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/edt_password"
-                            style="@style/smallText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:inputType="textPassword"
-                            android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_forgot_pwd"
-                        style="@style/bigText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:padding="@dimen/input_field_radius"
-                        android:text="@string/hint_forgot_password"
-                        app:layout_constraintTop_toBottomOf="@+id/til_password"
-                        app:layout_constraintVertical_bias="1.0" />
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_login"
-                        style="@style/AppButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin_large"
-                        android:gravity="center"
-                        android:padding="@dimen/input_field_radius"
-                        android:text="@string/btn_login"
-                        app:layout_constraintTop_toBottomOf="@id/tv_forgot_pwd"
-                        app:layout_constraintVertical_bias="1.0" />
+                        android:paddingTop="@dimen/size_back_button"
+                        android:paddingBottom="@dimen/height_205dp"
+                        android:text="@string/app_name"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    app:cardBackgroundColor="@color/colorSecondary"
+                    app:cardCornerRadius="@dimen/app_button_radius"
+                    app:cardElevation="@dimen/margin_large"
+                    app:layout_constraintBottom_toBottomOf="@+id/login_header"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/login_header">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/screen_internal_padding">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/AuthHeaderLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin_large"
+                            android:gravity="center"
+                            android:text="@string/btn_login"
+                            app:layout_constraintBottom_toTopOf="@id/til_user_name"
+                            app:layout_constraintVertical_bias="1.0" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_user_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/input_field_radius"
+                            android:hint="@string/hint_user_name"
+                            android:textColorHint="@color/grey_100"
+                            app:boxBackgroundColor="@color/colorSecondary"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopStart="@dimen/input_field_radius"
+                            app:boxStrokeColor="@color/colorPrimary"
+                            app:boxStrokeWidth="@dimen/divider_width"
+                            app:cursorColor="@color/colorPrimary"
+                            app:hintTextColor="@color/colorPrimary"
+                            app:layout_constraintBottom_toTopOf="@id/til_password"
+                            app:startIconDrawable="@drawable/ic_person"
+                            app:startIconTint="@color/colorBlack">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edt_user_name"
+                                style="@style/smallText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:maxLines="1"
+                                android:imeOptions="actionNext"
+                                android:inputType="text"
+                                android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/input_field_radius"
+                            android:hint="@string/hint_password"
+                            android:textColorHint="@color/grey_100"
+                            app:boxBackgroundColor="@color/colorSecondary"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
+                            app:boxCornerRadiusTopStart="@dimen/input_field_radius"
+                            app:boxStrokeColor="@color/colorPrimary"
+                            app:boxStrokeWidth="@dimen/divider_width"
+                            app:cursorColor="@color/colorPrimary"
+                            app:endIconMode="password_toggle"
+                            app:endIconTint="@color/grey_100"
+                            app:hintTextColor="@color/colorPrimary"
+                            app:layout_constraintBottom_toBottomOf="@id/til_user_name"
+                            app:layout_constraintBottom_toTopOf="@id/til_password"
+                            app:layout_constraintTop_toBottomOf="@id/tv_forgot_pwd"
+                            app:layout_constraintVertical_bias="1.0"
+                            app:startIconDrawable="@drawable/ic_lock"
+                            app:startIconTint="@color/colorBlack">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edt_password"
+                                style="@style/smallText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:inputType="textPassword"
+                                android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_forgot_pwd"
+                            style="@style/bigText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:padding="@dimen/input_field_radius"
+                            android:visibility="invisible"
+                            android:text="@string/hint_forgot_password"
+                            app:layout_constraintTop_toBottomOf="@+id/til_password"
+                            app:layout_constraintVertical_bias="1.0" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_login"
+                            style="@style/AppButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_large"
+                            android:gravity="center"
+                            android:padding="@dimen/input_field_radius"
+                            android:text="@string/btn_login"
+                            app:layout_constraintTop_toBottomOf="@id/tv_forgot_pwd"
+                            app:layout_constraintVertical_bias="1.0" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_linde_login"
+                            style="@style/hintTextColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:padding="@dimen/input_field_radius"
+                            android:text="@string/hint_linde_login"
+                            app:layout_constraintTop_toBottomOf="@+id/btn_login"
+                            app:layout_constraintVertical_bias="1.0" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_get_in_touch"
+            style="@style/regularTextBlack"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_back_button"
+            android:drawableEnd="@drawable/drawable_icon_hw"
+            android:drawablePadding="@dimen/margin_tiny"
+            android:gravity="end"
+            android:padding="@dimen/margin_tiny"
+            android:text="@string/powered_by"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

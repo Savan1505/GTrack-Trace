@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">GTrack&amp;Trace</string>
-    <string name="material_tracker">Material Tracker</string>
+    <string name="app_name">GTrack &amp; Trace</string>
     <string name="btn_login">Login</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_continue">Continue</string>
@@ -10,6 +9,7 @@
     <string name="hint_new_password">New Password</string>
     <string name="hint_confirm_password">Confirm Password</string>
     <string name="hint_email">Email</string>
+    <string name="hint_linde_login">Login With Linde Account</string>
     <string name="hint_forgot_password">Forgot Password ?</string>
     <string name="title_forgot_password">Forgot Password</string>
     <string name="title_project">Project</string>
@@ -41,8 +41,18 @@
     <string name="ok_action">OK</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="home">Home</string>
+    <string name="home">Dashboard</string>
     <string name="logout">Logout</string>
+    <string name="btn_no">NO</string>
+    <string name="btn_yes">YES</string>
+    <string name="logout_msg">Do you want to exit?</string>
     <string name="loading">Loading...</string>
     <string name="error_message">Error! Something went wrong</string>
+    <string name="error_username">Please enter the username</string>
+    <string name="error_password">Please enter the password</string>
+    <string name="error_project">Please select the project</string>
+    <string name="error_site">Please select the site</string>
+    <string name="error_qrcode">Please scan or enter the QRCode</string>
+    <string name="powered_by">Powered By</string>
+    <string name="no_material_code">No Material Code Found</string>
 </resources>

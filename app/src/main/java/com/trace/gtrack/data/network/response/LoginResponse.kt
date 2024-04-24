@@ -6,13 +6,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class LoginResponse<T>(
     @Json(name = "UserId")
-    val userId: String?,
+    val UserId: String?,
     @Json(name = "UserName")
-    val userName: String?,
+    val UserName: String?,
     @Json(name = "ProjectId")
-    val projectId: String?,
+    val ProjectId: String?,
     @Json(name = "SiteId")
-    val siteId: String?,
+    val SiteId: String?,
     @Json(name = "commonResponse")
     val commonResponse: T?,
 )

@@ -24,27 +24,27 @@
         android:layout_height="match_parent"
         android:gravity="start|center_vertical"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/margin_big"
+        android:paddingLeft="@dimen/margin_tiny"
         app:layout_constraintStart_toEndOf="@id/iv_nav_profile"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_username"
-            style="@style/AuthHeaderTextWhite"
+            style="@style/NavTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_project"
-            style="@style/AppBarTitle"
+            style="@style/NavSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_project" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_site"
-            style="@style/NavSubTitle"
+            style="@style/NavSubSite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_site" />

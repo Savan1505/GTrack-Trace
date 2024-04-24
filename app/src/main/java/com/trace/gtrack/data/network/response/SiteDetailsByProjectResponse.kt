@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class SiteDetailsByProjectResponse(
     @Json(name = "SiteId")
-    val siteId: String?,
+    val SiteId: String?,
     @Json(name = "SiteName")
-    val siteName: String?,
+    val SiteName: String?,
 )

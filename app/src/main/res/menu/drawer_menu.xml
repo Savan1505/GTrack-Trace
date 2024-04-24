@@ -23,14 +23,14 @@
             android:id="@+id/nav_track_material"
             android:icon="@drawable/ic_track_material"
             android:title="@string/track_material" />
-        <item
+        <!--<item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_person"
             android:title="@string/profile" />
         <item
             android:id="@+id/nav_change_password"
             android:icon="@drawable/ic_lock"
-            android:title="@string/change_password" />
+            android:title="@string/change_password" />-->
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"

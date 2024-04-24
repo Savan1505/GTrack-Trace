@@ -6,7 +6,6 @@ import com.trace.gtrack.data.network.base.CommonProjectDetailsResponse
 import com.trace.gtrack.data.network.base.CommonResponse
 import com.trace.gtrack.data.network.base.CommonSendMaterialResponse
 import com.trace.gtrack.data.network.request.AssignMaterialCodeRequest
-import com.trace.gtrack.data.network.request.AssignMaterialRequest
 import com.trace.gtrack.data.network.request.DeAssignMaterialCodeRequest
 import com.trace.gtrack.data.network.request.IOTCodeRequest
 import com.trace.gtrack.data.network.request.InsertHandheldRequest
@@ -18,7 +17,6 @@ import com.trace.gtrack.data.network.request.QRCodeRequest
 import com.trace.gtrack.data.network.request.RFIDCodeRequest
 import com.trace.gtrack.data.network.request.SearchMaterialRequest
 import com.trace.gtrack.data.network.request.SearchStrRequest
-import com.trace.gtrack.data.network.request.SendMaterialRequest
 import com.trace.gtrack.data.network.request.SiteDetailsRequest
 import com.trace.gtrack.data.network.response.IOTCodeResponse
 import com.trace.gtrack.data.network.response.LocationAssignMaterialResponse
@@ -42,25 +40,25 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/Login")
     suspend fun postAppLoginAPI(
-        @Header("APIKey") apiKey: Int,
-        @Header("ProjectId") projectId: Int,
-        @Header("SiteId") siteId: Int,
+        @Header("APIKey") apiKey: String,
+//        @Header("ProjectId") projectId: Int,
+//        @Header("SiteId") siteId: Int,
         @Body loginRequest: LoginRequest,
     ): LoginResponse<CommonResponse>
 
     @Headers("Accept: application/json")
-    @GET("api/GTrackAPI/AzureLogin")
+    @POST("api/GTrackAPI/AzureLogin")
     suspend fun postAzureLoginAPI(
-        @Header("APIKey") apiKey: Int,
-        @Header("ProjectId") projectId: Int,
-        @Header("SiteId") siteId: Int,
+        @Header("APIKey") apiKey: String,
+//        @Header("ProjectId") projectId: Int,
+//        @Header("SiteId") siteId: Int,
         @Body loginAzureRequest: LoginAzureRequest,
     ): LoginResponse<CommonResponse>
 
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/SearchMaterial")
     suspend fun postSearchMaterialCodeAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body searchMaterialRequest: SearchMaterialRequest,
@@ -69,7 +67,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/RFID_QRCodeMapping")
     suspend fun postRfidQRCodeMappingAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body rfidCodeRequest: RFIDCodeRequest,
@@ -78,7 +76,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/RFID_QRCodeReMapping")
     suspend fun postRfidQRCodeReMappingAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body rfidCodeRequest: RFIDCodeRequest,
@@ -87,7 +85,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/AssignMaterialTag")
     suspend fun postAssignMaterialTagAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body assignMaterialRequest: AssignMaterialCodeRequest,
@@ -96,7 +94,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/DeAssignMaterialTag")
     suspend fun postDeAssignMaterialTagAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body deAssignMaterialCodeRequest: DeAssignMaterialCodeRequest,
@@ -105,16 +103,16 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/GetMaterialCodeByQRcode")
     suspend fun postMaterialCodeByQRCodeAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body qrCodeRequest: QRCodeRequest,
     ): MaterialCodeResponse<CommonResponse>
 
     @Headers("Accept: application/json")
-    @POST("api/GTrackAPI/GetAssignedMaterialList")
+    @POST("api/GTrackAPI/GetMaterialCode")
     suspend fun postAssignedMaterialListAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body searchStrRequest: SearchStrRequest,
@@ -123,7 +121,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/InsertRFIDData")
     suspend fun postInsertRFIDDataAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body insertRFIDRequest: InsertRFIDRequest,
@@ -132,7 +130,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/InsertHandheldData")
     suspend fun postInsertHandheldDataAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body insertHandHeldRequest: InsertHandheldRequest,
@@ -147,7 +145,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/IOT_QRCodeMapping")
     suspend fun postIotQRCodeMappingAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body iotCodeRequest: IOTCodeRequest,
@@ -156,7 +154,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/IOT_QRCodeReMapping")
     suspend fun postIotQRCodeReMappingAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body iotCodeRequest: IOTCodeRequest,
@@ -165,7 +163,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/GetSiteDetailByProject")
     suspend fun postSiteDetailByProjectAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Body siteDetailsRequest: SiteDetailsRequest,
     ): SiteDetailsCommonResponse<CommonResponse>
@@ -173,7 +171,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/SendMaterial")
     suspend fun postSendMaterialAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body sendMaterialRequest: JSONArray,
@@ -182,7 +180,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/GetAssignedMaterial")
     suspend fun postAssignedMaterialAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body qrCodeRequest: QRCodeRequest,
@@ -191,7 +189,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @GET("api/GTrackAPI/GetLocationOfAllMaterials")
     suspend fun getLocationOfAllMaterialsAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
     ): CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>
@@ -199,7 +197,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/GetLocationOfAssignMaterial")
     suspend fun postLocationOfAssignMaterialsAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body lstAssignMaterialRequest: JSONArray
@@ -220,7 +218,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     @POST("api/GTrackAPI/InsertMAPSearchResult")
     suspend fun postInsertMAPSearchResultAPI(
-        @Header("APIKey") apiKey: Int,
+        @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
         @Body mapSearchResultRequest: MapSearchResultRequest,

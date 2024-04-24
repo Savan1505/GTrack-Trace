@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/input_field_radius">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/input_field_radius">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_search_material_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:layout_marginBottom="@dimen/input_field_radius"
+                    android:hint="@string/material_code"
+                    android:textColorHint="@color/grey_100"
+                    app:boxBackgroundColor="@color/colorSecondary"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/input_field_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/input_field_radius"
+                    app:boxCornerRadiusTopStart="@dimen/input_field_radius"
+                    app:boxStrokeColor="@color/colorPrimary"
+                    app:boxStrokeWidth="@dimen/divider_width"
+                    app:cursorColor="@color/colorPrimary"
+                    app:hintTextColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toTopOf="@id/rv_material_code"
+                    app:layout_constraintTop_toBottomOf="@id/rv_material_code"
+                    app:startIconDrawable="@drawable/ic_search"
+                    app:startIconTint="@color/colorBlack">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edt_search_material_code"
+                        style="@style/smallText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_material_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/til_search_material_code" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_no_data"
+            style="@style/regularTextBlack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_material_code"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

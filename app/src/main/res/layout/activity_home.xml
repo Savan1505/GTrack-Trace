@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.home.HomeActivity">
+        tools:context=".ui.home.ui.HomeActivity">
 
         <androidx.drawerlayout.widget.DrawerLayout
             android:id="@+id/drawer_layout"
@@ -37,6 +37,9 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:fitsSystemWindows="true"
+                app:itemIconTint="@color/colorBlack"
+                app:itemTextColor="@color/colorBlack"
+                app:itemBackground="@android:color/transparent"
                 app:headerLayout="@layout/nav_header"
                 app:menu="@menu/drawer_menu" />
         </androidx.drawerlayout.widget.DrawerLayout>

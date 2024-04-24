@@ -139,14 +139,12 @@
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/ivDropDownArrow"
                                 android:layout_width="0dp"
-                                android:layout_height="12dp"
+                                android:layout_height="@dimen/size_back_button"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/margin_small"
-                                android:layout_marginTop="@dimen/margin_small"
                                 android:layout_marginEnd="@dimen/margin_small"
-                                android:layout_marginBottom="@dimen/margin_small"
                                 android:layout_weight="0.1"
-                                android:src="@android:drawable/arrow_down_float"
+                                android:src="@drawable/ic_drop_down"
                                 android:tint="@color/grey_100" />
 
                         </LinearLayout>

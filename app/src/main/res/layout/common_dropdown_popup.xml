@@ -6,7 +6,7 @@
     app:cardCornerRadius="@dimen/input_field_radius">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rl_item_list"
+        android:id="@+id/rv_material_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.safeLaunch
 import com.trace.gtrack.data.IAppRepository
+import com.trace.gtrack.data.model.LoginAzureResult
 import com.trace.gtrack.data.model.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,6 +21,14 @@ class LoginViewModel @Inject constructor(
     val state: LiveData<LoginState> = mState
 
     fun postAppLoginAPI(context: Context, userName: String, password: String) {
+        if (userName.trim().isEmpty()) {
+            mState.value = LoginState.ErrorEnterUserName
+            return
+        }
+        if (password.trim().isEmpty()) {
+            mState.value = LoginState.ErrorEnterPassword
+            return
+        }
         mState.value = LoginState.Loading
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postAppLogin(userName, password)) {
@@ -40,12 +49,12 @@ class LoginViewModel @Inject constructor(
         mState.value = LoginState.Loading
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postAzureLogin(azureUserID)) {
-                is LoginResult.Error -> {
+                is LoginAzureResult.Error -> {
                     mState.value = LoginState.Error(result.message)
                 }
 
-                is LoginResult.Success -> {
-                    mState.value = LoginState.SuccessLogin
+                is LoginAzureResult.SuccessAzure -> {
+                    mState.value = LoginState.SuccessAzureLogin
                 }
 
                 null -> mState.value = LoginState.Error(context.getString(R.string.error_message))
@@ -56,6 +65,10 @@ class LoginViewModel @Inject constructor(
 
 sealed class LoginState {
     object SuccessLogin : LoginState()
+    object SuccessAzureLogin : LoginState()
     data class Error(val msg: String) : LoginState()
     object Loading : LoginState()
+
+    object ErrorEnterUserName : LoginState()
+    object ErrorEnterPassword : LoginState()
 }

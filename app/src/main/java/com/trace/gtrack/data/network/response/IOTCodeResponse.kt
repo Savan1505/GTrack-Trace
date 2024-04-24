@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class IOTCodeResponse<T>(
-    @Json(name = "IOTCode")
+    @Json(name = "IOTCodeList")
     val iOTCode: List<String>?,
     @Json(name = "commonResponse")
     val commonResponse: T?,
