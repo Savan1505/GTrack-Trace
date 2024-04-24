@@ -54,7 +54,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.tvLindeLogin.setOnClickListener {
-            AppProgressDialog.show(this@LoginActivity)
             if (mSingleAccountApp != null) {
                 mSingleAccountApp!!.signIn(
                     this@LoginActivity,
@@ -84,8 +83,9 @@ class LoginActivity : AppCompatActivity() {
                     mSingleAccountApp!!.signOut(object :
                         ISingleAccountPublicClientApplication.SignOutCallback {
                         override fun onSignOut() {
+                            persistenceManager.saveUserId("")
+                            persistenceManager.saveUserName("")
                             mAccount = null
-                            mSingleAccountApp = null
                         }
 
                         override fun onError(exception: MsalException) {
