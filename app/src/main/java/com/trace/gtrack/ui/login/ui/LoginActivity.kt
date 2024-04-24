@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.microsoft.identity.client.AuthenticationCallback
 import com.microsoft.identity.client.IAccount
 import com.microsoft.identity.client.IAuthenticationResult
-import com.microsoft.identity.client.IMultipleAccountPublicClientApplication
 import com.microsoft.identity.client.IPublicClientApplication.ISingleAccountApplicationCreatedListener
 import com.microsoft.identity.client.ISingleAccountPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
@@ -20,12 +18,14 @@ import com.microsoft.identity.client.exception.MsalServiceException
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.makeWarningToast
+import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityLoginBinding
 import com.trace.gtrack.ui.forgotpassword.ForgotPasswordActivity
 import com.trace.gtrack.ui.login.viewmodel.LoginState
 import com.trace.gtrack.ui.login.viewmodel.LoginViewModel
 import com.trace.gtrack.ui.selectprojsite.ui.SelectProSiteActivity
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -34,30 +34,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val loginViewModel: LoginViewModel by viewModels()
 
-    private var mSingleAccountApp: ISingleAccountPublicClientApplication? = null
-    private var mAccount: IAccount? = null
+    @Inject
+    internal lateinit var persistenceManager: IPersistenceManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observe()
-        PublicClientApplication.createSingleAccountPublicClientApplication(
-            this@LoginActivity,
-            R.raw.auth_config_single_account,
-            object : ISingleAccountApplicationCreatedListener {
-                override fun onCreated(application: ISingleAccountPublicClientApplication) {
-                    /**
-                     * This test app assumes that the app is only going to support one account.
-                     * This requires "account_mode" : "SINGLE" in the config json file.
-                     */
-                    mSingleAccountApp = application
-                    loadAccount()
-                }
-
-                override fun onError(exception: MsalException) {
-                    Log.e("GTrack AD : ", exception.toString())
-                }
-            })
+        mSingleAccountApp()
         binding.tvForgotPwd.setOnClickListener {
             ForgotPasswordActivity.launch(this@LoginActivity)
         }
@@ -70,6 +54,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.tvLindeLogin.setOnClickListener {
+            AppProgressDialog.show(this@LoginActivity)
             if (mSingleAccountApp != null) {
                 mSingleAccountApp!!.signIn(
                     this@LoginActivity,
@@ -77,6 +62,8 @@ class LoginActivity : AppCompatActivity() {
                     scopes,
                     authInteractiveCallback
                 )
+            } else {
+                mSingleAccountApp()
             }
         }
     }
@@ -93,6 +80,18 @@ class LoginActivity : AppCompatActivity() {
             override fun onAccountLoaded(activeAccount: IAccount?) {
                 // You can use the account data to update your UI or your app database.
                 mAccount = activeAccount
+                if (persistenceManager.getUserId().isNotEmpty()) {
+                    mSingleAccountApp!!.signOut(object :
+                        ISingleAccountPublicClientApplication.SignOutCallback {
+                        override fun onSignOut() {
+                            mAccount = null
+                            mSingleAccountApp = null
+                        }
+
+                        override fun onError(exception: MsalException) {
+                        }
+                    })
+                }
 //                updateUI()
             }
 
@@ -150,12 +149,12 @@ class LoginActivity : AppCompatActivity() {
         }
 
     private fun callGraphAPI() {
-        if(mAccount != null) {
+        if (mAccount != null) {
             loginViewModel.postAzureLoginAPI(
                 this@LoginActivity,
                 mAccount!!.id
             )
-        }else{
+        } else {
             makeWarningToast("Authentication failed,Please try again!")
         }
     }
@@ -207,7 +206,30 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun mSingleAccountApp() {
+        PublicClientApplication.createSingleAccountPublicClientApplication(
+            this@LoginActivity,
+            R.raw.auth_config_single_account,
+            object : ISingleAccountApplicationCreatedListener {
+                override fun onCreated(application: ISingleAccountPublicClientApplication) {
+                    /**
+                     * This test app assumes that the app is only going to support one account.
+                     * This requires "account_mode" : "SINGLE" in the config json file.
+                     */
+                    mSingleAccountApp = application
+                    loadAccount()
+                }
+
+                override fun onError(exception: MsalException) {
+                    Log.e("GTrack AD : ", exception.toString())
+                }
+            })
+    }
+
     companion object {
+        private var mSingleAccountApp: ISingleAccountPublicClientApplication? = null
+        private var mAccount: IAccount? = null
+
         @JvmStatic
         fun launch(context: Context) {
             context.startActivity(Intent(context, LoginActivity::class.java))

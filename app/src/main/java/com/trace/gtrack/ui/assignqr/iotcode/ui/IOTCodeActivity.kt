@@ -1,21 +1,17 @@
 package com.trace.gtrack.ui.assignqr.iotcode.ui
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.IOTCodeAdapter
@@ -31,7 +27,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
 import io.github.g00fy2.quickie.config.ScannerConfig
-import io.github.g00fy2.quickie.content.QRContent
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -159,7 +154,7 @@ class IOTCodeActivity : AppCompatActivity() {
         val layout: View =
             LayoutInflater.from(v.context).inflate(R.layout.common_dropdown_popup, null)
         popup.elevation = 20f
-        val rvLayout = layout.findViewById<RecyclerView>(R.id.rl_item_list)
+        val rvLayout = layout.findViewById<RecyclerView>(R.id.rv_material_code)
         val adapter = IOTCodeAdapter(list) {
             popup.dismiss()
             binding.selectIotCode.text = it

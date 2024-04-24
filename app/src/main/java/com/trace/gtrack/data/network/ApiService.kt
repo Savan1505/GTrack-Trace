@@ -110,7 +110,7 @@ interface ApiService {
     ): MaterialCodeResponse<CommonResponse>
 
     @Headers("Accept: application/json")
-    @POST("api/GTrackAPI/GetAssignedMaterialList")
+    @POST("api/GTrackAPI/GetMaterialCode")
     suspend fun postAssignedMaterialListAPI(
         @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,

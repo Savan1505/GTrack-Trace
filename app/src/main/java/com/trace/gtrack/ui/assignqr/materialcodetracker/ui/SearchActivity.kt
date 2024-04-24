@@ -4,11 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.MaterialCodeAdapter
 import com.trace.gtrack.common.utils.makeWarningToast
@@ -29,7 +30,7 @@ class SearchActivity : AppCompatActivity() {
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
-
+    var linearLayoutManager: LinearLayoutManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -46,19 +47,28 @@ class SearchActivity : AppCompatActivity() {
                 )
             }
         }
-        setupPopMaterialCode()
+        setupMaterialCodeAdapter()
     }
 
-    private fun setupPopMaterialCode() {
+    private fun setupMaterialCodeAdapter() {
+        binding.rvMaterialCode.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                linearLayoutManager = binding.rvMaterialCode.layoutManager as LinearLayoutManager?
+                if (linearLayoutManager != null) {
+                    loadMore()
+                }
+            }
+        })
         materialCodeAdapter = MaterialCodeAdapter {
-            binding.rlItemList.visibility = View.GONE
-            val intentCode:Intent = intent
+            binding.rvMaterialCode.visibility = View.GONE
+            val intentCode: Intent = intent
             intentCode.putExtra("material_code", it)
             setResult(Activity.RESULT_OK, intentCode)
             finish()
             //binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(it)
         }
-        binding.rlItemList.adapter = materialCodeAdapter
+        binding.rvMaterialCode.adapter = materialCodeAdapter
     }
 
     private fun observe() {
@@ -66,6 +76,8 @@ class SearchActivity : AppCompatActivity() {
             when (it) {
 
                 is AssignState.Error -> {
+                    binding.rvMaterialCode.visibility = View.GONE
+                    binding.tvNoData.visibility = View.VISIBLE
                     AppProgressDialog.hide()
                     makeWarningToast(it.msg)
                 }
@@ -75,10 +87,24 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 is AssignState.Success -> {
-                    materialCodeAdapter.updateSearchMaterialCodeList(it.lstMaterialCode)
+                    if (it.lstMaterialCode.isNotEmpty()) {
+                        binding.rvMaterialCode.visibility = View.VISIBLE
+                        binding.tvNoData.visibility = View.GONE
+                        materialCodeAdapter.updateSearchMaterialCodeList(it.lstMaterialCode)
+                    }
                 }
             }
         }
+    }
+
+    fun loadMore() {
+        assignViewModel.postAssignedMaterialListAPI(
+            this@SearchActivity,
+            persistenceManager.getAPIKeys(),
+            persistenceManager.getProjectId(),
+            persistenceManager.getSiteId(),
+            binding.edtSearchMaterialCode.text.toString()
+        )
     }
 
     companion object {

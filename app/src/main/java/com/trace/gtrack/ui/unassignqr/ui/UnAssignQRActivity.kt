@@ -151,9 +151,12 @@ class UnAssignQRActivity : AppCompatActivity() {
 
                 is UnAssignMaterialState.Success -> {
                     makeSuccessToast(it.message)
+                    binding.edtSearchMaterialCode.text?.clear()
                     binding.edtScanQrHere.text?.clear()
                     AppProgressDialog.hide()
                 }
+
+                else -> {}
             }
         }
     }

@@ -21,7 +21,6 @@ import com.trace.gtrack.data.network.response.SiteDetailsByProjectResponse
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySelectProjSiteBinding
 import com.trace.gtrack.ui.home.ui.HomeActivity
-import com.trace.gtrack.ui.login.viewmodel.LoginState
 import com.trace.gtrack.ui.selectprojsite.viewmodel.ProjDetailByProjectState
 import com.trace.gtrack.ui.selectprojsite.viewmodel.ProjSiteViewModel
 import com.trace.gtrack.ui.selectprojsite.viewmodel.SiteDetailByProjectState
@@ -115,7 +114,7 @@ class SelectProSiteActivity : AppCompatActivity() {
         val layout: View =
             LayoutInflater.from(v.context).inflate(R.layout.common_dropdown_popup, null)
         popup.elevation = 20f
-        val rvLayout = layout.findViewById<RecyclerView>(R.id.rl_item_list)
+        val rvLayout = layout.findViewById<RecyclerView>(R.id.rv_material_code)
         val adapter = ProjDropDownMenuAdapter(list) {
             popup.dismiss()
             binding.selectProject.text = it?.projectName
@@ -170,7 +169,7 @@ class SelectProSiteActivity : AppCompatActivity() {
         val layout: View =
             LayoutInflater.from(v.context).inflate(R.layout.common_dropdown_popup, null)
         popup.elevation = 20f
-        val rvLayout = layout.findViewById<RecyclerView>(R.id.rl_item_list)
+        val rvLayout = layout.findViewById<RecyclerView>(R.id.rv_material_code)
         val adapter = SiteDropDownMenuAdapter(list) {
             popup.dismiss()
             binding.selectSite.text = it?.SiteName

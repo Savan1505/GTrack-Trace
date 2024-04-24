@@ -1,5 +1,6 @@
 package com.trace.gtrack.data
 
+import androidx.compose.ui.text.toUpperCase
 import com.google.firebase.auth.FirebaseAuth
 import com.trace.gtrack.data.model.AssignedMaterialResult
 import com.trace.gtrack.data.model.CommonResult
@@ -54,6 +55,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -144,7 +146,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    SearchMaterialRequest(materialCode)
+                    SearchMaterialRequest(materialCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> SearchMaterialResult.Error(
@@ -179,7 +181,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    RFIDCodeRequest(qRCode, rfidCode)
+                    RFIDCodeRequest(qRCode.toUpperCase(Locale.ROOT), rfidCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -210,7 +212,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    RFIDCodeRequest(qRCode, rfidCode)
+                    RFIDCodeRequest(qRCode.toUpperCase(Locale.ROOT), rfidCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -239,7 +241,7 @@ class AppRepository @Inject constructor(
             safeApiCall(dispatcher) {
                 apiService.postAssignMaterialTagAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
-                    AssignMaterialCodeRequest(qRCode, materialCode)
+                    AssignMaterialCodeRequest(qRCode.toUpperCase(Locale.ROOT), materialCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -268,7 +270,7 @@ class AppRepository @Inject constructor(
             safeApiCall(dispatcher) {
                 apiService.postDeAssignMaterialTagAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
-                    DeAssignMaterialCodeRequest(userId, materialCode)
+                    DeAssignMaterialCodeRequest(userId, materialCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -300,7 +302,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    QRCodeRequest(qRCode)
+                    QRCodeRequest(qRCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> MaterialCodeResult.Error(
@@ -337,7 +339,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    SearchStrRequest(searchString,pageNumber,pageSize)
+                    SearchStrRequest(searchString.toUpperCase(Locale.ROOT), pageNumber, pageSize)
                 )
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(
@@ -374,7 +376,7 @@ class AppRepository @Inject constructor(
                         val jsonObjInsertHandHeldData = JSONObject()
                         jsonObjInsertHandHeldData.put("latitude", insertHandHeldData.latitude)
                         jsonObjInsertHandHeldData.put("longitude", insertHandHeldData.longitude)
-                        jsonObjInsertHandHeldData.put("RFID", insertHandHeldData.rfid)
+                        jsonObjInsertHandHeldData.put("RFID", insertHandHeldData.rfid?.toUpperCase(Locale.ROOT))
                         jsonObjData = JSONObject(jsonObjInsertHandHeldData.toString())
                     }
                 } catch (e: JSONException) {
@@ -416,7 +418,7 @@ class AppRepository @Inject constructor(
                         val jsonObjInsertHandHeldData = JSONObject()
                         jsonObjInsertHandHeldData.put("latitude", insertHandHeldData.latitude)
                         jsonObjInsertHandHeldData.put("longitude", insertHandHeldData.longitude)
-                        jsonObjInsertHandHeldData.put("RFID", insertHandHeldData.rfid)
+                        jsonObjInsertHandHeldData.put("RFID", insertHandHeldData.rfid?.toUpperCase(Locale.ROOT))
                         jsonObjData = JSONObject(jsonObjInsertHandHeldData.toString())
                     }
                 } catch (e: JSONException) {
@@ -477,7 +479,7 @@ class AppRepository @Inject constructor(
             safeApiCall(dispatcher) {
                 apiService.postIotQRCodeMappingAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
-                    IOTCodeRequest(iotCode, qRCode)
+                    IOTCodeRequest(iotCode.toUpperCase(Locale.ROOT), qRCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -505,7 +507,7 @@ class AppRepository @Inject constructor(
             safeApiCall(dispatcher) {
                 apiService.postIotQRCodeReMappingAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
-                    IOTCodeRequest(iotCode, qRCode)
+                    IOTCodeRequest(iotCode.toUpperCase(Locale.ROOT), qRCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -535,7 +537,7 @@ class AppRepository @Inject constructor(
                 apiService.postSiteDetailByProjectAPI(
                     apiKey,
                     Integer.parseInt(projectId),
-                    SiteDetailsRequest(userId)
+                    SiteDetailsRequest(userId.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> SiteDetailByProjectResult.Error(
@@ -571,7 +573,7 @@ class AppRepository @Inject constructor(
                 try {
                     for (sendMaterial in lstSendMaterialRequest) {
                         val jsonObjSendMaterial = JSONObject()
-                        jsonObjSendMaterial.put("MaterialCode", sendMaterial.materialCode)
+                        jsonObjSendMaterial.put("MaterialCode", sendMaterial.materialCode?.toUpperCase(Locale.ROOT))
                         jsonObjSendMaterial.put("Origin", sendMaterial.origin)
                         jsonObjSendMaterial.put("PONumber", sendMaterial.pONumber)
                         jsonObjSendMaterial.put("POItem", sendMaterial.pOItem)
@@ -625,7 +627,7 @@ class AppRepository @Inject constructor(
             safeApiCall(dispatcher) {
                 apiService.postAssignedMaterialAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
-                    QRCodeRequest(qRCode)
+                    QRCodeRequest(qRCode.toUpperCase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> AssignedMaterialResult.Error(
@@ -686,7 +688,7 @@ class AppRepository @Inject constructor(
                 try {
                     for (assignMaterial in lstAssignMaterialRequest) {
                         val jsonObjSendMaterial = JSONObject()
-                        jsonObjSendMaterial.put("MaterialCode", assignMaterial.materialCode)
+                        jsonObjSendMaterial.put("MaterialCode", assignMaterial.materialCode?.toUpperCase(Locale.ROOT))
                         jsonArrayAssignCodeData = JSONArray(jsonObjSendMaterial.toString())
                     }
                 } catch (e: JSONException) {
@@ -775,7 +777,7 @@ class AppRepository @Inject constructor(
             safeApiCall(dispatcher) {
                 apiService.postInsertMAPSearchResultAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
-                    MapSearchResultRequest(userId, materialCode, totalSearchTime)
+                    MapSearchResultRequest(userId, materialCode.toUpperCase(Locale.ROOT), totalSearchTime)
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(

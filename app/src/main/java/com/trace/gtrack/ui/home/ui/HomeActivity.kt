@@ -119,8 +119,6 @@ class HomeActivity : AppCompatActivity() {
         }.setNegativeButton(R.string.btn_yes) { dialogInterface, _ ->
             dialogInterface.dismiss()
             persistenceManager.setLoginState(false)
-            persistenceManager.saveUserId("")
-            persistenceManager.saveUserName("")
             persistenceManager.saveProjectId("")
             persistenceManager.saveProjectName("")
             persistenceManager.saveSiteId("")

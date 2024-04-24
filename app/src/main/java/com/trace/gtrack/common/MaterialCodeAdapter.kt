@@ -11,14 +11,15 @@ class MaterialCodeAdapter(
     val onClick: (String?) -> Unit,
 ) :
     RecyclerView.Adapter<MaterialCodeAdapter.ItemViewHolder>() {
-    private var lstMaterialCode: List<String> = ArrayList()
+    private var lstMaterialCode: MutableList<String> = mutableListOf()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): MaterialCodeAdapter.ItemViewHolder {
         val view: View =
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.dd_menu_item, parent, false)
+                .inflate(R.layout.material_code_item, parent, false)
         return ItemViewHolder(view)
     }
 
@@ -40,10 +41,13 @@ class MaterialCodeAdapter(
         }
     }
 
-    fun updateSearchMaterialCodeList(lstMaterialCode: List<String>){
+    fun updateSearchMaterialCodeList(lstMaterialCode: List<String>) {
         AppProgressDialog.hide()
-        this.lstMaterialCode = ArrayList()
-        this.lstMaterialCode = lstMaterialCode
+        if (lstMaterialCode.isNotEmpty()) {
+            this.lstMaterialCode.addAll(lstMaterialCode)
+        } else {
+            this.lstMaterialCode = ArrayList()
+        }
         notifyDataSetChanged()
     }
 }
