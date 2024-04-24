@@ -1,18 +1,20 @@
 package com.trace.gtrack.ui.assignqr.materialcodetracker.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.MaterialCodeAdapter
+import com.trace.gtrack.common.utils.hide
 import com.trace.gtrack.common.utils.makeWarningToast
+import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySearchBinding
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignState
@@ -36,6 +38,9 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observe()
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
         binding.edtSearchMaterialCode.doAfterTextChanged {
             if (binding.edtSearchMaterialCode.text.toString().length > 3) {
                 assignViewModel.postAssignedMaterialListAPI(
@@ -61,7 +66,7 @@ class SearchActivity : AppCompatActivity() {
             }
         })
         materialCodeAdapter = MaterialCodeAdapter {
-            binding.rvMaterialCode.visibility = View.GONE
+            binding.rvMaterialCode.isGone
             val intentCode: Intent = intent
             intentCode.putExtra("material_code", it)
             setResult(Activity.RESULT_OK, intentCode)
@@ -76,8 +81,8 @@ class SearchActivity : AppCompatActivity() {
             when (it) {
 
                 is AssignState.Error -> {
-                    binding.rvMaterialCode.visibility = View.GONE
-                    binding.tvNoData.visibility = View.VISIBLE
+                    binding.rvMaterialCode.hide()
+                    binding.tvNoData.show()
                     AppProgressDialog.hide()
                     makeWarningToast(it.msg)
                 }
@@ -88,8 +93,8 @@ class SearchActivity : AppCompatActivity() {
 
                 is AssignState.Success -> {
                     if (it.lstMaterialCode.isNotEmpty()) {
-                        binding.rvMaterialCode.visibility = View.VISIBLE
-                        binding.tvNoData.visibility = View.GONE
+                        binding.rvMaterialCode.show()
+                        binding.tvNoData.hide()
                         materialCodeAdapter.updateSearchMaterialCodeList(it.lstMaterialCode)
                     }
                 }
@@ -105,12 +110,5 @@ class SearchActivity : AppCompatActivity() {
             persistenceManager.getSiteId(),
             binding.edtSearchMaterialCode.text.toString()
         )
-    }
-
-    companion object {
-        @JvmStatic
-        fun launch(context: Context) {
-            context.startActivity(Intent(context, SearchActivity::class.java))
-        }
     }
 }

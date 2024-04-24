@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.trace.gtrack.databinding.FragmentHomeBinding
 import com.trace.gtrack.ui.assignqr.AssignQRActivity
-import com.trace.gtrack.ui.assignqr.materialcodetracker.ui.MaterialCodeActivity
 import com.trace.gtrack.ui.searchmaterial.ui.SearchMaterialActivity
+import com.trace.gtrack.ui.trackmaterial.ui.TrackMaterialActivity
 import com.trace.gtrack.ui.unassignqr.ui.UnAssignQRActivity
 
 class HomeFragment : Fragment() {
@@ -48,7 +48,7 @@ class HomeFragment : Fragment() {
             SearchMaterialActivity.launch(requireActivity())
         }
         binding.cvTrackMaterial.setOnClickListener {
-            MaterialCodeActivity.launch(requireActivity())
+            TrackMaterialActivity.launch(requireActivity())
         }
     }
 }

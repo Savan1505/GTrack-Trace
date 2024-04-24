@@ -6,6 +6,7 @@
     <color name="colorSecondary">#FFFFFFFF</color>
     <color name="colorBlack">#FF000000</color>
     <color name="grey_100">#FF7E8A9A</color>
+    <color name="grey">#FFD3D3D3</color>
     <color name="lightBlue">#FFE6E8FA</color>
     <color name="green_success">#62C166</color>
 </resources>

@@ -5,24 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
-import com.trace.gtrack.common.MaterialCodeAdapter
 import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityMaterialCodeBinding
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignMaterialState
-import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignState
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignViewModel
-import com.trace.gtrack.ui.home.ui.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
@@ -51,9 +46,8 @@ class MaterialCodeActivity : AppCompatActivity() {
         }
         binding.edtSearchMaterialCode.setOnClickListener {
             if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
-//                SearchActivity.launch(this@MaterialCodeActivity)
                 Intent(this@MaterialCodeActivity, SearchActivity::class.java).apply {
-                    launcher.launch(this)
+                    materialCodeActivityForResult.launch(this)
                 }
             } else {
                 makeWarningToast(resources.getString(R.string.error_qrcode))
@@ -89,7 +83,7 @@ class MaterialCodeActivity : AppCompatActivity() {
         }
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+    private val materialCodeActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val intent = result.data?.getStringExtra("material_code")
             binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(

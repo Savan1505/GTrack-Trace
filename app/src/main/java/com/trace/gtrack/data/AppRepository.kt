@@ -733,7 +733,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonProjectDetailsResponse<List<ProjectDetailsResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> ProjectDetailsResult.Error(data.Error_Message.toString())
+                    !(data.isSuccess()) -> ProjectDetailsResult.Error(data.err_msg.toString())
                     data == null -> ProjectDetailsResult.Error(oopsMessage)
                     else -> {
                         data.projectDetails.let { ProjectDetailsResult.Success(it) }
@@ -757,7 +757,7 @@ class AppRepository @Inject constructor(
             is ResponseWrapper.Success<CommonProjectDetailsResponse<List<ProjectKeysResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> ProjectKeysResult.Error(data.Error_Message.toString())
+                    !(data.isSuccess()) -> ProjectKeysResult.Error(data.err_msg.toString())
                     data == null -> ProjectKeysResult.Error(oopsMessage)
                     else -> {
                         data.projectDetails.let { ProjectKeysResult.Success(it) }

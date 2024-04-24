@@ -164,4 +164,6 @@ dependencies {
 
     implementation(files("libs/jxl.jar"))
     implementation(files("libs/DeviceAPI_ver20231208_release.aar"))
+
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }

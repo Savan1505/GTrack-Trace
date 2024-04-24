@@ -3,14 +3,14 @@ package com.trace.gtrack.data.network.base
 import com.squareup.moshi.Json
 
 data class CommonProjectDetailsResponse<T>(
-    @field:Json(name = "Status")
-    val Status: Int,
-    @field:Json(name = "Message")
-    val Message: String? = "",
-    @field:Json(name = "Error_Message")
-    val Error_Message: String? = "",
+    @field:Json(name = "status")
+    val status: Int,
+    @field:Json(name = "msg")
+    val msg: String? = "",
+    @field:Json(name = "err_msg")
+    val err_msg: String? = "",
     @Json(name = "projectDetails")
     val projectDetails: T?,
 ) {
-    fun isSuccess(): Boolean = Status == 1
+    fun isSuccess(): Boolean = status == 1
 }
