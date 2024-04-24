@@ -13,18 +13,24 @@ import android.text.Editable
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.rscja.deviceapi.RFIDWithUHFUART
 import com.rscja.deviceapi.interfaces.IUHF
 import com.trace.gtrack.R
+import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.makeSuccessToast
+import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
+import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityRfidBinding
 import com.trace.gtrack.ui.assignqr.common.IRFIDReaderListener
 import com.trace.gtrack.ui.assignqr.common.RFIDReaderInterface
 import com.trace.gtrack.ui.assignqr.common.ScanConnectionEnum
+import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDState
+import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
@@ -32,6 +38,7 @@ import io.github.g00fy2.quickie.config.ScannerConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
@@ -47,10 +54,15 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
     private var volumnRatio = 0f
     var soundMap = HashMap<Int, Int>()
     private var soundPool: SoundPool? = null
+    private val rfidViewModel: RFIDViewModel by viewModels()
+
+    @Inject
+    internal lateinit var persistenceManager: IPersistenceManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRfidBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        observe()
         binding.mainToolbar.ivBackButton.show()
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound();
@@ -226,6 +238,12 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
                     Integer.parseInt("2"),
                     Integer.parseInt("6")
                 )
+                rfidViewModel.postRFIDCodeAPI(
+                    this@RFIDActivity, persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                    binding.edtScanQrHere.text.toString(), data.toString()
+                )
                 Toast.makeText(
                     this@RFIDActivity, "RFID is :-- $data",
                     Toast.LENGTH_SHORT
@@ -278,6 +296,27 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
         if (soundPool != null) {
             soundPool?.release()
             soundPool = null
+        }
+    }
+
+    private fun observe() {
+        rfidViewModel.state.observe(this@RFIDActivity) { it ->
+            when (it) {
+
+                is RFIDState.Error -> {
+                    AppProgressDialog.hide()
+                    makeWarningToast(it.msg)
+                }
+
+                RFIDState.Loading -> {
+                    AppProgressDialog.show(this)
+                }
+
+                is RFIDState.Success -> {
+                    AppProgressDialog.hide()
+                    makeSuccessToast(it.rfidMsg)
+                }
+            }
         }
     }
 }
