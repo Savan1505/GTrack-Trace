@@ -43,6 +43,8 @@
     <string name="close">Close</string>
     <string name="home">Dashboard</string>
     <string name="logout">Logout</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="btn_no">NO</string>
     <string name="btn_yes">YES</string>
     <string name="logout_msg">Do you want to exit?</string>

@@ -79,7 +79,7 @@ class AppRepository @Inject constructor(
             }) {
 
             is ResponseWrapper.GenericError -> LoginResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> LoginResult.Error(networkErrorMessage)
@@ -110,7 +110,7 @@ class AppRepository @Inject constructor(
                 apiService.postAzureLoginAPI("TGluZGUgUHZ0IEx0ZA==", LoginAzureRequest(azureUserID))
             }) {
             is ResponseWrapper.GenericError -> LoginAzureResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> LoginAzureResult.Error(networkErrorMessage)
@@ -150,17 +150,17 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> SearchMaterialResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> SearchMaterialResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonMaterialResponse<List<SearchMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> SearchMaterialResult.Error(data.message.toString())
+                    !(data.isSuccess()) -> SearchMaterialResult.Error(data.Error_Message.toString())
                     data == null -> SearchMaterialResult.Error(oopsMessage)
                     else -> {
-                        data.materialDetail.let { SearchMaterialResult.Success(it) }
+                        data.MaterialDetail.let { SearchMaterialResult.Success(it) }
                     }
                 }
             }
@@ -185,7 +185,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -216,7 +216,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -245,7 +245,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -274,7 +274,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -306,7 +306,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> MaterialCodeResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> MaterialCodeResult.Error(networkErrorMessage)
@@ -343,7 +343,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> ListResult.Error(networkErrorMessage)
@@ -388,7 +388,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -430,7 +430,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -452,7 +452,7 @@ class AppRepository @Inject constructor(
                 apiService.getIOTCodeAPI(apiKey)
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> ListResult.Error(networkErrorMessage)
@@ -464,7 +464,7 @@ class AppRepository @Inject constructor(
                     )
 
                     data == null -> ListResult.Error(oopsMessage)
-                    else -> ListResult.Success(data.iOTCode)
+                    else -> ListResult.Success(data.IOTCodeList)
                 }
             }
         }
@@ -483,7 +483,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -511,7 +511,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)
@@ -541,7 +541,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> SiteDetailByProjectResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> SiteDetailByProjectResult.Error(networkErrorMessage)
@@ -601,14 +601,14 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> SendMaterialResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> SendMaterialResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonSendMaterialResponse<List<SendMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> SendMaterialResult.Error(data.message.toString())
+                    !(data.isSuccess()) -> SendMaterialResult.Error(data.Error_Message.toString())
                     data == null -> SendMaterialResult.Error(oopsMessage)
                     else -> {
                         data.sendMaterial.let { SendMaterialResult.Success(it) }
@@ -631,7 +631,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> AssignedMaterialResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> AssignedMaterialResult.Error(networkErrorMessage)
@@ -660,16 +660,16 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> LocationAssignMaterialResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> LocationAssignMaterialResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(data.message.toString())
+                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(data.Error_Message.toString())
                     data == null -> LocationAssignMaterialResult.Error(oopsMessage)
-                    else -> data.materialDetails?.let { LocationAssignMaterialResult.Success(it) }
+                    else -> data.Material_Details?.let { LocationAssignMaterialResult.Success(it) }
                 }
             }
         }
@@ -702,17 +702,17 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> LocationAssignMaterialResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> LocationAssignMaterialResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonMaterialDetailsResponse<List<LocationAssignMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(data.message.toString())
+                    !(data.isSuccess()) -> LocationAssignMaterialResult.Error(data.Error_Message.toString())
                     data == null -> LocationAssignMaterialResult.Error(oopsMessage)
                     else -> {
-                        data.materialDetails.let { LocationAssignMaterialResult.Success(it) }
+                        data.Material_Details.let { LocationAssignMaterialResult.Success(it) }
                     }
                 }
             }
@@ -726,14 +726,14 @@ class AppRepository @Inject constructor(
                 apiService.getProjectDetailAPI("TGluZGUgUHZ0IEx0ZA==")
             }) {
             is ResponseWrapper.GenericError -> ProjectDetailsResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> ProjectDetailsResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonProjectDetailsResponse<List<ProjectDetailsResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> ProjectDetailsResult.Error(data.message.toString())
+                    !(data.isSuccess()) -> ProjectDetailsResult.Error(data.err_msg.toString())
                     data == null -> ProjectDetailsResult.Error(oopsMessage)
                     else -> {
                         data.projectDetails.let { ProjectDetailsResult.Success(it) }
@@ -750,14 +750,14 @@ class AppRepository @Inject constructor(
                 apiService.getProjectKeysAPI("TGluZGUgUHZ0IEx0ZA==")
             }) {
             is ResponseWrapper.GenericError -> ProjectKeysResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> ProjectKeysResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonProjectDetailsResponse<List<ProjectKeysResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> ProjectKeysResult.Error(data.message.toString())
+                    !(data.isSuccess()) -> ProjectKeysResult.Error(data.err_msg.toString())
                     data == null -> ProjectKeysResult.Error(oopsMessage)
                     else -> {
                         data.projectDetails.let { ProjectKeysResult.Success(it) }
@@ -781,7 +781,7 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
-                response.error?.message ?: oopsMessage
+                response.error?.Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> CommonResult.Error(networkErrorMessage)

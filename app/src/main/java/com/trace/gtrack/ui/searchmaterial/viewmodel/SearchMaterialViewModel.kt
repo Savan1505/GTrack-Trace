@@ -19,9 +19,7 @@ class SearchMaterialViewModel @Inject constructor(
     private val iAppRepository: IAppRepository,
 ) : ViewModel() {
     private val mState = MutableLiveData<SearchMaterialState>()
-    private val mStateAM = MutableLiveData<SearchMaterialStartState>()
     val state: LiveData<SearchMaterialState> = mState
-    val stateAM: LiveData<SearchMaterialStartState> = mStateAM
 
     fun postMaterialCodeByQRCodeAPI(
         context: Context, apiKey: String,
@@ -42,7 +40,7 @@ class SearchMaterialViewModel @Inject constructor(
                 }
 
                 is MaterialCodeResult.Success -> {
-                    mState.value = result.materialCodeResponse.materialCode?.let { SearchMaterialState.Success(it) }
+                    mState.value = result.materialCodeResponse.MaterialCode?.let { SearchMaterialState.Success(it) }
                 }
 
                 null -> mState.value =
@@ -51,33 +49,7 @@ class SearchMaterialViewModel @Inject constructor(
         }
     }
 
-    fun postSearchMaterialCodeAPI(
-        context: Context, apiKey: String,
-        projectId: String,
-        siteId: String,
-        materialCode: String
-    ) {
-        mStateAM.value = SearchMaterialStartState.Loading
-        viewModelScope.safeLaunch {
-            when (val result = iAppRepository.postSearchMaterialCodeAPI(
-                apiKey,
-                projectId,
-                siteId, materialCode
-            )) {
-                is SearchMaterialResult.Error -> {
-                    mStateAM.value = SearchMaterialStartState.Error(result.message)
-                }
 
-                is SearchMaterialResult.Success -> {
-                    mStateAM.value =
-                        result.lstSearchMaterialResponse?.let { SearchMaterialStartState.Success(it) }
-                }
-
-                null -> mStateAM.value =
-                    SearchMaterialStartState.Error(context.getString(R.string.error_message))
-            }
-        }
-    }
 }
 
 sealed class SearchMaterialState {
@@ -85,13 +57,4 @@ sealed class SearchMaterialState {
     data class Error(val msg: String) : SearchMaterialState()
 
     object Loading : SearchMaterialState()
-}
-
-sealed class SearchMaterialStartState {
-    data class Success(val lstSearchMaterialResponse: List<SearchMaterialResponse>) :
-        SearchMaterialStartState()
-
-    data class Error(val msg: String) : SearchMaterialStartState()
-
-    object Loading : SearchMaterialStartState()
 }

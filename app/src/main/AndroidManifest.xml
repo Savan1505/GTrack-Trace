@@ -39,6 +39,9 @@
         android:usesCleartextTraffic="true"
         android:exported="true"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCLHQHGu8oUXmI4HnVFnSGVuduVUSqDq_U" />
         <activity
             android:name=".LandingActivity"
             android:exported="true"
@@ -109,6 +112,12 @@
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.searchmaterial.ui.SearchMaterialActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".ui.trackmaterial.ui.TrackMaterialActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"

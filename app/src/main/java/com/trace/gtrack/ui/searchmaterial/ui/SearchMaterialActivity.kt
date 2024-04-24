@@ -1,30 +1,28 @@
 package com.trace.gtrack.ui.searchmaterial.ui
 
-import android.content.ActivityNotFoundException
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
-import android.widget.TextView
+import android.view.View
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
-import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
+import com.trace.gtrack.common.utils.invisible
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
-import com.trace.gtrack.data.network.response.SearchMaterialResponse
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySearchMaterialBinding
-import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialStartState
+import com.trace.gtrack.ui.assignqr.materialcodetracker.ui.SearchActivity
 import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialState
 import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
 import io.github.g00fy2.quickie.config.ScannerConfig
-import io.github.g00fy2.quickie.content.QRContent
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,7 +34,6 @@ class SearchMaterialActivity : AppCompatActivity() {
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
-    private var isFetch: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchMaterialBinding.inflate(layoutInflater)
@@ -63,25 +60,36 @@ class SearchMaterialActivity : AppCompatActivity() {
                 setShowCloseButton(true) // show or hide (default) close button
                 setUseFrontCamera(false) // use the front camera
             })
-
-        binding.btnFetchDetails.setOnClickListener {
-            if (!isFetch) {
-                searchMaterialViewModel.postMaterialCodeByQRCodeAPI(
-                    this@SearchMaterialActivity, persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                    binding.edtScanQrHere.text.toString()
-                )
-            } else {
-                searchMaterialViewModel.postSearchMaterialCodeAPI(
-                    this@SearchMaterialActivity, persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                    binding.edtSearchMaterialCode.text.toString()
-                )
+        /*binding.edtSearchMaterialCode.setOnClickListener {
+            Intent(this@SearchMaterialActivity, SearchActivity::class.java).apply {
+                materialCodeActivityForResult.launch(this)
             }
+        }*/
+        binding.btnFetchDetails.setOnClickListener {
+            searchMaterialViewModel.postMaterialCodeByQRCodeAPI(
+                this@SearchMaterialActivity, persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+                binding.edtScanQrHere.text.toString()
+            )
         }
     }
+
+    private val materialCodeActivityForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data?.getStringExtra("material_code")
+                binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                    intent.toString()
+                )
+                if (binding.edtSearchMaterialCode.text.toString().isNotEmpty()) {
+                    binding.btnFetchDetails.invisible()
+                } else {
+                    binding.btnFetchDetails.show()
+                }
+                // Handle the Intent
+            }
+        }
 
     companion object {
         @JvmStatic
@@ -96,9 +104,10 @@ class SearchMaterialActivity : AppCompatActivity() {
         when (result) {
             is QRResult.QRSuccess -> {
                 binding.edtScanQrHere.text =
-                    Editable.Factory.getInstance().newEditable(result.content.rawValue
-                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    Editable.Factory.getInstance().newEditable(
+                        result.content.rawValue
+                        // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                            ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
                     )
             }
 
@@ -114,45 +123,20 @@ class SearchMaterialActivity : AppCompatActivity() {
             when (it) {
 
                 is SearchMaterialState.Error -> {
-                    isFetch = false
                     AppProgressDialog.hide()
                     makeWarningToast(it.msg)
                 }
 
                 SearchMaterialState.Loading -> {
-                    isFetch = false
                     AppProgressDialog.show(this@SearchMaterialActivity)
                 }
 
                 is SearchMaterialState.Success -> {
                     AppProgressDialog.hide()
+                    binding.btnFetchDetails.show()
                     binding.tilSearchMaterialCode.show()
-                    binding.tilSearchMaterialCode.editText?.text =
+                    binding.edtSearchMaterialCode.text =
                         Editable.Factory.getInstance().newEditable(it.materialCode)
-                    binding.btnFetchDetails.text = getString(R.string.btn_start)
-                    isFetch = true
-                }
-            }
-        }
-
-        searchMaterialViewModel.stateAM.observe(this@SearchMaterialActivity) {
-            when (it) {
-
-                is SearchMaterialStartState.Error -> {
-                    AppProgressDialog.hide()
-                    makeWarningToast(it.msg)
-                }
-
-                SearchMaterialStartState.Loading -> {
-                    AppProgressDialog.show(this@SearchMaterialActivity)
-                }
-
-                is SearchMaterialStartState.Success -> {
-                    AppProgressDialog.hide()
-                    val lstSearchMaterialResponse: List<SearchMaterialResponse> =
-                        it.lstSearchMaterialResponse
-                    binding.edtScanQrHere.text?.clear()
-                    binding.edtSearchMaterialCode.text?.clear()
                 }
             }
         }

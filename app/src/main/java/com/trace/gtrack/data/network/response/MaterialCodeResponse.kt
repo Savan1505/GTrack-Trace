@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class MaterialCodeResponse<T>(
     @Json(name = "MaterialCode")
-    val materialCode: String?,
+    val MaterialCode: String?,
     @Json(name = "commonResponse")
     val commonResponse: T?,
 )

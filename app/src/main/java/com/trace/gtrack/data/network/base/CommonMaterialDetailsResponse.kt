@@ -4,13 +4,13 @@ import com.squareup.moshi.Json
 
 data class CommonMaterialDetailsResponse<T>(
     @field:Json(name = "Status")
-    val status: Int,
+    val Status: Int,
     @field:Json(name = "Message")
-    val message: String? = "",
+    val Message: String? = "",
     @field:Json(name = "Error_Message")
-    val errorMessage: String? = "",
+    val Error_Message: String? = "",
     @Json(name = "Material_Details")
-    val materialDetails: T?,
+    val Material_Details: T?,
 ) {
-    fun isSuccess(): Boolean = status == 1
+    fun isSuccess(): Boolean = Status == 1
 }

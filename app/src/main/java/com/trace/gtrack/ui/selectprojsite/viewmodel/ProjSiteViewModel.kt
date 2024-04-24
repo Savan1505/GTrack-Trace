@@ -40,7 +40,7 @@ class ProjSiteViewModel @Inject constructor(
 
                 is SiteDetailByProjectResult.Success -> {
                     mState.value =
-                        SiteDetailByProjectState.Success(result.siteDetailsCommonResponse.siteDetailsList)
+                        SiteDetailByProjectState.Success(result.siteDetailsCommonResponse.SiteDetails)
                 }
 
                 null -> mState.value =

@@ -11,11 +11,9 @@ import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityHomeBinding
 import com.trace.gtrack.databinding.NavHeaderBinding
 import com.trace.gtrack.ui.assignqr.AssignQRActivity
-import com.trace.gtrack.ui.assignqr.materialcodetracker.ui.MaterialCodeActivity
-import com.trace.gtrack.ui.changepwd.ChangePasswordActivity
 import com.trace.gtrack.ui.login.ui.LoginActivity
-import com.trace.gtrack.ui.profile.ProfileActivity
 import com.trace.gtrack.ui.searchmaterial.ui.SearchMaterialActivity
+import com.trace.gtrack.ui.trackmaterial.ui.TrackMaterialActivity
 import com.trace.gtrack.ui.unassignqr.ui.UnAssignQRActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -69,7 +67,7 @@ class HomeActivity : AppCompatActivity() {
                     }
 
                     R.id.nav_track_material -> {
-                        MaterialCodeActivity.launch(this@HomeActivity)
+                        TrackMaterialActivity.launch(this@HomeActivity)
                     }
 
                     /*R.id.nav_profile -> {

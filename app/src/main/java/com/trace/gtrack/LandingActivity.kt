@@ -20,7 +20,7 @@ class LandingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLandingBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+//        setContentView(binding.root)
         if (persistenceManager.getLoginState()) {
             HomeActivity.launch(this@LandingActivity)
             finish()

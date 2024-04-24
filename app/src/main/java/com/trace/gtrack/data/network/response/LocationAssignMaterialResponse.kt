@@ -6,13 +6,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class LocationAssignMaterialResponse(
     @Json(name = "Message")
-    val message: String?,
+    val Message: String?,
     @Json(name = "MaterialCode")
-    val materialCode: String?,
+    val MaterialCode: String?,
     @Json(name = "GIOTCode")
-    val gIOTCode: String?,
+    val GIOTCode: String?,
     @Json(name = "Latitude")
-    val latitude: String?,
+    val Latitude: String?,
     @Json(name = "Longitude")
-    val longitude: String?,
+    val Longitude: String?,
 )
