@@ -143,10 +143,10 @@ class SelectProSiteActivity : AppCompatActivity() {
         val rvLayout = layout.findViewById<RecyclerView>(R.id.rv_material_code)
         val adapter = ProjDropDownMenuAdapter(list) {
             popup.dismiss()
-            binding.selectProject.text = it?.projectName
-            it?.projectId?.let { projectId ->
+            binding.selectProject.text = it?.ProjectName
+            it?.ProjectId?.let { projectId ->
                 persistenceManager.saveProjectId(projectId)
-                it.projectAPIKeys?.let { apiKey ->
+                it.ProjectAPIKeys?.let { apiKey ->
                     persistenceManager.saveAPIKeys(apiKey)
                     projSiteViewModel.postSiteDetailByProjectAPI(
                         this@SelectProSiteActivity,

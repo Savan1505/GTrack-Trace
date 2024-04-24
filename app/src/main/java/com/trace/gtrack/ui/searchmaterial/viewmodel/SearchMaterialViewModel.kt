@@ -42,7 +42,7 @@ class SearchMaterialViewModel @Inject constructor(
                 }
 
                 is MaterialCodeResult.Success -> {
-                    mState.value = result.materialCodeResponse.materialCode?.let { SearchMaterialState.Success(it) }
+                    mState.value = result.materialCodeResponse.MaterialCode?.let { SearchMaterialState.Success(it) }
                 }
 
                 null -> mState.value =

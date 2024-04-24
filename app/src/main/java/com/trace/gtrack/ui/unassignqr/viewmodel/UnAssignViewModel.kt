@@ -41,7 +41,7 @@ class UnAssignViewModel @Inject constructor(
                 }
 
                 is MaterialCodeResult.Success -> {
-                    mState.value = result.materialCodeResponse.materialCode?.let { UnAssignState.Success(it) }
+                    mState.value = result.materialCodeResponse.MaterialCode?.let { UnAssignState.Success(it) }
                 }
 
                 null -> mState.value =
