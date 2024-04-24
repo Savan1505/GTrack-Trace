@@ -162,6 +162,6 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-api:1.18.0")
     implementation("io.opentelemetry:opentelemetry-context:1.18.0")
 
-    // paging 3
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation(files("libs/jxl.jar"))
+    implementation(files("libs/DeviceAPI_ver20231208_release.aar"))
 }

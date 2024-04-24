@@ -2,6 +2,8 @@ package com.trace.gtrack.ui.assignqr.rfid.common
 
 import android.content.Context
 import android.util.Log
+import com.trace.gtrack.ui.assignqr.common.RFIDReaderInterface
+import com.trace.gtrack.ui.assignqr.common.ScanConnectionEnum
 import com.trace.gtrack.ui.assignqr.rfid.RFIDActivity
 import com.zebra.rfid.api3.*
 import java.util.*
