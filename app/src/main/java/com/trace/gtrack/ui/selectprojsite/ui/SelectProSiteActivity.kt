@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.ProjDropDownMenuAdapter
@@ -21,6 +22,7 @@ import com.trace.gtrack.data.network.response.SiteDetailsByProjectResponse
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySelectProjSiteBinding
 import com.trace.gtrack.ui.home.ui.HomeActivity
+import com.trace.gtrack.ui.login.ui.LoginActivity
 import com.trace.gtrack.ui.selectprojsite.viewmodel.ProjDetailByProjectState
 import com.trace.gtrack.ui.selectprojsite.viewmodel.ProjSiteViewModel
 import com.trace.gtrack.ui.selectprojsite.viewmodel.SiteDetailByProjectState
@@ -54,6 +56,30 @@ class SelectProSiteActivity : AppCompatActivity() {
             HomeActivity.launch(this@SelectProSiteActivity)
             finish()
         }
+        binding.btnLogout.setOnClickListener {
+            logoutDialog()
+        }
+    }
+
+    private fun logoutDialog() {
+        val mDialog = MaterialAlertDialogBuilder(
+            this,
+            R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Background
+        )
+        mDialog.setPositiveButton(R.string.btn_no) { dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }.setNegativeButton(R.string.btn_yes) { dialogInterface, _ ->
+            dialogInterface.dismiss()
+            persistenceManager.setLoginState(false)
+            persistenceManager.saveProjectId("")
+            persistenceManager.saveProjectName("")
+            persistenceManager.saveSiteId("")
+            persistenceManager.saveSiteName("")
+            LoginActivity.launch(this@SelectProSiteActivity)
+            finish()
+        }.setMessage(R.string.logout_msg)
+            .setTitle(R.string.logout).create()
+        mDialog.show()
     }
 
     private fun observe() {

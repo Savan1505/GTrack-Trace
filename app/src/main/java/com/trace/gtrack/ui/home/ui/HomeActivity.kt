@@ -53,7 +53,7 @@ class HomeActivity : AppCompatActivity() {
                 drawerLayout.closeDrawers()
                 when (it.itemId) {
                     R.id.nav_home -> {
-                        homeFragmentLoad()
+                        
                     }
 
                     R.id.nav_assign_qr -> {
