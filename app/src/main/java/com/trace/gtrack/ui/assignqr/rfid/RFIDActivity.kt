@@ -99,6 +99,15 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
                 setUseFrontCamera(false) // use the front camera
             })
 
+        binding.btnStartScan.setOnClickListener {
+            rfidViewModel.postRFIDCodeAPI(
+                this@RFIDActivity, persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+                binding.edtScanQrHere.text.toString(), binding.edtRfidCode.toString()
+            )
+        }
+
         //Scanner Initializations
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -238,16 +247,11 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
                     Integer.parseInt("2"),
                     Integer.parseInt("6")
                 )
-                rfidViewModel.postRFIDCodeAPI(
-                    this@RFIDActivity, persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                    binding.edtScanQrHere.text.toString(), data.toString()
+                binding.tilRfidCode.show()
+                binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
+                    data.toString()
                 )
-                Toast.makeText(
-                    this@RFIDActivity, "RFID is :-- $data",
-                    Toast.LENGTH_SHORT
-                ).show()
+
                 if (!TextUtils.isEmpty(data)) {
                     result = true;
 

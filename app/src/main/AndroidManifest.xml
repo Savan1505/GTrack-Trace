@@ -41,7 +41,7 @@
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCLHQHGu8oUXmI4HnVFnSGVuduVUSqDq_U" />
+            android:value="AIzaSyB0StHDfS7VI-vrWvnIUOJZiUthMhyokyQ" />
         <activity
             android:name=".LandingActivity"
             android:exported="true"

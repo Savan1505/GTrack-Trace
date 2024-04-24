@@ -67,6 +67,7 @@
     <dimen name="height_166dp">166dp</dimen>
     <dimen name="btn_play_width">114dp</dimen>
     <dimen name="height_100dp">100dp</dimen>
+    <dimen name="height_135dp">135dp</dimen>
     <dimen name="dash_width">1dp</dimen>
     <dimen name="dash_gap">6dp</dimen>
     <dimen name="size_back_button">40dp</dimen>

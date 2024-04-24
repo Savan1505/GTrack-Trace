@@ -20,6 +20,7 @@
     <string name="assign_qr_to_iot_code">Assign QR\nto\nIOT Code</string>
     <string name="material_code">Material Code</string>
     <string name="rfid">RFID</string>
+    <string name="rfid_code">RFID Code</string>
     <string name="iot_code">IOT Code</string>
     <string name="assign_qr">Assign QR</string>
     <string name="unassign_qr">Unassign QR</string>
