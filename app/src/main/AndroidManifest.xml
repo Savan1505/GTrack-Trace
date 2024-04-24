@@ -135,7 +135,7 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.assignqr.materialcodetracker.ui.SearchActivity"
+            android:name=".ui.assignqr.common.SearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"

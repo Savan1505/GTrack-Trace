@@ -16,6 +16,7 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityMaterialCodeBinding
+import com.trace.gtrack.ui.assignqr.common.SearchActivity
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignMaterialState
 import com.trace.gtrack.ui.assignqr.materialcodetracker.viewmodel.AssignViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -16,7 +15,6 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySearchMaterialBinding
-import com.trace.gtrack.ui.assignqr.materialcodetracker.ui.SearchActivity
 import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialState
 import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialViewModel
 import dagger.hilt.android.AndroidEntryPoint
