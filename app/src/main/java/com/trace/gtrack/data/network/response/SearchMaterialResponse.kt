@@ -6,15 +6,15 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class SearchMaterialResponse(
     @Json(name = "QRCode")
-    val qRCode: String?,
+    val QRCode: String?,
     @Json(name = "Latitude")
-    val latitude: String?,
+    val Latitude: String?,
     @Json(name = "Longitude")
-    val longitude: String?,
+    val Longitude: String?,
     @Json(name = "RFIDCode")
-    val rFIDCode: String?,
+    val RFIDCode: String?,
     @Json(name = "BatteryStatus")
-    val batteryStatus: String?,
+    val BatteryStatus: String?,
     @Json(name = "BadStatus")
-    val badStatus: String?,
+    val BadStatus: String?,
 )

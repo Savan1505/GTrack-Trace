@@ -35,7 +35,7 @@ class ProjDropDownMenuAdapter(
     inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var tvTitle: AppCompatTextView = view.findViewById(R.id.tv_status)
         fun bind(item: ProjectKeysResponse) {
-            tvTitle.text = item.projectName
+            tvTitle.text = item.ProjectName
             itemView.setOnClickListener {
                 onClick(item)
             }

@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class SiteDetailsCommonResponse<T>(
     @Json(name = "SiteDetails")
-    val siteDetailsList: List<SiteDetailsByProjectResponse>?,
+    val SiteDetails: List<SiteDetailsByProjectResponse>?,
     @Json(name = "commonResponse")
     val commonResponse: T?,
 )

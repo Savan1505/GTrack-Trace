@@ -6,11 +6,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class SendMaterialResponse(
     @Json(name = "Status_Code")
-    val statusCode: String?,
+    val Status_Code: String?,
     @Json(name = "Detail_Message")
-    val detailMessage: String?,
+    val Detail_Message: String?,
     @Json(name = "GIOTCode")
-    val gIOTCode: String?,
+    val GIOTCode: String?,
     @Json(name = "MaterialCode")
-    val materialCode: String?,
+    val MaterialCode: String?,
 )

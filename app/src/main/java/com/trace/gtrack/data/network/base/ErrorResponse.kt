@@ -4,9 +4,9 @@ import com.squareup.moshi.Json
 
 data class ErrorResponse(
     @field:Json(name = "Status")
-    val status: Int,
+    val Status: Int,
     @field:Json(name = "Message")
-    val message: String? = "",
+    val Message: String? = "",
     @field:Json(name = "Error_Message")
-    val errorMessage: String? = "",
+    val Error_Message: String? = "",
 )
