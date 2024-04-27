@@ -181,7 +181,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    RFIDCodeRequest(qRCode.toUpperCase(Locale.ROOT), rfidCode.toUpperCase(Locale.ROOT))
+                    RFIDCodeRequest(qRCode.uppercase(Locale.ROOT), rfidCode.uppercase(Locale.ROOT))
                 )
             }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(

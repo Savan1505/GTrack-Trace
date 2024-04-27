@@ -26,8 +26,6 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityRfidBinding
-import com.trace.gtrack.ui.assignqr.common.IRFIDReaderListener
-import com.trace.gtrack.ui.assignqr.common.RFIDReaderInterface
 import com.trace.gtrack.ui.assignqr.common.ScanConnectionEnum
 import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDState
 import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDViewModel
@@ -41,7 +39,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
+class RFIDActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRfidBinding
     private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
@@ -104,7 +102,7 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
                 this@RFIDActivity, persistenceManager.getAPIKeys(),
                 persistenceManager.getProjectId(),
                 persistenceManager.getSiteId(),
-                binding.edtScanQrHere.text.toString(), binding.edtRfidCode.toString()
+                binding.edtScanQrHere.text.toString().trim(), binding.edtRfidCode.text.toString().trim()
             )
         }
 
@@ -135,10 +133,10 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
                     BLUETOOTH_PERMISSION_REQUEST_CODE
                 )
             } else {
-                configureDevice()
+               // configureDevice()
             }
         } else {
-            configureDevice()
+           // configureDevice()
         }
     }
 
@@ -149,7 +147,7 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
     ) {
         if (requestCode == BLUETOOTH_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                configureDevice()
+              //  configureDevice()
             } else {
                 Toast.makeText(this, "Bluetooth Permissions not granted", Toast.LENGTH_SHORT).show()
             }
@@ -157,61 +155,19 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    private fun configureDevice() {
 
-        Thread { configureRFID() }.start()
 
-    }
-
-    private fun configureRFID() {
-        // Configure RFID
-        if (rfidInterface == null)
-            rfidInterface = RFIDReaderInterface(this@RFIDActivity)
-
-        var connectRFIDResult = rfidInterface!!.connect(applicationContext, scanConnectionMode)
-
-        runOnUiThread {
-//            progressBar.visibility = ProgressBar.GONE
-            Toast.makeText(
-                applicationContext,
-                if (connectRFIDResult) "RFID Reader connected!" else "RFID Reader connection ERROR!",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
 
     override fun onDestroy() {
-        /*super.onDestroy()
-        dispose()
+        super.onDestroy()
         releaseSoundPool()
         if (mReader != null) {
             mReader!!.free()
         }
-        super.onDestroy()
-        Process.killProcess(Process.myPid())*/
-        releaseSoundPool()
-        if (mReader != null) {
-            mReader!!.free()
-        }
-        super.onDestroy()
     }
 
-    private fun dispose() {
-        try {
-            if (rfidInterface != null) {
-                rfidInterface!!.onDestroy()
-            }
-        } catch (ex: Exception) {
-        }
-    }
 
-    override fun newTagRead(epc: String?) {
-        runOnUiThread {
-            makeSuccessToast(epc!!)
-//            tagsList.add(0, epc!!)
-//            listViewRFID.invalidateViews()
-        }
-    }
+
 
     companion object {
         @JvmStatic
@@ -220,7 +176,6 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
         }
 
         const val OPEN_SCANNER = "open_scanner"
-        private var rfidInterface: RFIDReaderInterface? = null
     }
 
     private fun scanQRCodeResult(result: QRResult) {
@@ -252,10 +207,16 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
                     Integer.parseInt("2"),
                     Integer.parseInt("6")
                 )
-                binding.tilRfidCode.show()
-                binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
-                    data.toString()
-                )
+                if(data!=null){
+                    binding.tilRfidCode.show()
+                    binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
+                        data.toString()
+                    )
+                }else{
+                    Toast.makeText(this, "RFID Read Error..", Toast.LENGTH_SHORT).show()
+
+                }
+
 
                 if (!TextUtils.isEmpty(data)) {
                     result = true;
@@ -275,7 +236,7 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
         return super.onKeyDown(keyCode, event)
     }
 
-    fun playSound(id: Int) {
+    private fun playSound(id: Int) {
         val audioMaxVolume =
             am?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) // 返回当前AudioManager对象的最大音量值
         val audioCurrentVolume =
