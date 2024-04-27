@@ -181,14 +181,19 @@ class RFIDActivity : AppCompatActivity(), IRFIDReaderListener {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        /*super.onDestroy()
         dispose()
         releaseSoundPool()
         if (mReader != null) {
             mReader!!.free()
         }
         super.onDestroy()
-        Process.killProcess(Process.myPid())
+        Process.killProcess(Process.myPid())*/
+        releaseSoundPool()
+        if (mReader != null) {
+            mReader!!.free()
+        }
+        super.onDestroy()
     }
 
     private fun dispose() {

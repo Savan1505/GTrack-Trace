@@ -1,5 +1,6 @@
 package com.trace.gtrack.ui.unassignqr.ui
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -7,6 +8,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -17,6 +20,7 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityUnassignQrBinding
+import com.trace.gtrack.ui.assignqr.common.SearchActivity
 import com.trace.gtrack.ui.unassignqr.viewmodel.UnAssignMaterialState
 import com.trace.gtrack.ui.unassignqr.viewmodel.UnAssignState
 import com.trace.gtrack.ui.unassignqr.viewmodel.UnAssignViewModel
@@ -46,6 +50,16 @@ class UnAssignQRActivity : AppCompatActivity() {
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
+        }
+        binding.edtSearchMaterialCode.setOnClickListener {
+            if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
+                Intent(this@UnAssignQRActivity, SearchActivity::class.java).apply {
+                    materialCodeActivityForResult.launch(this)
+                }
+            } else {
+                makeWarningToast(resources.getString(R.string.error_qrcode))
+            }
+
         }
         binding.ivScanQr.setOnClickListener {
             scanQrCode.launch(
@@ -81,6 +95,16 @@ class UnAssignQRActivity : AppCompatActivity() {
                     binding.edtSearchMaterialCode.text.toString()
                 )
             }
+        }
+    }
+
+    private val materialCodeActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data?.getStringExtra("material_code")
+            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                intent.toString()
+            )
+            // Handle the Intent
         }
     }
 

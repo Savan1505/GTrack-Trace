@@ -23,8 +23,8 @@
     <string name="rfid_code">RFID Code</string>
     <string name="iot_code">IOT Code</string>
     <string name="assign_qr">Assign QR</string>
-    <string name="unassign_qr">Unassign QR</string>
-    <string name="search_material">Search Material</string>
+    <string name="unassign_qr">DeAssign QR</string>
+    <string name="search_material">Material Details</string>
     <string name="track_material">Track Material</string>
     <string name="user">User</string>
     <string name="change_password">Change Password</string>

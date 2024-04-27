@@ -2,6 +2,7 @@ package com.trace.gtrack.ui.login.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -64,6 +65,12 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 mSingleAccountApp()
             }
+        }
+
+        binding.tvGetInTouch.setOnClickListener {
+            val url = "https://garimasystem.com/" // URL to open in the browser
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
         }
     }
 

@@ -9,12 +9,14 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.invisible
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivitySearchMaterialBinding
+import com.trace.gtrack.ui.assignqr.common.SearchActivity
 import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialState
 import com.trace.gtrack.ui.searchmaterial.viewmodel.SearchMaterialViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +42,16 @@ class SearchMaterialActivity : AppCompatActivity() {
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
+        }
+        binding.edtSearchMaterialCode.setOnClickListener {
+            if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
+                Intent(this@SearchMaterialActivity, SearchActivity::class.java).apply {
+                    materialCodeActivityForResult.launch(this)
+                }
+            } else {
+                makeWarningToast(resources.getString(R.string.error_qrcode))
+            }
+
         }
         binding.ivScanQr.setOnClickListener {
             scanQrCode.launch(
