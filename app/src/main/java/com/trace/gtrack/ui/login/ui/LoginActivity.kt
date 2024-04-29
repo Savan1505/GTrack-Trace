@@ -133,7 +133,21 @@ class LoginActivity : AppCompatActivity() {
                 AppProgressDialog.hide()
                 /* Failed to acquireToken */
                 if (exception.message.toString() == "An account is already signed in.") {
-                    callGraphAPI()
+                    if (exception.errorCode == "invalid_parameter") {
+                        mSingleAccountApp!!.signOut(object :
+                            ISingleAccountPublicClientApplication.SignOutCallback {
+                            override fun onSignOut() {
+                                persistenceManager.saveUserId("")
+                                persistenceManager.saveUserName("")
+                                mAccount = null
+                            }
+
+                            override fun onError(exception: MsalException) {
+                            }
+                        })
+                    } else {
+                        callGraphAPI()
+                    }
                 } else {
                     Log.d(
                         "Savan",

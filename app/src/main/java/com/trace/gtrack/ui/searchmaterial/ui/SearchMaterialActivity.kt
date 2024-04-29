@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.invisible
@@ -52,6 +53,12 @@ class SearchMaterialActivity : AppCompatActivity() {
                 makeWarningToast(resources.getString(R.string.error_qrcode))
             }
 
+        }
+        binding.edtScanQrHere.doOnTextChanged { text, start, before, count ->
+            binding.btnFetchDetails.show()
+            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                ""
+            )
         }
         binding.ivScanQr.setOnClickListener {
             scanQrCode.launch(
@@ -113,6 +120,7 @@ class SearchMaterialActivity : AppCompatActivity() {
     private fun scanQRCodeResult(result: QRResult) {
         when (result) {
             is QRResult.QRSuccess -> {
+                binding.btnFetchDetails.show()
                 binding.edtScanQrHere.text =
                     Editable.Factory.getInstance().newEditable(
                         result.content.rawValue
@@ -143,7 +151,7 @@ class SearchMaterialActivity : AppCompatActivity() {
 
                 is SearchMaterialState.Success -> {
                     AppProgressDialog.hide()
-                    binding.btnFetchDetails.show()
+                    binding.btnFetchDetails.invisible()
                     binding.tilSearchMaterialCode.show()
                     binding.edtSearchMaterialCode.text =
                         Editable.Factory.getInstance().newEditable(it.materialCode)

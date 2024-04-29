@@ -150,14 +150,14 @@ class AppRepository @Inject constructor(
                 )
             }) {
             is ResponseWrapper.GenericError -> SearchMaterialResult.Error(
-                response.error?.Message ?: oopsMessage
+                response.error?.Error_Message ?: oopsMessage
             )
 
             ResponseWrapper.NetworkError -> SearchMaterialResult.Error(networkErrorMessage)
             is ResponseWrapper.Success<CommonMaterialResponse<List<SearchMaterialResponse>>> -> {
                 val data = response.value
                 when {
-                    !(data.isSuccess()) -> SearchMaterialResult.Error(data.Error_Message.toString())
+                    !(data.isSuccess()) -> SearchMaterialResult.Error(data.Message.toString())
                     data == null -> SearchMaterialResult.Error(oopsMessage)
                     else -> {
                         data.MaterialDetail.let { SearchMaterialResult.Success(it) }

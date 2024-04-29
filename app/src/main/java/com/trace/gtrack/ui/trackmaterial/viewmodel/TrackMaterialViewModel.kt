@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.safeLaunch
 import com.trace.gtrack.data.IAppRepository
@@ -19,7 +21,7 @@ class TrackMaterialViewModel @Inject constructor(
 ) : ViewModel() {
     private val mState = MutableLiveData<TrackMaterialMaterialState>()
     val state: LiveData<TrackMaterialMaterialState> = mState
-
+    var lstTrackMaterialResponse:List<SearchMaterialResponse> = ArrayList()
     fun postSearchMaterialCodeAPI(
         context: Context, apiKey: String,
         projectId: String,

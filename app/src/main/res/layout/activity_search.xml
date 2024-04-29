@@ -58,6 +58,7 @@
                         android:gravity="start"
                         android:imeOptions="actionSearch"
                         android:inputType="text"
+                        android:maxLength="140"
                         android:maxLines="1"
                         android:theme="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox" />
                 </com.google.android.material.textfield.TextInputLayout>

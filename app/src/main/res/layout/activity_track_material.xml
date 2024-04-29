@@ -17,7 +17,6 @@
             android:layout_height="0dp"
             android:fillViewport="true"
             android:orientation="vertical"
-            android:padding="@dimen/screen_internal_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_toolbar">
@@ -27,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/material_code"
+                android:padding="@dimen/screen_internal_padding"
                 android:textColorHint="@color/grey_100"
                 app:boxBackgroundColor="@color/colorSecondary"
                 app:boxBackgroundMode="outline"
@@ -83,10 +83,12 @@
                     android:text="@string/stop" />
             </LinearLayout>
 
-            <!--<com.google.android.gms.maps.MapView
-                android:id="@+id/mapview"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />-->
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_weight="1"/>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
