@@ -45,8 +45,6 @@ class MaterialCodeAdapter(
         AppProgressDialog.hide()
         if (lstMaterialCode.isNotEmpty()) {
             this.lstMaterialCode.addAll(lstMaterialCode)
-        } else {
-            this.lstMaterialCode = ArrayList()
         }
         notifyDataSetChanged()
     }

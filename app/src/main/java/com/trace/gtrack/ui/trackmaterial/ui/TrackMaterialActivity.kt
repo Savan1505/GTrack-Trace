@@ -116,34 +116,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is TrackMaterialMaterialState.Success -> {
                     AppProgressDialog.hide()
-                    fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-                    if (ActivityCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return@observe
-                    }
-                    if (locationRequest != null) {
-                        googleMap.isMyLocationEnabled = true
-                        // Zoom controls
-                        googleMap.uiSettings.isZoomControlsEnabled = true
-                        fusedLocationClient.requestLocationUpdates(
-                            locationRequest,
-                            locationCallback,
-                            Looper.getMainLooper()
-                        )
-                    }
                     mapView.show()
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
                     mapView.getMapAsync(this)
@@ -195,6 +167,34 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         firstLocation.Longitude!!.toDouble()
                     ), 13f
                 )
+            )
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (locationRequest != null) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            googleMap.isMyLocationEnabled = true
+            // Zoom controls
+            googleMap.uiSettings.isZoomControlsEnabled = true
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
             )
         }
     }

@@ -21,7 +21,7 @@ class AssignViewModel @Inject constructor(
     private val mStateAM = MutableLiveData<AssignMaterialState>()
     val state: LiveData<AssignState> = mState
     val stateAM: LiveData<AssignMaterialState> = mStateAM
-    private var pageNumber: Int = 1
+    var pageNumber: Int = 1
     private var pageSize: Int = 10
 
     fun postAssignedMaterialListAPI(
@@ -36,7 +36,7 @@ class AssignViewModel @Inject constructor(
                 apiKey,
                 projectId,
                 siteId,
-                pageNumber++,
+                pageNumber,
                 pageSize,
                 searchString
             )) {

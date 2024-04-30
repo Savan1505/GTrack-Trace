@@ -7,9 +7,10 @@
         android:layout_height="match_parent"
         android:padding="@dimen/input_field_radius">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:paddingRight="@dimen/input_field_radius"
             android:paddingBottom="@dimen/input_field_radius">
 
@@ -26,8 +27,8 @@
                     android:id="@+id/iv_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/input_field_radius"
                     android:layout_gravity="left"
+                    android:padding="@dimen/input_field_radius"
                     android:src="@drawable/ic_back"
                     android:tint="@color/colorBlack" />
 
@@ -68,11 +69,11 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_material_code"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:clipToPadding="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/ll_search" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_no_data"
