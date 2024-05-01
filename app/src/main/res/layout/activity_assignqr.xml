@@ -149,6 +149,7 @@
                             android:alignmentMode="alignMargins"
                             android:columnCount="3"
                             android:columnOrderPreserved="false"
+                            android:visibility="gone"
                             android:padding="@dimen/margin_normal"
                             android:rowCount="2">
 
@@ -175,6 +176,7 @@
                                 android:layout_marginRight="@dimen/margin_normal"
                                 android:layout_marginBottom="@dimen/margin_normal"
                                 app:cardCornerRadius="@dimen/margin_tiny"
+
                                 app:cardElevation="@dimen/margin_tiny">
 
                                 <LinearLayout

@@ -232,7 +232,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
             for (location in locationResult.locations) {
                 // Use latitude and longitude
-                googleMap.clear()
+                //googleMap.clear()
                 val currentLatLng = LatLng(location!!.latitude, location.longitude)
                 trackMaterialViewModel.lstHandHeldDataRequest =
                     listOf(

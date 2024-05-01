@@ -334,8 +334,8 @@ class RFIDActivity : AppCompatActivity() {
     }
 
     private val locationRequest = LocationRequest.create().apply {
-        interval = 10000 // Update interval in milliseconds
-        fastestInterval = 5000 // Fastest update interval in milliseconds
+        interval = 0 // Update interval in milliseconds
+        fastestInterval = 0 // Fastest update interval in milliseconds
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
