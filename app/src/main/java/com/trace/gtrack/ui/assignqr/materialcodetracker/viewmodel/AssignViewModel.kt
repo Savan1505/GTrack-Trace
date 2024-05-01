@@ -20,6 +20,7 @@ class AssignViewModel @Inject constructor(
     private val mState = MutableLiveData<AssignState>()
     private val mStateAM = MutableLiveData<AssignMaterialState>()
     val state: LiveData<AssignState> = mState
+    var lstMaterialCode: List<String> = ArrayList()
     val stateAM: LiveData<AssignMaterialState> = mStateAM
     var pageNumber: Int = 1
     private var pageSize: Int = 10
@@ -45,7 +46,11 @@ class AssignViewModel @Inject constructor(
                 }
 
                 is ListResult.Success -> {
-                    mState.value = result.lstResponse?.let { AssignState.Success(it) }
+                    if (result.lstResponse != null) {
+                        mState.value = result.lstResponse?.let { AssignState.Success(it) }
+                    } else {
+                        mState.value = AssignState.Success(ArrayList())
+                    }
                 }
 
                 null -> mState.value = AssignState.Error(context.getString(R.string.error_message))

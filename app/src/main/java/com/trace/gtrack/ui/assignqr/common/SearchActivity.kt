@@ -52,21 +52,15 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.edtSearchMaterialCode.doAfterTextChanged {
             if (binding.edtSearchMaterialCode.text.toString().length > 3) {
+                assignViewModel.lstMaterialCode = ArrayList()
                 assignViewModel.pageNumber = 1
-                /*assignViewModel.postAssignedMaterialListAPI(
-                    this@SearchActivity,
-                    persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                    binding.edtSearchMaterialCode.text.toString()
-                )*/
-                setupMaterialCodeAdapter(ArrayList())
+                setupMaterialCodeAdapter()
                 loadMore()
             }
         }
     }
 
-    private fun setupMaterialCodeAdapter(lstMaterialCode: List<String>) {
+    private fun setupMaterialCodeAdapter() {
         linearLayoutManager =
             binding.rvMaterialCode.layoutManager as LinearLayoutManager?
         binding.rvMaterialCode.isNestedScrollingEnabled = false
@@ -76,34 +70,13 @@ class SearchActivity : AppCompatActivity() {
             intentCode.putExtra("material_code", it)
             setResult(Activity.RESULT_OK, intentCode)
             finish()
-        }, lstMaterialCode)
-        /*binding.rvMaterialCode.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (linearLayoutManager != null) {
-                    if (dy > 0) {
-                        // Scrolling down
-                        val visibleItemCount = linearLayoutManager?.childCount
-                        val totalItemCount = linearLayoutManager?.itemCount
-                        val firstVisibleItem = linearLayoutManager?.findFirstVisibleItemPosition()
-                        if (visibleItemCount != null) {
-                            if (visibleItemCount + firstVisibleItem!! >= totalItemCount!!) {
-                                // Reached the end of the list, load more data
-                                assignViewModel.pageNumber++
-                                loadMore()
-                            }
-                        }
-                    }
-                }
-            }
-        })*/
+        }, assignViewModel.lstMaterialCode)
         binding.rvMaterialCode.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (isFirstTimeCall) {
                         isFirstTimeCall = false
-
                         assignViewModel.pageNumber++
                         loadMore()
                     }
@@ -111,6 +84,7 @@ class SearchActivity : AppCompatActivity() {
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     isFirstTimeCall = true
                 }
+                materialCodeAdapter.showProgressBarNotify(true)
             }
         })
         binding.rvMaterialCode.adapter = materialCodeAdapter
@@ -124,19 +98,21 @@ class SearchActivity : AppCompatActivity() {
                     binding.rvMaterialCode.hide()
                     binding.tvNoData.show()
                     materialCodeAdapter.showProgressBarNotify(false)
-                    //AppProgressDialog.hide()
                     makeWarningToast(it.msg)
                 }
 
                 AssignState.Loading -> {
-                    //AppProgressDialog.show(this)
+                    materialCodeAdapter.showProgressBarNotify(true)
                 }
 
                 is AssignState.Success -> {
                     binding.rvMaterialCode.show()
                     binding.tvNoData.hide()
-                    setupMaterialCodeAdapter(it.lstMaterialCode)
                     materialCodeAdapter.showProgressBarNotify(false)
+                    if (it.lstMaterialCode.isNotEmpty()) {
+                        assignViewModel.lstMaterialCode += it.lstMaterialCode
+                        setupMaterialCodeAdapter()
+                    }
                 }
             }
         }

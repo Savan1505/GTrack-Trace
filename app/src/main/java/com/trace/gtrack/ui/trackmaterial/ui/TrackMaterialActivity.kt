@@ -23,16 +23,22 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.hide
+import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
+import com.trace.gtrack.data.network.request.InsertHandHeldDataRequest
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityTrackMaterialBinding
 import com.trace.gtrack.ui.assignqr.common.SearchActivity
+import com.trace.gtrack.ui.trackmaterial.viewmodel.HandHeldDataState
+import com.trace.gtrack.ui.trackmaterial.viewmodel.InsertMapResultState
+import com.trace.gtrack.ui.trackmaterial.viewmodel.InsertRFIDMapState
 import com.trace.gtrack.ui.trackmaterial.viewmodel.TrackMaterialMaterialState
 import com.trace.gtrack.ui.trackmaterial.viewmodel.TrackMaterialViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,9 +50,12 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityTrackMaterialBinding
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
+    private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
     private val trackMaterialViewModel: TrackMaterialViewModel by viewModels()
+    private var startTime: Long = 0
+    private var stopTime: Long = 0
+    private var isRunning: Boolean = false
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
@@ -71,7 +80,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         binding.btnStart.setOnClickListener {
-            //setMapLocation()
+            startTimer()
             trackMaterialViewModel.postSearchMaterialCodeAPI(
                 this@TrackMaterialActivity,
                 persistenceManager.getAPIKeys(),
@@ -83,7 +92,32 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.btnStop.setOnClickListener {
             onResume()
             mapView.hide()
+            stopTimer()
+            if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
+                trackMaterialViewModel.postInsertRFIDDataAPI(
+                    this@TrackMaterialActivity,
+                    persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                )
+            }
+            trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
+            trackMaterialViewModel.postInsertMAPSearchResultAPI(
+                this@TrackMaterialActivity,
+                persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+                persistenceManager.getUserId(),
+                binding.edtSearchMaterialCode.text.toString(),
+            )
             trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+            binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.btnStart.isClickable = false
+            binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.btnStop.isClickable = false
+            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                ""
+            )
         }
     }
 
@@ -95,6 +129,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     intent.toString()
                 )
                 if (binding.edtSearchMaterialCode.text.toString().isNotEmpty()) {
+                    binding.btnStart.isClickable = true
                     binding.btnStart.background = getDrawable(R.drawable.app_button_background)
                 }
                 // Handle the Intent
@@ -117,14 +152,73 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 is TrackMaterialMaterialState.Success -> {
                     AppProgressDialog.hide()
                     mapView.show()
+                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStart.isClickable = false
+                    binding.btnStop.isClickable = true
+                    binding.btnStop.background = getDrawable(R.drawable.app_button_red_background)
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
                     mapView.getMapAsync(this)
                 }
             }
         }
+        trackMaterialViewModel.stateHH.observe(this@TrackMaterialActivity) {
+            when (it) {
+
+                is HandHeldDataState.Error -> {
+                    AppProgressDialog.hide()
+                    makeWarningToast(it.msg)
+                }
+
+                HandHeldDataState.Loading -> {
+                    AppProgressDialog.show(this)
+                }
+
+                is HandHeldDataState.Success -> {
+                    AppProgressDialog.hide()
+                    //Current Location Map
+                }
+            }
+        }
+        trackMaterialViewModel.stateRFID.observe(this@TrackMaterialActivity) {
+            when (it) {
+
+                is InsertRFIDMapState.Error -> {
+                    AppProgressDialog.hide()
+                    makeWarningToast(it.msg)
+                }
+
+                InsertRFIDMapState.Loading -> {
+                    AppProgressDialog.show(this)
+                }
+
+                is InsertRFIDMapState.Success -> {
+                    AppProgressDialog.hide()
+                    makeSuccessToast(it.rfidMsg)
+                }
+            }
+        }
+
+        trackMaterialViewModel.stateMapResult.observe(this@TrackMaterialActivity) {
+            when (it) {
+
+                is InsertMapResultState.Error -> {
+                    AppProgressDialog.hide()
+                    makeWarningToast(it.msg)
+                }
+
+                InsertMapResultState.Loading -> {
+                    AppProgressDialog.show(this)
+                }
+
+                is InsertMapResultState.Success -> {
+                    AppProgressDialog.hide()
+                    makeSuccessToast(it.mapResultMsg)
+                }
+            }
+        }
     }
 
-    private val locationRequest = LocationRequest.create()?.apply {
+    private val locationRequest = LocationRequest.create().apply {
         interval = 10000 // Update interval in milliseconds
         fastestInterval = 5000 // Fastest update interval in milliseconds
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -135,13 +229,41 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             if (locationResult != null) {
                 super.onLocationResult(locationResult)
             }
-            locationResult
+
             for (location in locationResult.locations) {
                 // Use latitude and longitude
+                googleMap.clear()
                 val currentLatLng = LatLng(location!!.latitude, location.longitude)
+                trackMaterialViewModel.lstHandHeldDataRequest =
+                    listOf(
+                        InsertHandHeldDataRequest(
+                            location.latitude.toString(),
+                            location.longitude.toString(),
+                            persistenceManager.getRFIDCode()
+                        )
+                    )
+                if (trackMaterialViewModel.lstTrackMaterialResponse.isNotEmpty()) {
+                    insertHandHeldDataAPICall()
+                }
                 googleMap.addMarker(
-                    MarkerOptions().position(currentLatLng).title("Current Location")
+                    MarkerOptions().position(currentLatLng).title("Current Location").icon(
+                        BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                    )
                 )
+                for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
+                    googleMap.addMarker(
+                        MarkerOptions().position(
+                            LatLng(
+                                searchMaterialResponse.Latitude!!.toDouble(),
+                                searchMaterialResponse.Longitude!!.toDouble()
+                            )
+                        ).title(searchMaterialResponse.RFIDCode.toString()).icon(
+                            BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                        )
+                    )
+                }
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 13f))
             }
         }
@@ -155,48 +277,29 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         searchMaterialResponse.Latitude!!.toDouble(),
                         searchMaterialResponse.Longitude!!.toDouble()
                     )
-                ).title(searchMaterialResponse.RFIDCode.toString())
+                ).title(searchMaterialResponse.RFIDCode.toString()).icon(
+                    BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                )
             )
-        }
-        if (trackMaterialViewModel.lstTrackMaterialResponse.isNotEmpty()) {
-            val firstLocation = trackMaterialViewModel.lstTrackMaterialResponse[0]
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(
-                        firstLocation.Latitude!!.toDouble(),
-                        firstLocation.Longitude!!.toDouble()
+                        searchMaterialResponse.Latitude.toDouble(),
+                        searchMaterialResponse.Longitude.toDouble()
                     ), 13f
                 )
             )
         }
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (locationRequest != null) {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
-            }
-            googleMap.isMyLocationEnabled = true
-            // Zoom controls
-            googleMap.uiSettings.isZoomControlsEnabled = true
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-        }
+    }
+
+    private fun insertHandHeldDataAPICall() {
+        trackMaterialViewModel.postInsertHandheldDataAPI(
+            this@TrackMaterialActivity,
+            persistenceManager.getAPIKeys(),
+            persistenceManager.getProjectId(),
+            persistenceManager.getSiteId(),
+        )
     }
 
     override fun onResume() {
@@ -229,7 +332,66 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         if (map != null) {
             googleMap = map
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            if (locationRequest != null) {
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        LOCATION_PERMISSION_REQUEST_CODE
+                    )
+                    return
+                }
+                googleMap.isMyLocationEnabled = true
+                // Zoom controls
+                googleMap.uiSettings.isZoomControlsEnabled = true
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+            }
             setMapLocation()
         }
+    }
+
+    private fun startTimer() {
+        if (!isRunning) {
+            startTime = System.currentTimeMillis()
+            isRunning = true
+            println("Timer started")
+        } else {
+            println("Timer is already running")
+        }
+    }
+
+    private fun stopTimer() {
+        if (isRunning) {
+            stopTime = System.currentTimeMillis()
+            isRunning = false
+            println("Timer stopped")
+        } else {
+            println("Timer is not running")
+        }
+    }
+
+    private fun getElapsedTime(): Long {
+        return if (isRunning) {
+            System.currentTimeMillis() - startTime
+        } else {
+            stopTime - startTime
+        }
+    }
+
+    fun epochToTime(elapsed: Long): String {
+        val seconds = (elapsed / 1000) % 60
+        val minutes = ((elapsed / (1000 * 60)) % 60)
+        val hours = ((elapsed / (1000 * 60 * 60)) % 24)
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 }
