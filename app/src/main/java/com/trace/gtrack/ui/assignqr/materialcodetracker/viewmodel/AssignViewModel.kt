@@ -47,7 +47,7 @@ class AssignViewModel @Inject constructor(
 
                 is ListResult.Success -> {
                     if (result.lstResponse != null) {
-                        mState.value = result.lstResponse?.let { AssignState.Success(it) }
+                        mState.value = result.lstResponse.let { AssignState.Success(it) }
                     } else {
                         mState.value = AssignState.Success(ArrayList())
                     }

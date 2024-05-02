@@ -11,6 +11,7 @@ import androidx.core.view.isGone
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.trace.gtrack.R
 import com.trace.gtrack.common.MaterialItemAdapter
 import com.trace.gtrack.common.utils.hide
 import com.trace.gtrack.common.utils.makeWarningToast
@@ -33,7 +34,7 @@ class SearchActivity : AppCompatActivity() {
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
-    var linearLayoutManager: LinearLayoutManager? = null
+    private var linearLayoutManager: LinearLayoutManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -56,6 +57,13 @@ class SearchActivity : AppCompatActivity() {
                 assignViewModel.pageNumber = 1
                 setupMaterialCodeAdapter()
                 loadMore()
+            }
+            if (binding.edtSearchMaterialCode.text!!.isEmpty()) {
+                binding.tvTotalItem.hide()
+                binding.tvNoData.show()
+                assignViewModel.lstMaterialCode = ArrayList()
+                assignViewModel.pageNumber = 1
+                setupMaterialCodeAdapter()
             }
         }
     }
@@ -109,7 +117,13 @@ class SearchActivity : AppCompatActivity() {
                     binding.rvMaterialCode.show()
                     binding.tvNoData.hide()
                     materialCodeAdapter.showProgressBarNotify(false)
+                    binding.tvTotalItem.show()
+                    binding.tvTotalItem.text =
+                        resources.getString(R.string.total_item) + it.lstMaterialCode.size.toString();
                     if (it.lstMaterialCode.isNotEmpty()) {
+                        assignViewModel.lstMaterialCode += it.lstMaterialCode
+                        setupMaterialCodeAdapter()
+                    } else if (assignViewModel.pageNumber == 1 && it.lstMaterialCode.isEmpty()) {
                         assignViewModel.lstMaterialCode += it.lstMaterialCode
                         setupMaterialCodeAdapter()
                     }

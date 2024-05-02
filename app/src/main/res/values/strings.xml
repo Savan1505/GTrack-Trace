@@ -59,4 +59,5 @@
     <string name="powered_by">Powered By</string>
     <string name="no_material_code">No Material Code Found</string>
     <string name="assign_RFID">Assign QR to RFID</string>
+    <string name="total_item">Total Item: </string>
 </resources>

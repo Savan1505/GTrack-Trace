@@ -31,13 +31,14 @@
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimary">
 
+                    <!--android:paddingBottom="@dimen/height_215dp" IOT Visible replace with this-->
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/AuthHeaderTextWhite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:paddingTop="@dimen/size_back_button"
-                        android:paddingBottom="@dimen/height_215dp"
+                        android:paddingBottom="@dimen/btn_play_width"
                         android:text="@string/assign_qr_to"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
