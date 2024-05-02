@@ -152,7 +152,7 @@
                             android:layout_margin="@dimen/margin_large"
                             android:gravity="center"
                             android:padding="@dimen/input_field_radius"
-                            android:text="@string/assign_RFID"
+                            android:text="@string/btn_start_scan"
                             app:layout_constraintTop_toBottomOf="@id/til_rfid_code"
                             app:layout_constraintVertical_bias="1.0" />
                     </androidx.constraintlayout.widget.ConstraintLayout>

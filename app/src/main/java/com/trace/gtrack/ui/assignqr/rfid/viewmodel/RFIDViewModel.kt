@@ -19,10 +19,10 @@ class RFIDViewModel @Inject constructor(
 ) : ViewModel() {
     private val mState = MutableLiveData<RFIDState>()
     val state: LiveData<RFIDState> = mState
-    private val mStateRFID = MutableLiveData<InsertRFIDState>()
-    val stateRFID: LiveData<InsertRFIDState> = mStateRFID
-    var lstInsertRFIDData: List<InsertHandHeldDataRequest> = ArrayList()
-    fun postRFIDCodeAPI(
+//    private val mStateRFID = MutableLiveData<InsertRFIDState>()
+//    val stateRFID: LiveData<InsertRFIDState> = mStateRFID
+//    var lstInsertRFIDData: List<InsertHandHeldDataRequest> = ArrayList()
+    fun postRfidQRCodeMappingAPI(
         context: Context, apiKey: String,
         projectId: String,
         siteId: String,
@@ -52,7 +52,7 @@ class RFIDViewModel @Inject constructor(
         }
     }
 
-    fun postInsertRFIDDataAPI(
+    /*fun postInsertRFIDDataAPI(
         context: Context, apiKey: String,
         projectId: String,
         siteId: String,
@@ -77,7 +77,7 @@ class RFIDViewModel @Inject constructor(
                     InsertRFIDState.Error(context.getString(R.string.error_message))
             }
         }
-    }
+    }*/
 }
 
 sealed class RFIDState {
@@ -87,9 +87,9 @@ sealed class RFIDState {
     object Loading : RFIDState()
 }
 
-sealed class InsertRFIDState {
+/*sealed class InsertRFIDState {
     data class Success(val insertRFIDMsg: String) : InsertRFIDState()
     data class Error(val msg: String) : InsertRFIDState()
 
     object Loading : InsertRFIDState()
-}
+}*/

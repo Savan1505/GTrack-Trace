@@ -8,7 +8,6 @@ import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.view.KeyEvent
@@ -17,11 +16,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.rscja.deviceapi.RFIDWithUHFUART
 import com.rscja.deviceapi.interfaces.IUHF
 import com.trace.gtrack.R
@@ -29,11 +23,9 @@ import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
-import com.trace.gtrack.data.network.request.InsertHandHeldDataRequest
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityRfidBinding
 import com.trace.gtrack.ui.assignqr.common.ScanConnectionEnum
-import com.trace.gtrack.ui.assignqr.rfid.viewmodel.InsertRFIDState
 import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDState
 import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +44,8 @@ class RFIDActivity : AppCompatActivity() {
     private val scanQrCode = registerForActivityResult(ScanCustomCode(), ::scanQRCodeResult)
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private val ACCESS_FINE_LOCATION_REQUEST_CODE = 99
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    //    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var scanConnectionMode: ScanConnectionEnum = ScanConnectionEnum.SledScan
     var mReader: RFIDWithUHFUART? = null
     private var am: AudioManager? = null
@@ -68,7 +61,7 @@ class RFIDActivity : AppCompatActivity() {
         binding = ActivityRfidBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observe()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -85,7 +78,7 @@ class RFIDActivity : AppCompatActivity() {
             locationRequest,
             locationCallback,
             Looper.getMainLooper()
-        )
+        )*/
         binding.mainToolbar.ivBackButton.show()
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound();
@@ -123,14 +116,19 @@ class RFIDActivity : AppCompatActivity() {
             })
 
         binding.btnStartScan.setOnClickListener {
-            rfidViewModel.postRFIDCodeAPI(
-                this@RFIDActivity,
-                persistenceManager.getAPIKeys(),
-                persistenceManager.getProjectId(),
-                persistenceManager.getSiteId(),
-                binding.edtScanQrHere.text.toString().trim(),
-                binding.edtRfidCode.text.toString().trim()
-            )
+            binding.tilRfidCode.show()
+            if (binding.btnStartScan.text == resources.getString(R.string.assign_RFID)) {
+                rfidViewModel.postRfidQRCodeMappingAPI(
+                    this@RFIDActivity,
+                    persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                    binding.edtScanQrHere.text.toString().trim(),
+                    binding.edtRfidCode.text.toString().trim()
+                )
+            } else {
+                binding.btnStartScan.text = resources.getString(R.string.assign_RFID)
+            }
         }
 
         //Scanner Initializations
@@ -313,7 +311,7 @@ class RFIDActivity : AppCompatActivity() {
             }
         }
 
-        rfidViewModel.stateRFID.observe(this@RFIDActivity) {
+        /*rfidViewModel.stateRFID.observe(this@RFIDActivity) {
             when (it) {
 
                 is InsertRFIDState.Error -> {
@@ -330,10 +328,10 @@ class RFIDActivity : AppCompatActivity() {
                     makeSuccessToast(it.insertRFIDMsg)
                 }
             }
-        }
+        }*/
     }
 
-    private val locationRequest = LocationRequest.create().apply {
+    /*private val locationRequest = LocationRequest.create().apply {
         interval = 0 // Update interval in milliseconds
         fastestInterval = 0 // Fastest update interval in milliseconds
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -355,14 +353,14 @@ class RFIDActivity : AppCompatActivity() {
                             binding.edtRfidCode.text.toString().trim()
                         )
                     )
-                if (rfidViewModel.lstInsertRFIDData.isNotEmpty()) {
+                *//*if (rfidViewModel.lstInsertRFIDData.isNotEmpty()) {
                     rfidViewModel.postInsertRFIDDataAPI(
                         this@RFIDActivity, persistenceManager.getAPIKeys(),
                         persistenceManager.getProjectId(),
                         persistenceManager.getSiteId()
                     )
-                }
+                }*//*
             }
         }
-    }
+    }*/
 }

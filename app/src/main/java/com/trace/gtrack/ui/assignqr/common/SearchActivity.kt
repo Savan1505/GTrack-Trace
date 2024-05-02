@@ -8,7 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
-import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.trace.gtrack.R
@@ -51,14 +51,16 @@ class SearchActivity : AppCompatActivity() {
                 InputMethodManager.SHOW_IMPLICIT
             )
         }
-        binding.edtSearchMaterialCode.doAfterTextChanged {
+        binding.edtSearchMaterialCode.addTextChangedListener {
             if (binding.edtSearchMaterialCode.text.toString().length > 3) {
+                binding.edtSearchMaterialCode.isEnabled = false
                 assignViewModel.lstMaterialCode = ArrayList()
                 assignViewModel.pageNumber = 1
                 setupMaterialCodeAdapter()
                 loadMore()
             }
             if (binding.edtSearchMaterialCode.text!!.isEmpty()) {
+                binding.edtSearchMaterialCode.isEnabled = false
                 binding.tvTotalItem.hide()
                 binding.tvNoData.show()
                 assignViewModel.lstMaterialCode = ArrayList()
@@ -116,15 +118,24 @@ class SearchActivity : AppCompatActivity() {
                 is AssignState.Success -> {
                     binding.rvMaterialCode.show()
                     binding.tvNoData.hide()
+                    binding.edtSearchMaterialCode.isEnabled = true
+                    if (binding.edtSearchMaterialCode.requestFocus()) {
+                        val inputMethodManager: InputMethodManager =
+                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputMethodManager.showSoftInput(
+                            binding.edtSearchMaterialCode,
+                            InputMethodManager.SHOW_IMPLICIT
+                        )
+                    }
                     materialCodeAdapter.showProgressBarNotify(false)
                     binding.tvTotalItem.show()
                     binding.tvTotalItem.text =
-                        resources.getString(R.string.total_item) + it.lstMaterialCode.size.toString();
+                        resources.getString(R.string.total_item) + it.lstMaterialCode.size.toString()
                     if (it.lstMaterialCode.isNotEmpty()) {
                         assignViewModel.lstMaterialCode += it.lstMaterialCode
                         setupMaterialCodeAdapter()
                     } else if (assignViewModel.pageNumber == 1 && it.lstMaterialCode.isEmpty()) {
-                        assignViewModel.lstMaterialCode += it.lstMaterialCode
+                        assignViewModel.lstMaterialCode = ArrayList()
                         setupMaterialCodeAdapter()
                     }
                 }
