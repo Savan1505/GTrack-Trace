@@ -4,14 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.trace.gtrack.R
 import com.trace.gtrack.common.MaterialItemAdapter
 import com.trace.gtrack.common.utils.hide
 import com.trace.gtrack.common.utils.makeWarningToast
@@ -51,23 +51,46 @@ class SearchActivity : AppCompatActivity() {
                 InputMethodManager.SHOW_IMPLICIT
             )
         }
-        binding.edtSearchMaterialCode.addTextChangedListener {
-            if (binding.edtSearchMaterialCode.text.toString().length > 3) {
-                binding.edtSearchMaterialCode.isEnabled = false
-                assignViewModel.lstMaterialCode = ArrayList()
-                assignViewModel.pageNumber = 1
-                setupMaterialCodeAdapter()
-                loadMore()
+        binding.edtSearchMaterialCode.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+                // Not needed
             }
-            if (binding.edtSearchMaterialCode.text!!.isEmpty()) {
-                binding.edtSearchMaterialCode.isEnabled = false
-                binding.tvTotalItem.hide()
-                binding.tvNoData.show()
-                assignViewModel.lstMaterialCode = ArrayList()
-                assignViewModel.pageNumber = 1
-                setupMaterialCodeAdapter()
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Trigger search API call here
+                val searchText = s.toString().trim()
+                if (searchText.isNotEmpty()) {
+                    if (searchText.length <= 3) {
+                        binding.tvNoData.show()
+                        assignViewModel.lstMaterialCode = ArrayList()
+                        assignViewModel.pageNumber = 1
+                        setupMaterialCodeAdapter()
+                    }
+                }
             }
-        }
+
+            override fun afterTextChanged(s: Editable?) {
+                val searchText = s.toString().trim()
+                if (searchText.isNotEmpty()) {
+                    if (searchText.length > 3) {
+                        assignViewModel.lstMaterialCode = ArrayList()
+                        assignViewModel.pageNumber = 1
+                        setupMaterialCodeAdapter()
+                        loadMore()
+                    }
+                } else {
+                    binding.tvNoData.show()
+                    assignViewModel.lstMaterialCode = ArrayList()
+                    assignViewModel.pageNumber = 1
+                    setupMaterialCodeAdapter()
+                }
+            }
+        })
     }
 
     private fun setupMaterialCodeAdapter() {
@@ -84,17 +107,25 @@ class SearchActivity : AppCompatActivity() {
         binding.rvMaterialCode.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (isFirstTimeCall) {
-                        isFirstTimeCall = false
-                        assignViewModel.pageNumber++
-                        loadMore()
+                if (binding.edtSearchMaterialCode.text.toString().isNotEmpty()) {
+                    if (binding.edtSearchMaterialCode.text.toString().length > 3) {
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            if (isFirstTimeCall) {
+                                isFirstTimeCall = false
+                                assignViewModel.pageNumber++
+                                loadMore()
+                            }
+                        }
+                        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                            isFirstTimeCall = true
+                        }
+                        materialCodeAdapter.showProgressBarNotify(true)
+                    } else {
+                        materialCodeAdapter.showProgressBarNotify(false)
                     }
+                } else {
+                    materialCodeAdapter.showProgressBarNotify(false)
                 }
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    isFirstTimeCall = true
-                }
-                materialCodeAdapter.showProgressBarNotify(true)
             }
         })
         binding.rvMaterialCode.adapter = materialCodeAdapter
@@ -118,23 +149,15 @@ class SearchActivity : AppCompatActivity() {
                 is AssignState.Success -> {
                     binding.rvMaterialCode.show()
                     binding.tvNoData.hide()
-                    binding.edtSearchMaterialCode.isEnabled = true
-                    if (binding.edtSearchMaterialCode.requestFocus()) {
-                        val inputMethodManager: InputMethodManager =
-                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputMethodManager.showSoftInput(
-                            binding.edtSearchMaterialCode,
-                            InputMethodManager.SHOW_IMPLICIT
-                        )
-                    }
                     materialCodeAdapter.showProgressBarNotify(false)
-                    binding.tvTotalItem.show()
-                    binding.tvTotalItem.text =
-                        resources.getString(R.string.total_item) + it.lstMaterialCode.size.toString()
                     if (it.lstMaterialCode.isNotEmpty()) {
+                        if (assignViewModel.pageNumber == 1) {
+                            assignViewModel.lstMaterialCode = ArrayList()
+                        }
                         assignViewModel.lstMaterialCode += it.lstMaterialCode
                         setupMaterialCodeAdapter()
                     } else if (assignViewModel.pageNumber == 1 && it.lstMaterialCode.isEmpty()) {
+                        binding.tvNoData.show()
                         assignViewModel.lstMaterialCode = ArrayList()
                         setupMaterialCodeAdapter()
                     }
@@ -145,12 +168,16 @@ class SearchActivity : AppCompatActivity() {
 
     fun loadMore() {
         materialCodeAdapter.showProgressBarNotify(true)
-        assignViewModel.postAssignedMaterialListAPI(
-            this@SearchActivity,
-            persistenceManager.getAPIKeys(),
-            persistenceManager.getProjectId(),
-            persistenceManager.getSiteId(),
-            binding.edtSearchMaterialCode.text.toString()
-        )
+        if (persistenceManager != null && binding.edtSearchMaterialCode.text.toString()
+                .isNotEmpty() && binding.edtSearchMaterialCode.text.toString().length > 3
+        ) {
+            assignViewModel.postAssignedMaterialListAPI(
+                this@SearchActivity,
+                persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+                binding.edtSearchMaterialCode.text.toString()
+            )
+        }
     }
 }

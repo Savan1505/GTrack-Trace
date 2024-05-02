@@ -25,7 +25,6 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityRfidBinding
-import com.trace.gtrack.ui.assignqr.common.ScanConnectionEnum
 import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDState
 import com.trace.gtrack.ui.assignqr.rfid.viewmodel.RFIDViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,10 +45,10 @@ class RFIDActivity : AppCompatActivity() {
     private val ACCESS_FINE_LOCATION_REQUEST_CODE = 99
 
     //    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var scanConnectionMode: ScanConnectionEnum = ScanConnectionEnum.SledScan
+//    private var scanConnectionMode: ScanConnectionEnum = ScanConnectionEnum.SledScan
     var mReader: RFIDWithUHFUART? = null
     private var am: AudioManager? = null
-    private var volumnRatio = 0f
+    private var volumnRatio = 1.0f
     var soundMap = HashMap<Int, Int>()
     private var soundPool: SoundPool? = null
     private val rfidViewModel: RFIDViewModel by viewModels()
@@ -116,7 +115,6 @@ class RFIDActivity : AppCompatActivity() {
             })
 
         binding.btnStartScan.setOnClickListener {
-            binding.tilRfidCode.show()
             if (binding.btnStartScan.text == resources.getString(R.string.assign_RFID)) {
                 rfidViewModel.postRfidQRCodeMappingAPI(
                     this@RFIDActivity,
@@ -127,7 +125,7 @@ class RFIDActivity : AppCompatActivity() {
                     binding.edtRfidCode.text.toString().trim()
                 )
             } else {
-                binding.btnStartScan.text = resources.getString(R.string.assign_RFID)
+                rfidReaderConnection()
             }
         }
 
@@ -221,37 +219,7 @@ class RFIDActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == 139 || keyCode == 280 || keyCode == 293) {
             if (event.repeatCount == 0) {
-                var result = false
-                val data = mReader?.readData(
-                    "00000000",
-                    IUHF.Bank_EPC,
-                    Integer.parseInt("2"),
-                    Integer.parseInt("6")
-                )
-                if (data != null) {
-                    binding.tilRfidCode.show()
-                    binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
-                        data.toString()
-                    )
-                    persistenceManager.saveRFIDCode(data.toString())
-                } else {
-                    Toast.makeText(this, "RFID Read Error..", Toast.LENGTH_SHORT).show()
-
-                }
-
-
-                if (!TextUtils.isEmpty(data)) {
-                    result = true;
-
-                } else {
-                    result = false;
-                }
-                if (!result) {
-                    playSound(2);
-                } else {
-                    playSound(1);
-
-                }
+                rfidReaderConnection()
             }
             return true
         }
@@ -288,6 +256,42 @@ class RFIDActivity : AppCompatActivity() {
         if (soundPool != null) {
             soundPool?.release()
             soundPool = null
+        }
+    }
+
+    private fun rfidReaderConnection() {
+        var result = false
+        val data = mReader?.readData(
+            "00000000",
+            IUHF.Bank_EPC,
+            Integer.parseInt("2"),
+            Integer.parseInt("6")
+        )
+        if (data != null) {
+            binding.tilRfidCode.show()
+            binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
+                data.toString()
+            )
+            binding.edtRfidCode.show()
+            binding.btnStartScan.text = resources.getString(R.string.assign_RFID)
+            persistenceManager.saveRFIDCode(data.toString())
+        } else {
+            Toast.makeText(this, "Re-Scan RFID...", Toast.LENGTH_SHORT).show()
+
+        }
+
+
+        if (!TextUtils.isEmpty(data)) {
+            result = true;
+
+        } else {
+            result = false;
+        }
+        if (!result) {
+            playSound(2);
+        } else {
+            playSound(1);
+
         }
     }
 
@@ -330,6 +334,7 @@ class RFIDActivity : AppCompatActivity() {
             }
         }*/
     }
+
 
     /*private val locationRequest = LocationRequest.create().apply {
         interval = 0 // Update interval in milliseconds

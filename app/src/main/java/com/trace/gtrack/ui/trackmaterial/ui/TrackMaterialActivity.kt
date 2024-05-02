@@ -25,6 +25,7 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
@@ -50,6 +51,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityTrackMaterialBinding
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
+    private var currentLocationMarker: Marker? = null
+
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val trackMaterialViewModel: TrackMaterialViewModel by viewModels()
@@ -81,43 +84,39 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnStart.setOnClickListener {
             startTimer()
-            trackMaterialViewModel.postSearchMaterialCodeAPI(
-                this@TrackMaterialActivity,
-                persistenceManager.getAPIKeys(),
-                persistenceManager.getProjectId(),
-                persistenceManager.getSiteId(),
-                binding.edtSearchMaterialCode.text.toString(),
-            )
+            if(persistenceManager != null) {
+                trackMaterialViewModel.postSearchMaterialCodeAPI(
+                    this@TrackMaterialActivity,
+                    persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                    binding.edtSearchMaterialCode.text.toString(),
+                )
+            }
         }
         binding.btnStop.setOnClickListener {
             onResume()
             mapView.hide()
             stopTimer()
-            if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
+            /*if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
                 trackMaterialViewModel.postInsertRFIDDataAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
                     persistenceManager.getProjectId(),
                     persistenceManager.getSiteId(),
                 )
-            }
+            }*/
             trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
-            trackMaterialViewModel.postInsertMAPSearchResultAPI(
-                this@TrackMaterialActivity,
-                persistenceManager.getAPIKeys(),
-                persistenceManager.getProjectId(),
-                persistenceManager.getSiteId(),
-                persistenceManager.getUserId(),
-                binding.edtSearchMaterialCode.text.toString(),
-            )
-            trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
-            binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
-            binding.btnStart.isClickable = false
-            binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
-            binding.btnStop.isClickable = false
-            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                ""
-            )
+            if(persistenceManager != null) {
+                trackMaterialViewModel.postInsertMAPSearchResultAPI(
+                    this@TrackMaterialActivity,
+                    persistenceManager.getAPIKeys(),
+                    persistenceManager.getProjectId(),
+                    persistenceManager.getSiteId(),
+                    persistenceManager.getUserId(),
+                    binding.edtSearchMaterialCode.text.toString(),
+                )
+            }
         }
     }
 
@@ -212,6 +211,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertMapResultState.Success -> {
                     AppProgressDialog.hide()
+                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStart.isClickable = false
+                    binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStop.isClickable = false
+                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
                     makeSuccessToast(it.mapResultMsg)
                 }
             }
@@ -232,26 +239,34 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
             for (location in locationResult.locations) {
                 // Use latitude and longitude
-                //googleMap.clear()
+//                googleMap.clear()
                 val currentLatLng = LatLng(location!!.latitude, location.longitude)
-                trackMaterialViewModel.lstHandHeldDataRequest =
-                    listOf(
-                        InsertHandHeldDataRequest(
-                            location.latitude.toString(),
-                            location.longitude.toString(),
-                            persistenceManager.getRFIDCode()
-                        )
-                    )
-                if (trackMaterialViewModel.lstTrackMaterialResponse.isNotEmpty()) {
-                    insertHandHeldDataAPICall()
-                }
-                googleMap.addMarker(
-                    MarkerOptions().position(currentLatLng).title("Current Location").icon(
-                        BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_RED)
-                    )
-                )
                 for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
+                    trackMaterialViewModel.lstHandHeldDataRequest =
+                        listOf(
+                            InsertHandHeldDataRequest(
+                                location.latitude.toString(),
+                                location.longitude.toString(),
+                                searchMaterialResponse.RFIDCode.toString()
+                            )
+                        )
+                    if (trackMaterialViewModel.lstTrackMaterialResponse.isNotEmpty()) {
+                        insertHandHeldDataAPICall()
+                    }
+                    if (currentLocationMarker == null) {
+                        // If marker doesn't exist, create a new marker
+                        currentLocationMarker = googleMap.addMarker(
+                            MarkerOptions().position(currentLatLng)
+                                .title(searchMaterialResponse.RFIDCode.toString()).icon(
+                                BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                            )
+                        )
+                    } else {
+                        // If marker exists, update its position
+                        currentLocationMarker?.position = currentLatLng
+                    }
+
                     googleMap.addMarker(
                         MarkerOptions().position(
                             LatLng(
@@ -264,7 +279,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         )
                     )
                 }
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 13f))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
             }
         }
     }
@@ -294,32 +309,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun insertHandHeldDataAPICall() {
-        trackMaterialViewModel.postInsertHandheldDataAPI(
-            this@TrackMaterialActivity,
-            persistenceManager.getAPIKeys(),
-            persistenceManager.getProjectId(),
-            persistenceManager.getSiteId(),
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
+        if(persistenceManager != null) {
+            trackMaterialViewModel.postInsertHandheldDataAPI(
+                this@TrackMaterialActivity,
+                persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+            )
+        }
     }
 
     companion object {
@@ -387,7 +384,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun epochToTime(elapsed: Long): String {
+    private fun epochToTime(elapsed: Long): String {
         val seconds = (elapsed / 1000) % 60
         val minutes = ((elapsed / (1000 * 60)) % 60)
         val hours = ((elapsed / (1000 * 60 * 60)) % 24)

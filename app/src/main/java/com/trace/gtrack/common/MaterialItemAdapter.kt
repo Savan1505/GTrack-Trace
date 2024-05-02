@@ -14,7 +14,7 @@ class MaterialItemAdapter(
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val ITEM_VIEW_TYPE_ITEM = 0
     private val ITEM_VIEW_TYPE_PROGRESS_BAR = 1
-    private var showProgressBar = false
+    var showProgressBar = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

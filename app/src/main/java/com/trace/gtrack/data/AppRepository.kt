@@ -1,5 +1,6 @@
 package com.trace.gtrack.data
 
+import android.util.Log
 import androidx.compose.ui.text.toUpperCase
 import com.google.firebase.auth.FirebaseAuth
 import com.trace.gtrack.data.model.AssignedMaterialResult
@@ -413,9 +414,11 @@ class AppRepository @Inject constructor(
                 // lstInsertHandHeldData = InsertHandHeldDataRequest(latitude: 123.456, longitude: 789.012, RFID: RFID123)
                 var jsonObjData = JSONObject()
 
+                Log.d("Savan", lstInsertHandHeldData.toString().length.toString())
                 try {
                     for (insertHandHeldData in lstInsertHandHeldData) {
                         val jsonObjInsertHandHeldData = JSONObject()
+                        Log.d("Savan", "insertHandHeldData : "+insertHandHeldData.toString())
                         jsonObjInsertHandHeldData.put("latitude", insertHandHeldData.latitude)
                         jsonObjInsertHandHeldData.put("longitude", insertHandHeldData.longitude)
                         jsonObjInsertHandHeldData.put("RFID", insertHandHeldData.rfid?.toUpperCase(Locale.ROOT))
@@ -424,6 +427,7 @@ class AppRepository @Inject constructor(
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
+                Log.d("Savan", "jsonObjData : "+jsonObjData.toString())
                 apiService.postInsertHandheldDataAPI(
                     apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId),
                     InsertHandheldRequest(jsonObjData.toString())
