@@ -51,7 +51,7 @@ class UnAssignQRActivity : AppCompatActivity() {
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
         }
-        binding.edtSearchMaterialCode.setOnClickListener {
+        /*binding.edtSearchMaterialCode.setOnClickListener {
             if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
                 Intent(this@UnAssignQRActivity, SearchActivity::class.java).apply {
                     materialCodeActivityForResult.launch(this)
@@ -60,7 +60,7 @@ class UnAssignQRActivity : AppCompatActivity() {
                 makeWarningToast(resources.getString(R.string.error_qrcode))
             }
 
-        }
+        }*/
         binding.ivScanQr.setOnClickListener {
             scanQrCode.launch(
                 ScannerConfig.build {

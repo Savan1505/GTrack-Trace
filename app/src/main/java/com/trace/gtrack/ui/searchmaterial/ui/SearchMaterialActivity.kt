@@ -44,7 +44,7 @@ class SearchMaterialActivity : AppCompatActivity() {
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
         }
-        binding.edtSearchMaterialCode.setOnClickListener {
+        /*binding.edtSearchMaterialCode.setOnClickListener {
             if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
                 Intent(this@SearchMaterialActivity, SearchActivity::class.java).apply {
                     materialCodeActivityForResult.launch(this)
@@ -53,7 +53,7 @@ class SearchMaterialActivity : AppCompatActivity() {
                 makeWarningToast(resources.getString(R.string.error_qrcode))
             }
 
-        }
+        }*/
         binding.edtScanQrHere.doOnTextChanged { text, start, before, count ->
             binding.btnFetchDetails.show()
             binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
