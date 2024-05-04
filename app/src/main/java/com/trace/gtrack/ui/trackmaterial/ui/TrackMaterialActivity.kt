@@ -245,15 +245,17 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     val currentLatLng = LatLng(location!!.latitude, location.longitude)
                     for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
                         val handHeldDeviceId = UUID.randomUUID().toString();
-                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                            listOf(
-                                InsertHandHeldDataRequest(
-                                    location.latitude,
-                                    location.longitude,
-                                    searchMaterialResponse.RFIDCode
+                        for (rfidCode in persistenceManager.getRFIDCode()) {
+                            trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                listOf(
+                                    InsertHandHeldDataRequest(
+                                        location.latitude,
+                                        location.longitude,
+                                        rfidCode
+                                    )
                                 )
                             )
-                        )
+                        }
                         trackMaterialViewModel.lstHandHeldDataRequest.addAll(
                             listOf(
                                 InsertHandHeldDataRequest(

@@ -28,6 +28,6 @@ interface IPersistenceManager {
     fun getLoginState(): Boolean
     fun setLoginState(isLogin: Boolean)
 
-    fun saveRFIDCode(rfidCode: String)
-    fun getRFIDCode(): String
+    fun saveRFIDCode(rfidCode: MutableList<String>)
+    fun getRFIDCode(): MutableList<String>
 }

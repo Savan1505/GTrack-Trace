@@ -100,12 +100,12 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
 
     }
 
-    override fun saveRFIDCode(rfidCode: String) {
+    override fun saveRFIDCode(rfidCode: MutableList<String>) {
         sharePref[KEY_RFID_CODE] = rfidCode
     }
 
-    override fun getRFIDCode(): String {
-        return sharePref[KEY_RFID_CODE, ""]
+    override fun getRFIDCode(): MutableList<String> {
+        return sharePref[KEY_RFID_CODE, mutableListOf()]
 
     }
 

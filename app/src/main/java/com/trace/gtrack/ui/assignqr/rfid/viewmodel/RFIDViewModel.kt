@@ -19,6 +19,7 @@ class RFIDViewModel @Inject constructor(
 ) : ViewModel() {
     private val mState = MutableLiveData<RFIDState>()
     val state: LiveData<RFIDState> = mState
+    var lstRFIDData: MutableList<String> = mutableListOf()
 //    private val mStateRFID = MutableLiveData<InsertRFIDState>()
 //    val stateRFID: LiveData<InsertRFIDState> = mStateRFID
 //    var lstInsertRFIDData: List<InsertHandHeldDataRequest> = ArrayList()
