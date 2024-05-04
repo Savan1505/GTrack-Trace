@@ -41,6 +41,7 @@ class SelectProSiteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySelectProjSiteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         projSiteViewModel.getProjectKeysAPI(this@SelectProSiteActivity)
         observe()
         binding.btnContinue.setOnClickListener {

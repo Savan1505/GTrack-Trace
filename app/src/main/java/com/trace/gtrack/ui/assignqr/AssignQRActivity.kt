@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.databinding.ActivityAssignqrBinding
 import com.trace.gtrack.ui.assignqr.iotcode.ui.IOTCodeActivity
@@ -20,6 +21,7 @@ class AssignQRActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAssignqrBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()

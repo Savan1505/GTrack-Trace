@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.trace.gtrack.R
 import com.trace.gtrack.databinding.ActivityForgotPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +17,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
     }
 
     companion object {

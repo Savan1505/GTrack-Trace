@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
+import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityProfileBinding
@@ -24,6 +25,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         binding.mainToolbar.ivBackButton.show()
         binding.edtUserName.text = Editable.Factory.getInstance().newEditable(persistenceManager.getUserName().uppercase(
             Locale.ROOT))

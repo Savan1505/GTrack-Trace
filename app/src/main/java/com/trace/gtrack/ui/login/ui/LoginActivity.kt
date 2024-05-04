@@ -41,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         observe()
         mSingleAccountApp()
         binding.tvForgotPwd.setOnClickListener {

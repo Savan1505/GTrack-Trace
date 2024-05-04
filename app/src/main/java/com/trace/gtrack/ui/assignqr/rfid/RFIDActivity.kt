@@ -60,6 +60,7 @@ class RFIDActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRfidBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         observe()
         /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(

@@ -2,6 +2,7 @@ package com.trace.gtrack.ui.home.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -35,6 +36,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         // Initialize the inactivity handler and runnable
         inactivityHandler = Handler()
         inactivityRunnable = Runnable {

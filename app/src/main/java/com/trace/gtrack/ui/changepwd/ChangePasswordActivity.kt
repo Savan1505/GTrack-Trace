@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.databinding.ActivityChangePasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,6 +18,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChangePasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()

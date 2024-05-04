@@ -24,7 +24,7 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
         private const val KEY_SITE_NAME = "siteName"
         private const val KEY_USER_LOGIN_STATE = "userLoginState"
         private const val KEY_IOT_CODE = "iotCode"
-        private const val KEY_RFID_CODE = "rfidCode"
+        const val KEY_RFID_CODE = "rfidCode"
 
     }
 
@@ -105,8 +105,11 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
     }
 
     override fun getRFIDCodeList(): MutableList<String> {
-        return sharePref[KEY_RFID_CODE, mutableListOf()]
-
+        if (sharePref.contains(KEY_RFID_CODE)) {
+            return sharePref[KEY_RFID_CODE, mutableListOf()]
+        } else {
+            return mutableListOf()
+        }
     }
 
     private val moshi: Moshi by lazy {

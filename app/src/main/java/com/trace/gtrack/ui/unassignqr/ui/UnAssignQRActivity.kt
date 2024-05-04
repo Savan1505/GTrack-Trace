@@ -41,6 +41,7 @@ class UnAssignQRActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUnassignQrBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         observe()
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {

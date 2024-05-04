@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.trace.gtrack.R
 import com.trace.gtrack.common.MaterialItemAdapter
 import com.trace.gtrack.common.utils.hide
 import com.trace.gtrack.common.utils.makeWarningToast
@@ -39,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         observe()
         binding.ivBack.setOnClickListener {
             finish()

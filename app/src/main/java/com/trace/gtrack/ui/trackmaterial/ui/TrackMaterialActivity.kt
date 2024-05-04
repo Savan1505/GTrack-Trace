@@ -35,6 +35,7 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.network.request.InsertHandHeldDataRequest
 import com.trace.gtrack.data.persistence.IPersistenceManager
+import com.trace.gtrack.data.persistence.PersistenceManager.Companion.KEY_RFID_CODE
 import com.trace.gtrack.databinding.ActivityTrackMaterialBinding
 import com.trace.gtrack.ui.assignqr.common.SearchActivity
 import com.trace.gtrack.ui.trackmaterial.viewmodel.HandHeldDataState
@@ -68,6 +69,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackMaterialBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         MapsInitializer.initialize(this@TrackMaterialActivity)
         observe()
         mapView = binding.mapView
@@ -182,6 +184,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertRFIDMapState.Error -> {
                     AppProgressDialog.hide()
+                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStart.isClickable = false
+                    binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStop.isClickable = false
+                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
                     makeWarningToast(it.msg)
                 }
 
@@ -251,16 +261,18 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     val currentLatLng = LatLng(location!!.latitude, location.longitude)
                     for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
                         val handHeldDeviceId = UUID.randomUUID().toString()
-                        for (rfidCode in persistenceManager.getRFIDCodeList()) {
-                            trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                                listOf(
-                                    InsertHandHeldDataRequest(
-                                        location.latitude,
-                                        location.longitude,
-                                        rfidCode
+                        if (persistenceManager.getRFIDCodeList().contains(KEY_RFID_CODE)) {
+                            for (rfidCode in persistenceManager.getRFIDCodeList()) {
+                                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                    listOf(
+                                        InsertHandHeldDataRequest(
+                                            location.latitude,
+                                            location.longitude,
+                                            rfidCode
+                                        )
                                     )
                                 )
-                            )
+                            }
                         }
                         trackMaterialViewModel.lstHandHeldDataRequest =
                             listOf(
