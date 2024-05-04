@@ -272,7 +272,6 @@ class RFIDActivity : AppCompatActivity() {
             binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
                 data.toString()
             )
-            binding.edtRfidCode.show()
             binding.btnStartScan.text = resources.getString(R.string.assign_RFID)
             persistenceManager.saveRFIDCode(data.toString())
         } else {

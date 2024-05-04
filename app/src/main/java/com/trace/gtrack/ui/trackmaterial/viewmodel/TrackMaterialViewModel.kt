@@ -27,9 +27,9 @@ class TrackMaterialViewModel @Inject constructor(
     val stateRFID: LiveData<InsertRFIDMapState> = mStateRFID
     private val mStateMapResult = MutableLiveData<InsertMapResultState>()
     val stateMapResult: LiveData<InsertMapResultState> = mStateMapResult
-    var lstInsertRFIDData: List<InsertHandHeldDataRequest> = ArrayList()
+    var lstInsertRFIDDataRequest: MutableList<InsertHandHeldDataRequest> = mutableListOf()
     var lstTrackMaterialResponse: List<SearchMaterialResponse> = ArrayList()
-    var lstHandHeldDataRequest: List<InsertHandHeldDataRequest> = ArrayList()
+    var lstHandHeldDataRequest: MutableList<InsertHandHeldDataRequest> = mutableListOf()
     var totalSearchTime: String = ""
     fun postSearchMaterialCodeAPI(
         context: Context, apiKey: String,
@@ -100,7 +100,7 @@ class TrackMaterialViewModel @Inject constructor(
                 apiKey,
                 projectId,
                 siteId,
-                lstInsertRFIDData,
+                lstInsertRFIDDataRequest,
             )) {
                 is CommonResult.Error -> {
                     mStateRFID.value = InsertRFIDMapState.Error(result.message)
