@@ -13,7 +13,7 @@
         <item name="colorOnSecondary">@color/colorOnPrimary</item>
         <item name="background">@color/colorSecondary</item>
         Status bar color.
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
         Customize your theme here.
     </style>
 
