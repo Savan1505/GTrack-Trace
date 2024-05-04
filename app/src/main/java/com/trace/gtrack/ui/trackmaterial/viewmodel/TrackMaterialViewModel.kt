@@ -29,7 +29,7 @@ class TrackMaterialViewModel @Inject constructor(
     val stateMapResult: LiveData<InsertMapResultState> = mStateMapResult
     var lstInsertRFIDDataRequest: MutableList<InsertHandHeldDataRequest> = mutableListOf()
     var lstTrackMaterialResponse: List<SearchMaterialResponse> = ArrayList()
-    var lstHandHeldDataRequest: MutableList<InsertHandHeldDataRequest> = mutableListOf()
+    var lstHandHeldDataRequest: List<InsertHandHeldDataRequest> = ArrayList()
     var totalSearchTime: String = ""
     fun postSearchMaterialCodeAPI(
         context: Context, apiKey: String,

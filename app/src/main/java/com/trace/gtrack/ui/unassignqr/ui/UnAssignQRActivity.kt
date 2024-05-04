@@ -1,26 +1,22 @@
 package com.trace.gtrack.ui.unassignqr.ui
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
-import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
+import com.trace.gtrack.common.utils.invisible
 import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.persistence.IPersistenceManager
 import com.trace.gtrack.databinding.ActivityUnassignQrBinding
-import com.trace.gtrack.ui.assignqr.common.SearchActivity
 import com.trace.gtrack.ui.unassignqr.viewmodel.UnAssignMaterialState
 import com.trace.gtrack.ui.unassignqr.viewmodel.UnAssignState
 import com.trace.gtrack.ui.unassignqr.viewmodel.UnAssignViewModel
@@ -28,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanCustomCode
 import io.github.g00fy2.quickie.config.ScannerConfig
-import io.github.g00fy2.quickie.content.QRContent
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -98,15 +93,16 @@ class UnAssignQRActivity : AppCompatActivity() {
         }
     }
 
-    private val materialCodeActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val intent = result.data?.getStringExtra("material_code")
-            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                intent.toString()
-            )
-            // Handle the Intent
+    private val materialCodeActivityForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data?.getStringExtra("material_code")
+                binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                    intent.toString()
+                )
+                // Handle the Intent
+            }
         }
-    }
 
     companion object {
         @JvmStatic
@@ -122,9 +118,10 @@ class UnAssignQRActivity : AppCompatActivity() {
         when (result) {
             is QRResult.QRSuccess -> {
                 binding.edtScanQrHere.text =
-                    Editable.Factory.getInstance().newEditable(result.content.rawValue
-                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                    Editable.Factory.getInstance().newEditable(
+                        result.content.rawValue
+                        // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                            ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
                     )
             }
 
@@ -166,6 +163,11 @@ class UnAssignQRActivity : AppCompatActivity() {
 
                 is UnAssignMaterialState.Error -> {
                     AppProgressDialog.hide()
+                    binding.edtScanQrHere.text?.clear()
+                    binding.edtSearchMaterialCode.text?.clear()
+                    binding.btnFetchDetails.text = getString(R.string.btn_fetch_details)
+                    isFetch = false
+                    binding.tilSearchMaterialCode.invisible()
                     makeWarningToast(it.msg)
                 }
 
@@ -175,8 +177,11 @@ class UnAssignQRActivity : AppCompatActivity() {
 
                 is UnAssignMaterialState.Success -> {
                     makeSuccessToast(it.message)
-                    binding.edtSearchMaterialCode.text?.clear()
                     binding.edtScanQrHere.text?.clear()
+                    binding.edtSearchMaterialCode.text?.clear()
+                    binding.btnFetchDetails.text = getString(R.string.btn_fetch_details)
+                    isFetch = false
+                    binding.tilSearchMaterialCode.invisible()
                     AppProgressDialog.hide()
                 }
 

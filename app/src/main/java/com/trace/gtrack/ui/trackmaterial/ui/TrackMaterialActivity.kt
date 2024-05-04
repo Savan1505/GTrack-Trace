@@ -85,15 +85,13 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnStart.setOnClickListener {
             startTimer()
-            if (persistenceManager != null) {
-                trackMaterialViewModel.postSearchMaterialCodeAPI(
-                    this@TrackMaterialActivity,
-                    persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                    binding.edtSearchMaterialCode.text.toString(),
-                )
-            }
+            trackMaterialViewModel.postSearchMaterialCodeAPI(
+                this@TrackMaterialActivity,
+                persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+                binding.edtSearchMaterialCode.text.toString(),
+            )
         }
         binding.btnStop.setOnClickListener {
             onResume()
@@ -108,7 +106,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
             }
             trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
-            if (persistenceManager != null) {
+            /*if (persistenceManager != null) {
                 trackMaterialViewModel.postInsertMAPSearchResultAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
@@ -117,7 +115,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     persistenceManager.getUserId(),
                     binding.edtSearchMaterialCode.text.toString(),
                 )
-            }
+            }*/
         }
     }
 
@@ -188,11 +186,19 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 InsertRFIDMapState.Loading -> {
-                    //AppProgressDialog.show(this)
+                    AppProgressDialog.show(this)
                 }
 
                 is InsertRFIDMapState.Success -> {
                     AppProgressDialog.hide()
+                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStart.isClickable = false
+                    binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStop.isClickable = false
+                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
                     makeSuccessToast(it.rfidMsg)
                 }
             }
@@ -212,14 +218,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertMapResultState.Success -> {
                     AppProgressDialog.hide()
-                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+                    /*trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
                     binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStop.isClickable = false
                     binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
                         ""
-                    )
+                    )*/
                     makeSuccessToast(it.mapResultMsg)
                 }
             }
@@ -244,7 +250,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                googleMap.clear()
                     val currentLatLng = LatLng(location!!.latitude, location.longitude)
                     for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
-                        val handHeldDeviceId = UUID.randomUUID().toString();
+                        val handHeldDeviceId = UUID.randomUUID().toString()
                         for (rfidCode in persistenceManager.getRFIDCodeList()) {
                             trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                 listOf(
@@ -256,7 +262,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                 )
                             )
                         }
-                        trackMaterialViewModel.lstHandHeldDataRequest.addAll(
+                        trackMaterialViewModel.lstHandHeldDataRequest =
                             listOf(
                                 InsertHandHeldDataRequest(
                                     location.latitude,
@@ -264,7 +270,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     handHeldDeviceId
                                 )
                             )
-                        )
                         if (trackMaterialViewModel.lstTrackMaterialResponse.isNotEmpty()) {
                             insertHandHeldDataAPICall()
                         }
@@ -274,7 +279,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                 MarkerOptions().position(currentLatLng)
                                     .title(searchMaterialResponse.RFIDCode.toString()).icon(
                                         BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
                                     )
                             )
                         } else {
@@ -288,9 +293,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     searchMaterialResponse.Latitude!!.toDouble(),
                                     searchMaterialResponse.Longitude!!.toDouble()
                                 )
-                            ).title(searchMaterialResponse.RFIDCode.toString()).icon(
+                            ).title(searchMaterialResponse.QRCode.toString()).icon(
                                 BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED)
                             )
                         )
                     }
@@ -312,9 +317,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                             searchMaterialResponse.Latitude!!.toDouble(),
                             searchMaterialResponse.Longitude!!.toDouble()
                         )
-                    ).title(searchMaterialResponse.RFIDCode.toString()).icon(
+                    ).title(searchMaterialResponse.QRCode.toString()).icon(
                         BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                            .defaultMarker(BitmapDescriptorFactory.HUE_RED)
                     )
                 )
                 googleMap.moveCamera(

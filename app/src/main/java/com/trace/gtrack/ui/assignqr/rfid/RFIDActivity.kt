@@ -20,6 +20,7 @@ import com.rscja.deviceapi.RFIDWithUHFUART
 import com.rscja.deviceapi.interfaces.IUHF
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
+import com.trace.gtrack.common.utils.invisible
 import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
@@ -310,6 +311,14 @@ class RFIDActivity : AppCompatActivity() {
 
                 is RFIDState.Success -> {
                     AppProgressDialog.hide()
+                    binding.tilRfidCode.invisible()
+                    binding.edtRfidCode.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
+                    binding.edtScanQrHere.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
+                    binding.btnStartScan.text = resources.getString(R.string.btn_scan_RFID)
                     makeSuccessToast(it.rfidMsg)
                 }
             }
