@@ -5,8 +5,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.SoundPool
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.text.Editable
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.rscja.deviceapi.RFIDWithUHFUART
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
 import com.trace.gtrack.common.utils.hide
@@ -44,8 +48,17 @@ import com.trace.gtrack.ui.trackmaterial.viewmodel.InsertRFIDMapState
 import com.trace.gtrack.ui.trackmaterial.viewmodel.TrackMaterialMaterialState
 import com.trace.gtrack.ui.trackmaterial.viewmodel.TrackMaterialViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+
+
+import com.rscja.deviceapi.entity.UHFTAGInfo
+import com.rscja.deviceapi.interfaces.IUHFInventoryCallback
+import com.trace.gtrack.ui.trackmaterial.RfidLocation
+
 
 @AndroidEntryPoint
 class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -62,9 +75,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     private var stopTime: Long = 0
     private var isRunning: Boolean = false
 
+    var mReader: RFIDWithUHFUART? = null
+    private var am: AudioManager? = null
+    private var volumnRatio = 1.0f
+    var soundMap = HashMap<Int, Int>()
+    private var soundPool: SoundPool? = null
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
-
+    var rfidLocation:ArrayList<RfidLocation>?= java.util.ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackMaterialBinding.inflate(layoutInflater)
@@ -74,7 +92,20 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         observe()
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
+        am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+        initSound();
+        mReader = try {
+            RFIDWithUHFUART.getInstance()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return
+        }
 
+        if (mReader != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mReader?.init()
+            }
+        }
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
@@ -98,6 +129,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.btnStop.setOnClickListener {
             onResume()
             mapView.hide()
+            mReader?.stopInventory()
             stopTimer()
             if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty() && persistenceManager != null) {
                 trackMaterialViewModel.postInsertRFIDDataAPI(
@@ -158,6 +190,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.btnStop.background = getDrawable(R.drawable.app_button_red_background)
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
                     mapView.getMapAsync(this)
+                    rfidReaderConnection()
+                    mReader?.startInventoryTag()!!
                 }
             }
         }
@@ -260,15 +294,15 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                googleMap.clear()
                     val currentLatLng = LatLng(location!!.latitude, location.longitude)
                     for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
-                        val handHeldDeviceId = UUID.randomUUID().toString()
-                        if (persistenceManager.getRFIDCodeList().contains(KEY_RFID_CODE)) {
-                            for (rfidCode in persistenceManager.getRFIDCodeList()) {
+                        val handHeldDeviceId = Settings.Secure.getString(contentResolver,Settings.Secure.ANDROID_ID)
+                        if (!rfidLocation.isNullOrEmpty()) {
+                            rfidLocation?.forEach {
                                 trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                     listOf(
                                         InsertHandHeldDataRequest(
                                             location.latitude,
                                             location.longitude,
-                                            rfidCode
+                                            it.rfid
                                         )
                                     )
                                 )
@@ -430,5 +464,64 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         val hours = ((elapsed / (1000 * 60 * 60)) % 24)
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    private fun playSound(id: Int) {
+        val audioMaxVolume =
+            am?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) // 返回当前AudioManager对象的最大音量值
+        val audioCurrentVolume =
+            am?.getStreamVolume(AudioManager.STREAM_MUSIC) // 返回当前AudioManager对象的音量值
+        volumnRatio = audioCurrentVolume?.toFloat()!! / audioMaxVolume?.toFloat()!!
+        try {
+            soundPool?.play(
+                soundMap.get(id)!!, volumnRatio,  // 左声道音量
+                volumnRatio,  // 右声道音量
+                1,  // 优先级，0为最低
+                0,  // 循环次数，0不循环，-1永远循环
+                1F // 回放速度 ，该值在0.5-2.0之间，1为正常速度
+            )
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun initSound() {
+        soundPool = SoundPool(10, AudioManager.STREAM_MUSIC, 5)
+        soundMap[1] = soundPool?.load(this, R.raw.barcodebeep, 1)!!
+        soundMap[2] = soundPool?.load(this, R.raw.serror, 1)!!
+        am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+    }
+
+    private fun releaseSoundPool() {
+        if (soundPool != null) {
+            soundPool?.release()
+            soundPool = null
+        }
+    }
+
+    private fun rfidReaderConnection() {
+        mReader?.setInventoryCallback(object : IUHFInventoryCallback {
+            override fun callback(uhftagInfo: UHFTAGInfo?) {
+                android.util.Log.e("rfid",""+uhftagInfo)
+                rfidLocation?.add(RfidLocation(rfid=uhftagInfo?.epc,
+                    longitude=0.00,
+                latitude=0.00))
+                trackMaterialViewModel.lstTrackMaterialResponse.forEach{
+                    if (it.RFIDCode.equals(uhftagInfo?.epc!!))
+                    {
+                        playSound(1)
+                    }
+
+                }
+
+            }
+        })
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseSoundPool()
+        if (mReader != null) {
+            mReader!!.free()
+        }
     }
 }
