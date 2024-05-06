@@ -497,18 +497,25 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun rfidReaderConnection() {
         mReader?.setInventoryCallback { uhftagInfo ->
-            trackMaterialViewModel.lstInsertRFIDDataRequest.add(
-                InsertHandHeldDataRequest(
-                    rfid = uhftagInfo?.epc,
-                    longitude = 0.00,
-                    latitude = 0.00
+            try {
+                trackMaterialViewModel.lstInsertRFIDDataRequest.add(
+                    InsertHandHeldDataRequest(
+                        rfid = uhftagInfo?.epc,
+                        longitude = 0.00,
+                        latitude = 0.00
+                    )
                 )
-            )
-            trackMaterialViewModel.lstTrackMaterialResponse.forEach {
-                if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
-                    playSound(1)
-                }
+                trackMaterialViewModel.lstTrackMaterialResponse.forEach {
+                    if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            playSound(1)
+                        }
 
+                    }
+
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
