@@ -125,6 +125,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             onResume()
             mapView.hide()
             mReader?.stopInventory()
+            releaseSoundPool()
             stopTimer()
             if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty() && persistenceManager != null) {
                 trackMaterialViewModel.postInsertRFIDDataAPI(
