@@ -126,7 +126,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             mapView.hide()
             mReader?.stopInventory()
             stopTimer()
-            if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty() && persistenceManager != null) {
+            if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
                 trackMaterialViewModel.postInsertRFIDDataAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
@@ -291,7 +291,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
                         val handHeldDeviceId =
                             Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-                        if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                        if (!(trackMaterialViewModel.lstInsertRFIDDataRequest.isNullOrEmpty())) {
                             trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
                                 trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                     listOf(
