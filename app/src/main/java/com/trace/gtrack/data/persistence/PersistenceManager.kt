@@ -2,17 +2,14 @@ package com.trace.gtrack.data.persistence
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.trace.gtrack.ui.login.model.LoginModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class PersistenceManager @Inject constructor(@ApplicationContext val context: Context) :
     IPersistenceManager {
 
-    val sharePref = context.getSharedPreferences("ForwardForm", Context.MODE_PRIVATE)
+    private val sharePref: SharedPreferences =
+        context.getSharedPreferences("ForwardForm", Context.MODE_PRIVATE)
 
     companion object {
         private const val KEY_USER_ID = "userId"
@@ -24,7 +21,6 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
         private const val KEY_SITE_NAME = "siteName"
         private const val KEY_USER_LOGIN_STATE = "userLoginState"
         private const val KEY_IOT_CODE = "iotCode"
-        const val KEY_RFID_CODE = "rfidCode"
 
     }
 
@@ -99,29 +95,6 @@ class PersistenceManager @Inject constructor(@ApplicationContext val context: Co
         return sharePref[KEY_IOT_CODE, ""]
 
     }
-
-    override fun saveRFIDCodeList(rfidCode: MutableList<String>) {
-        sharePref[KEY_RFID_CODE] = rfidCode
-    }
-
-    override fun getRFIDCodeList(): MutableList<String> {
-        if (sharePref.contains(KEY_RFID_CODE)) {
-            return sharePref[KEY_RFID_CODE, mutableListOf()]
-        } else {
-            return mutableListOf()
-        }
-    }
-
-    private val moshi: Moshi by lazy {
-        Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-    }
-
-    private val jsonAdapter: JsonAdapter<LoginModel> = moshi.adapter(LoginModel::class.java)
-
-    /*override fun logout() {
-        sharePref[KEY_USER] = ""
-        setLoginState(UserLoginState.Login)
-    }*/
 
     override fun getLoginState(): Boolean {
         return sharePref[KEY_USER_LOGIN_STATE, false]

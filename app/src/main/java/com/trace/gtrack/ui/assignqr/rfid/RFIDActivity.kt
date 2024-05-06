@@ -276,7 +276,6 @@ class RFIDActivity : AppCompatActivity() {
             )
             binding.btnStartScan.text = resources.getString(R.string.assign_RFID)
             rfidViewModel.lstRFIDData.add(data.toString())
-            persistenceManager.saveRFIDCodeList(rfidViewModel.lstRFIDData)
         } else {
             Toast.makeText(this, "Re-Scan RFID...", Toast.LENGTH_SHORT).show()
 

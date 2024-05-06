@@ -1,5 +1,6 @@
 package com.trace.gtrack.ui.trackmaterial.ui
 
+
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -39,7 +40,6 @@ import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
 import com.trace.gtrack.data.network.request.InsertHandHeldDataRequest
 import com.trace.gtrack.data.persistence.IPersistenceManager
-import com.trace.gtrack.data.persistence.PersistenceManager.Companion.KEY_RFID_CODE
 import com.trace.gtrack.databinding.ActivityTrackMaterialBinding
 import com.trace.gtrack.ui.assignqr.common.SearchActivity
 import com.trace.gtrack.ui.trackmaterial.viewmodel.HandHeldDataState
@@ -51,13 +51,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
-
-
-import com.rscja.deviceapi.entity.UHFTAGInfo
-import com.rscja.deviceapi.interfaces.IUHFInventoryCallback
-import com.trace.gtrack.ui.trackmaterial.RfidLocation
 
 
 @AndroidEntryPoint
@@ -80,9 +74,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     private var volumnRatio = 1.0f
     var soundMap = HashMap<Int, Int>()
     private var soundPool: SoundPool? = null
+
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
-    var rfidLocation:ArrayList<RfidLocation>?= java.util.ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackMaterialBinding.inflate(layoutInflater)
@@ -294,9 +289,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                googleMap.clear()
                     val currentLatLng = LatLng(location!!.latitude, location.longitude)
                     for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
-                        val handHeldDeviceId = Settings.Secure.getString(contentResolver,Settings.Secure.ANDROID_ID)
-                        if (!rfidLocation.isNullOrEmpty()) {
-                            rfidLocation?.forEach {
+                        val handHeldDeviceId =
+                            Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+                        if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                            trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
                                 trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                     listOf(
                                         InsertHandHeldDataRequest(
@@ -500,23 +496,23 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun rfidReaderConnection() {
-        mReader?.setInventoryCallback(object : IUHFInventoryCallback {
-            override fun callback(uhftagInfo: UHFTAGInfo?) {
-                android.util.Log.e("rfid",""+uhftagInfo)
-                rfidLocation?.add(RfidLocation(rfid=uhftagInfo?.epc,
-                    longitude=0.00,
-                latitude=0.00))
-                trackMaterialViewModel.lstTrackMaterialResponse.forEach{
-                    if (it.RFIDCode.equals(uhftagInfo?.epc!!))
-                    {
-                        playSound(1)
-                    }
-
+        mReader?.setInventoryCallback { uhftagInfo ->
+            trackMaterialViewModel.lstInsertRFIDDataRequest.add(
+                InsertHandHeldDataRequest(
+                    rfid = uhftagInfo?.epc,
+                    longitude = 0.00,
+                    latitude = 0.00
+                )
+            )
+            trackMaterialViewModel.lstTrackMaterialResponse.forEach {
+                if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
+                    playSound(1)
                 }
 
             }
-        })
+        }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         releaseSoundPool()
