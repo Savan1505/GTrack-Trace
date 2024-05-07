@@ -122,7 +122,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnStart.setOnClickListener {
             startTimer()
-            isStopClick=true
+            isStopClick=false
             trackMaterialViewModel.postSearchMaterialCodeAPI(
                 this@TrackMaterialActivity,
                 persistenceManager.getAPIKeys(),
@@ -136,17 +136,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             mapView.hide()
             mReader?.stopInventory()
             releaseSoundPool()
-            isStopClick=false
+            isStopClick=true
             stopTimer()
-            if (newInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
+            if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
 
                 trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
                 trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(newInsertRFIDDataRequest)
-                Log.e(
-                    "TAG",
-                    "onCreate: STOP lstInsertRFIDDataRequest " + Gson().toJson(trackMaterialViewModel.lstInsertRFIDDataRequest)
-                )
+
                 trackMaterialViewModel.postInsertRFIDDataAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
@@ -259,6 +256,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         ""
                     )
                     makeSuccessToast(it.rfidMsg)
+                    finish()
                 }
             }
         }

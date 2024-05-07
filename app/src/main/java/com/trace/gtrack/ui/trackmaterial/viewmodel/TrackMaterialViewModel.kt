@@ -90,10 +90,6 @@ class TrackMaterialViewModel @Inject constructor(
         siteId: String
     ) {
         mStateRFID.value = InsertRFIDMapState.Loading
-        Log.e(
-            "TAG",
-            "onCreate: STOP postInsertRFIDDataAPI " + Gson().toJson(lstInsertRFIDDataRequest)
-        )
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postInsertRFIDDataAPI(
                 apiKey,
