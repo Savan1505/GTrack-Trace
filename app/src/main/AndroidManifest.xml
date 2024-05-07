@@ -38,10 +38,11 @@
         android:theme="@style/Theme.GTrackTrace"
         android:usesCleartextTraffic="true"
         android:exported="true"
+        android:hardwareAccelerated="true"
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB0StHDfS7VI-vrWvnIUOJZiUthMhyokyQ" />
+            android:value="AIzaSyCCut0tAuLSkYbsGqzBpJcm3JZbUWvyX3I" />
         <activity
             android:name=".LandingActivity"
             android:exported="true"
