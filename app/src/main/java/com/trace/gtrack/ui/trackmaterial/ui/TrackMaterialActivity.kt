@@ -80,7 +80,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var handHeldDeviceId = ""
     val newInsertRFIDDataRequest = mutableListOf<InsertHandHeldDataRequest>()
-
+     var isStopClick=false
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
@@ -122,6 +122,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnStart.setOnClickListener {
             startTimer()
+            isStopClick=true
             trackMaterialViewModel.postSearchMaterialCodeAPI(
                 this@TrackMaterialActivity,
                 persistenceManager.getAPIKeys(),
@@ -135,6 +136,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             mapView.hide()
             mReader?.stopInventory()
             releaseSoundPool()
+            isStopClick=false
             stopTimer()
             if (newInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
@@ -300,74 +302,84 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (locationResult != null) {
                     super.onLocationResult(locationResult)
                 }
-                Handler().postDelayed(Runnable {
-                    for (location in locationResult.locations) {
-                        // Use latitude and longitude
+
+                    Handler().postDelayed(Runnable {
+                        if(!isStopClick) {
+                            for (location in locationResult.locations) {
+                                // Use latitude and longitude
 //                googleMap.clear()
-                        val currentLatLng = LatLng(location!!.latitude, location.longitude)
+                                val currentLatLng = LatLng(location!!.latitude, location.longitude)
 
 
-                        /*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                            newInsertRFIDDataRequest
-                        )*/
-                        for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
-                            if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
-                                trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
-                                    if (it.latitude == 0.0 && it.longitude == 0.0) {
-                                        newInsertRFIDDataRequest.add(
-                                            InsertHandHeldDataRequest(
-                                                location.latitude, location.longitude, it.rfid
-                                            )
-                                        )/*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                /*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                newInsertRFIDDataRequest
+                            )*/
+                                for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
+                                    if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                                        trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
+                                            if (it.latitude == 0.0 && it.longitude == 0.0) {
+                                                newInsertRFIDDataRequest.add(
+                                                    InsertHandHeldDataRequest(
+                                                        location.latitude,
+                                                        location.longitude,
+                                                        it.rfid
+                                                    )
+                                                )/*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                             listOf(
                                                 InsertHandHeldDataRequest(
                                                     location.latitude, location.longitude, it.rfid
                                                 )
                                             )
                                         )*/
+                                            }
+                                        }
                                     }
-                                }
-                            }
 
 
-                            trackMaterialViewModel.lstHandHeldDataRequest = listOf(
-                                InsertHandHeldDataRequest(
-                                    location.latitude, location.longitude, handHeldDeviceId
-                                )
-                            )
+                                    trackMaterialViewModel.lstHandHeldDataRequest = listOf(
+                                        InsertHandHeldDataRequest(
+                                            location.latitude, location.longitude, handHeldDeviceId
+                                        )
+                                    )
 
-                            if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
-                                insertHandHeldDataAPICall()
-                            }
-                            if (currentLocationMarker == null) {
-                                // If marker doesn't exist, create a new marker
-                                currentLocationMarker = googleMap.addMarker(
-                                    MarkerOptions().position(currentLatLng)
-                                        .title(searchMaterialResponse.RFIDCode.toString()).icon(
+                                    if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
+                                        insertHandHeldDataAPICall()
+                                    }
+                                    if (currentLocationMarker == null) {
+                                        // If marker doesn't exist, create a new marker
+                                        currentLocationMarker = googleMap.addMarker(
+                                            MarkerOptions().position(currentLatLng)
+                                                .title(searchMaterialResponse.RFIDCode.toString())
+                                                .icon(
+                                                    BitmapDescriptorFactory.defaultMarker(
+                                                        BitmapDescriptorFactory.HUE_GREEN
+                                                    )
+                                                )
+                                        )
+                                    } else {
+                                        // If marker exists, update its position
+                                        currentLocationMarker?.position = currentLatLng
+                                    }
+
+                                    googleMap.addMarker(
+                                        MarkerOptions().position(
+                                            LatLng(
+                                                searchMaterialResponse.Latitude!!.toDouble(),
+                                                searchMaterialResponse.Longitude!!.toDouble()
+                                            )
+                                        ).title(searchMaterialResponse.QRCode.toString()).icon(
                                             BitmapDescriptorFactory.defaultMarker(
-                                                BitmapDescriptorFactory.HUE_GREEN
+                                                BitmapDescriptorFactory.HUE_RED
                                             )
                                         )
-                                )
-                            } else {
-                                // If marker exists, update its position
-                                currentLocationMarker?.position = currentLatLng
-                            }
-
-                            googleMap.addMarker(
-                                MarkerOptions().position(
-                                    LatLng(
-                                        searchMaterialResponse.Latitude!!.toDouble(),
-                                        searchMaterialResponse.Longitude!!.toDouble()
                                     )
-                                ).title(searchMaterialResponse.QRCode.toString()).icon(
-                                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
-                                )
-                            )
+                                }
+                                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                            }
                         }
-                        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                    }
-                }, 3000)
+                    }, 3000)
+
+
 
             } catch (e: NumberFormatException) {
                 println("Error parsing string to double: ${e.message}")
@@ -461,6 +473,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         if (isRunning) {
             stopTime = System.currentTimeMillis()
             isRunning = false
+
             println("Timer stopped")
         } else {
             println("Timer is not running")
