@@ -1,10 +1,12 @@
 package com.trace.gtrack.ui.trackmaterial.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.safeLaunch
 import com.trace.gtrack.data.IAppRepository
@@ -32,29 +34,23 @@ class TrackMaterialViewModel @Inject constructor(
     var lstHandHeldDataRequest: List<InsertHandHeldDataRequest> = ArrayList()
     var totalSearchTime: String = ""
     fun postSearchMaterialCodeAPI(
-        context: Context, apiKey: String,
-        projectId: String,
-        siteId: String,
-        materialCode: String
+        context: Context, apiKey: String, projectId: String, siteId: String, materialCode: String
     ) {
         mState.value = TrackMaterialMaterialState.Loading
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postSearchMaterialCodeAPI(
-                apiKey,
-                projectId,
-                siteId, materialCode
+                apiKey, projectId, siteId, materialCode
             )) {
                 is SearchMaterialResult.Error -> {
                     mState.value = TrackMaterialMaterialState.Error(result.message)
                 }
 
                 is SearchMaterialResult.Success -> {
-                    mState.value =
-                        result.lstSearchMaterialResponse?.let {
-                            TrackMaterialMaterialState.Success(
-                                it
-                            )
-                        }
+                    mState.value = result.lstSearchMaterialResponse?.let {
+                        TrackMaterialMaterialState.Success(
+                            it
+                        )
+                    }
                 }
 
                 null -> mState.value =
@@ -67,13 +63,12 @@ class TrackMaterialViewModel @Inject constructor(
         context: Context, apiKey: String,
         projectId: String,
         siteId: String,
-    ) {
+
+        ) {
         mStateHH.value = HandHeldDataState.Loading
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postInsertHandheldDataAPI(
-                apiKey,
-                projectId,
-                siteId, lstHandHeldDataRequest
+                apiKey, projectId, siteId, lstHandHeldDataRequest
             )) {
                 is CommonResult.Error -> {
                     mStateHH.value = HandHeldDataState.Error(result.message)
@@ -90,11 +85,10 @@ class TrackMaterialViewModel @Inject constructor(
     }
 
     fun postInsertRFIDDataAPI(
-        context: Context, apiKey: String,
-        projectId: String,
-        siteId: String,
+        context: Context, apiKey: String, projectId: String, siteId: String
     ) {
         mStateRFID.value = InsertRFIDMapState.Loading
+
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postInsertRFIDDataAPI(
                 apiKey,
@@ -126,12 +120,7 @@ class TrackMaterialViewModel @Inject constructor(
         mStateMapResult.value = InsertMapResultState.Loading
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postInsertMAPSearchResultAPI(
-                apiKey,
-                projectId,
-                siteId,
-                userId,
-                materialCode,
-                totalSearchTime
+                apiKey, projectId, siteId, userId, materialCode, totalSearchTime
             )) {
                 is CommonResult.Error -> {
                     mStateMapResult.value = InsertMapResultState.Error(result.message)
