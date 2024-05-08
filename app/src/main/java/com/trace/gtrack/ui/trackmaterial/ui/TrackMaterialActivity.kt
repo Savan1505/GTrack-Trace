@@ -142,7 +142,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
 
                 trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(newInsertRFIDDataRequest)
+                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(newInsertRFIDDataRequest.distinct().toList())
 
                 trackMaterialViewModel.postInsertRFIDDataAPI(
                     this@TrackMaterialActivity,
