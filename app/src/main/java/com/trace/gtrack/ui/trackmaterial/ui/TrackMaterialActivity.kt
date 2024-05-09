@@ -96,6 +96,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound()
         mReader = try {
@@ -122,6 +123,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnStart.setOnClickListener {
             startTimer()
+            am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
             initSound()
             isStopClick = false
             trackMaterialViewModel.postSearchMaterialCodeAPI(
@@ -202,7 +204,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.btnStop.isClickable = true
                     binding.btnStop.background = getDrawable(R.drawable.app_button_red_background)
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
-                    mapView.getMapAsync(this)
                     rfidReaderConnection()
                     mReader?.startInventoryTag()!!
                 }
