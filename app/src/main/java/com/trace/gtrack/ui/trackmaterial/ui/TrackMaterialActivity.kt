@@ -135,11 +135,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         binding.btnStop.setOnClickListener {
             onResume()
-            mapView.hide()
-            mReader?.stopInventory()
-            releaseSoundPool()
-            isStopClick = true
-            stopTimer()
             if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
 
@@ -249,6 +244,11 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertRFIDMapState.Success -> {
                     AppProgressDialog.hide()
+                    mapView.hide()
+                    mReader?.stopInventory()
+                    releaseSoundPool()
+                    isStopClick = true
+                    stopTimer()
                     trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
@@ -445,7 +445,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                         LOCATION_PERMISSION_REQUEST_CODE
                     )
-//                    return
+                    return
                 }
                 googleMap.isMyLocationEnabled = true
                 // Zoom controls
