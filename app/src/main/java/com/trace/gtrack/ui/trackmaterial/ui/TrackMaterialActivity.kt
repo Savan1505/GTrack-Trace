@@ -122,6 +122,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnStart.setOnClickListener {
             startTimer()
+            initSound()
             isStopClick=false
             trackMaterialViewModel.postSearchMaterialCodeAPI(
                 this@TrackMaterialActivity,
@@ -403,7 +404,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         LatLng(
                             searchMaterialResponse.Latitude.toDouble(),
                             searchMaterialResponse.Longitude.toDouble()
-                        ), 10f
+                        ), 15f
                     )
                 )
             }
