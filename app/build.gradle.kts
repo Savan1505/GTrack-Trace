@@ -60,6 +60,7 @@ android {
                 "String",
                 "API_URL",
                 "\"http://gtrackntraceapi.garimasystem.com/\""
+//                "\"https://www.garima.linde-le.com/\""
 //                "\"https://gtrackntraceapi.garimasystem.com/\""
 //                "\"https://garimaapi.linde-le.com/\""
 

@@ -349,7 +349,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     // If marker doesn't exist, create a new marker
                                     currentLocationMarker = googleMap.addMarker(
                                         MarkerOptions().position(currentLatLng)
-                                            .title(searchMaterialResponse.RFIDCode.toString())
+                                            .title(handHeldDeviceId)
                                             .icon(
                                                 BitmapDescriptorFactory.defaultMarker(
                                                     BitmapDescriptorFactory.HUE_GREEN
@@ -431,9 +431,15 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
     override fun onMapReady(map: GoogleMap) {
         if (map != null) {
             googleMap = map
+            setMapLocation()
+            am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+            initSound();
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             if (locationRequest != null) {
                 if (ActivityCompat.checkSelfPermission(
@@ -445,7 +451,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                         LOCATION_PERMISSION_REQUEST_CODE
                     )
-                    return
+//                    return
                 }
                 googleMap.isMyLocationEnabled = true
                 // Zoom controls
@@ -454,7 +460,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     locationRequest, locationCallback, Looper.getMainLooper()
                 )
             }
-            setMapLocation()
         }
     }
 
@@ -553,7 +558,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        releaseSoundPool()
+        //releaseSoundPool()
         if (mReader != null) {
             mReader!!.free()
         }
