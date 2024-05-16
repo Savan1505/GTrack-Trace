@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Bundle
@@ -81,6 +80,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var handHeldDeviceId = ""
     val newInsertRFIDDataRequest = mutableListOf<InsertHandHeldDataRequest>()
+    val newInsertHandHeldRequest = mutableListOf<InsertHandHeldDataRequest>()
     var isStopClick = false
 
     @Inject
@@ -144,7 +144,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                             newInsertRFIDDataRequest.distinctBy { it.rfid })
                     }
                 }
-                if(trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
                     trackMaterialViewModel.postInsertRFIDDataAPI(
                         this@TrackMaterialActivity,
                         persistenceManager.getAPIKeys(),
@@ -391,16 +391,22 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     }
                                 }
 
-
-                                    trackMaterialViewModel.lstHandHeldDataRequest = listOf(
-                                        InsertHandHeldDataRequest(
-                                            location.latitude, location.longitude, handHeldDeviceId
-                                        )
+                                newInsertHandHeldRequest.add(
+                                    InsertHandHeldDataRequest(
+                                        location.latitude, location.longitude, handHeldDeviceId
                                     )
+                                )
+
+                                if (newInsertHandHeldRequest.isNotEmpty()) {
+                                    trackMaterialViewModel.lstHandHeldDataRequest =
+                                        newInsertHandHeldRequest.distinctBy {
+                                            it.latitude ?: it.longitude
+                                        }
 
                                     if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
                                         insertHandHeldDataAPICall()
                                     }
+                                }
 
                                 //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                             }
