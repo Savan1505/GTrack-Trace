@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Bundle
@@ -67,6 +68,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var previousLatitude: Double? = null
+    private var previousLongitude: Double? = null
     private val trackMaterialViewModel: TrackMaterialViewModel by viewModels()
     private var startTime: Long = 0
     private var stopTime: Long = 0
@@ -93,18 +96,17 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         handHeldDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         MapsInitializer.initialize(this@TrackMaterialActivity)
         observe()
-
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound()
-        mReader = try {
-            RFIDWithUHFUART.getInstance()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            return
-        }
-        mapView.getMapAsync(this)
+//        mReader = try {
+//            RFIDWithUHFUART.getInstance()
+//        } catch (ex: Exception) {
+//            ex.printStackTrace()
+//            return
+//        }
+//        mapView.getMapAsync(this)
         if (mReader != null) {
             CoroutineScope(Dispatchers.IO).launch {
                 mReader?.init()
@@ -147,6 +149,22 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     persistenceManager.getSiteId(),
                 )
 
+            } else {
+                mapView.hide()
+                mReader?.stopInventory()
+                releaseSoundPool()
+                isStopClick = true
+                stopTimer()
+                trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
+                trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+                trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+                binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                binding.btnStart.isClickable = false
+                binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+                binding.btnStop.isClickable = false
+                binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                    ""
+                )
             }
             trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())/*if (persistenceManager != null) {
                 trackMaterialViewModel.postInsertMAPSearchResultAPI(
@@ -198,8 +216,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.btnStop.background = getDrawable(R.drawable.app_button_red_background)
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
                     mapView.getMapAsync(this)
-                    rfidReaderConnection()
-                    mReader?.startInventoryTag()!!
+                    if (mReader != null) {
+                        rfidReaderConnection()
+                        mReader?.startInventoryTag()!!
+                    }
                 }
             }
         }
@@ -226,6 +246,11 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertRFIDMapState.Error -> {
                     AppProgressDialog.hide()
+                    mapView.hide()
+                    mReader?.stopInventory()
+                    releaseSoundPool()
+                    isStopClick = true
+                    stopTimer()
                     trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
@@ -235,6 +260,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         ""
                     )
                     makeWarningToast(it.msg)
+                    finish()
                 }
 
                 InsertRFIDMapState.Loading -> {
@@ -261,7 +287,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
-
         trackMaterialViewModel.stateMapResult.observe(this@TrackMaterialActivity) {
             when (it) {
 
@@ -334,46 +359,48 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     }
                                 }
 
-
-                                trackMaterialViewModel.lstHandHeldDataRequest = listOf(
-                                    InsertHandHeldDataRequest(
-                                        location.latitude, location.longitude, handHeldDeviceId
+                                val isNewLocationSame = isNewLocationSameAsPrevious(location)
+                                if (isNewLocationSame) {
+                                    trackMaterialViewModel.lstHandHeldDataRequest = listOf(
+                                        InsertHandHeldDataRequest(
+                                            location.latitude, location.longitude, handHeldDeviceId
+                                        )
                                     )
-                                )
 
-                                if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
-                                    insertHandHeldDataAPICall()
-                                }
-                                if (currentLocationMarker == null) {
-                                    // If marker doesn't exist, create a new marker
-                                    currentLocationMarker = googleMap.addMarker(
-                                        MarkerOptions().position(currentLatLng)
-                                            .title(handHeldDeviceId)
-                                            .icon(
-                                                BitmapDescriptorFactory.defaultMarker(
-                                                    BitmapDescriptorFactory.HUE_GREEN
+                                    if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
+                                        insertHandHeldDataAPICall()
+                                    }
+                                    if (currentLocationMarker == null) {
+                                        // If marker doesn't exist, create a new marker
+                                        currentLocationMarker = googleMap.addMarker(
+                                            MarkerOptions().position(currentLatLng)
+                                                .title(handHeldDeviceId)
+                                                .icon(
+                                                    BitmapDescriptorFactory.defaultMarker(
+                                                        BitmapDescriptorFactory.HUE_GREEN
+                                                    )
                                                 )
-                                            )
-                                    )
-                                } else {
-                                    // If marker exists, update its position
-                                    currentLocationMarker?.position = currentLatLng
-                                }
+                                        )
+                                    } else {
+                                        // If marker exists, update its position
+                                        currentLocationMarker?.position = currentLatLng
+                                    }
 
-                                googleMap.addMarker(
-                                    MarkerOptions().position(
-                                        LatLng(
-                                            searchMaterialResponse.Latitude!!.toDouble(),
-                                            searchMaterialResponse.Longitude!!.toDouble()
-                                        )
-                                    ).title(searchMaterialResponse.QRCode.toString()).icon(
-                                        BitmapDescriptorFactory.defaultMarker(
-                                            BitmapDescriptorFactory.HUE_RED
+                                    googleMap.addMarker(
+                                        MarkerOptions().position(
+                                            LatLng(
+                                                searchMaterialResponse.Latitude!!.toDouble(),
+                                                searchMaterialResponse.Longitude!!.toDouble()
+                                            )
+                                        ).title(searchMaterialResponse.QRCode.toString()).icon(
+                                            BitmapDescriptorFactory.defaultMarker(
+                                                BitmapDescriptorFactory.HUE_RED
+                                            )
                                         )
                                     )
-                                )
+                                }
+                                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                             }
-                            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                         }
                     }
                 }, 3000)
@@ -568,5 +595,28 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         if (mReader != null) {
             mReader!!.free()
         }
+    }
+
+    fun isNewLocationSameAsPrevious(newLocation: Location): Boolean {
+        val currentLatitude = newLocation.latitude
+        val currentLongitude = newLocation.longitude
+
+        // Check if previous location is null
+        if (previousLatitude == null || previousLongitude == null) {
+            // Store the current location as the previous location
+            previousLatitude = currentLatitude
+            previousLongitude = currentLongitude
+            return false
+        }
+
+        // Compare current location with previous location
+        val isSameLocation =
+            currentLatitude == previousLatitude && currentLongitude == previousLongitude
+
+        // Update previous location with current location
+        previousLatitude = currentLatitude
+        previousLongitude = currentLongitude
+
+        return isSameLocation
     }
 }
