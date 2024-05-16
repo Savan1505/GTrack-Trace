@@ -68,8 +68,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var previousLatitude: Double? = null
-    private var previousLongitude: Double? = null
     private val trackMaterialViewModel: TrackMaterialViewModel by viewModels()
     private var startTime: Long = 0
     private var stopTime: Long = 0
@@ -140,14 +138,20 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
                 trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
                 trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(newInsertRFIDDataRequest.distinctBy { it.rfid })
-
-                trackMaterialViewModel.postInsertRFIDDataAPI(
-                    this@TrackMaterialActivity,
-                    persistenceManager.getAPIKeys(),
-                    persistenceManager.getProjectId(),
-                    persistenceManager.getSiteId(),
-                )
+                newInsertRFIDDataRequest.forEach { it1 ->
+                    if (it1.latitude != 0.0 && it1.longitude != 0.0) {
+                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                            newInsertRFIDDataRequest.distinctBy { it.rfid })
+                    }
+                }
+                if(trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                    trackMaterialViewModel.postInsertRFIDDataAPI(
+                        this@TrackMaterialActivity,
+                        persistenceManager.getAPIKeys(),
+                        persistenceManager.getProjectId(),
+                        persistenceManager.getSiteId(),
+                    )
+                }
 
             } else {
                 mapView.hide()
@@ -339,6 +343,34 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                             newInsertRFIDDataRequest
                         )*/
                             for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
+                                if (currentLocationMarker == null) {
+                                    // If marker doesn't exist, create a new marker
+                                    currentLocationMarker = googleMap.addMarker(
+                                        MarkerOptions().position(currentLatLng)
+                                            .title(handHeldDeviceId)
+                                            .icon(
+                                                BitmapDescriptorFactory.defaultMarker(
+                                                    BitmapDescriptorFactory.HUE_GREEN
+                                                )
+                                            )
+                                    )
+                                } else {
+                                    // If marker exists, update its position
+                                    currentLocationMarker?.position = currentLatLng
+                                }
+
+                                googleMap.addMarker(
+                                    MarkerOptions().position(
+                                        LatLng(
+                                            searchMaterialResponse.Latitude!!.toDouble(),
+                                            searchMaterialResponse.Longitude!!.toDouble()
+                                        )
+                                    ).title(searchMaterialResponse.QRCode.toString()).icon(
+                                        BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_RED
+                                        )
+                                    )
+                                )
                                 if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
                                     trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
                                         if (it.latitude == 0.0 && it.longitude == 0.0) {
@@ -359,8 +391,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     }
                                 }
 
-                                val isNewLocationSame = isNewLocationSameAsPrevious(location)
-                                if (isNewLocationSame) {
+
                                     trackMaterialViewModel.lstHandHeldDataRequest = listOf(
                                         InsertHandHeldDataRequest(
                                             location.latitude, location.longitude, handHeldDeviceId
@@ -370,37 +401,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                     if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
                                         insertHandHeldDataAPICall()
                                     }
-                                    if (currentLocationMarker == null) {
-                                        // If marker doesn't exist, create a new marker
-                                        currentLocationMarker = googleMap.addMarker(
-                                            MarkerOptions().position(currentLatLng)
-                                                .title(handHeldDeviceId)
-                                                .icon(
-                                                    BitmapDescriptorFactory.defaultMarker(
-                                                        BitmapDescriptorFactory.HUE_GREEN
-                                                    )
-                                                )
-                                        )
-                                    } else {
-                                        // If marker exists, update its position
-                                        currentLocationMarker?.position = currentLatLng
-                                    }
 
-                                    googleMap.addMarker(
-                                        MarkerOptions().position(
-                                            LatLng(
-                                                searchMaterialResponse.Latitude!!.toDouble(),
-                                                searchMaterialResponse.Longitude!!.toDouble()
-                                            )
-                                        ).title(searchMaterialResponse.QRCode.toString()).icon(
-                                            BitmapDescriptorFactory.defaultMarker(
-                                                BitmapDescriptorFactory.HUE_RED
-                                            )
-                                        )
-                                    )
-                                }
                                 //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                             }
+
                         }
                     }
                 }, 3000)
@@ -595,28 +599,5 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         if (mReader != null) {
             mReader!!.free()
         }
-    }
-
-    fun isNewLocationSameAsPrevious(newLocation: Location): Boolean {
-        val currentLatitude = newLocation.latitude
-        val currentLongitude = newLocation.longitude
-
-        // Check if previous location is null
-        if (previousLatitude == null || previousLongitude == null) {
-            // Store the current location as the previous location
-            previousLatitude = currentLatitude
-            previousLongitude = currentLongitude
-            return false
-        }
-
-        // Compare current location with previous location
-        val isSameLocation =
-            currentLatitude == previousLatitude && currentLongitude == previousLongitude
-
-        // Update previous location with current location
-        previousLatitude = currentLatitude
-        previousLongitude = currentLongitude
-
-        return isSameLocation
     }
 }
