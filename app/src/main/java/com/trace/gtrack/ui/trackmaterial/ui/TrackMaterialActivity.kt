@@ -100,12 +100,12 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound()
-//        mReader = try {
-//            RFIDWithUHFUART.getInstance()
-//        } catch (ex: Exception) {
-//            ex.printStackTrace()
-//            return
-//        }
+        mReader = try {
+            RFIDWithUHFUART.getInstance()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return
+        }
 //        mapView.getMapAsync(this)
         if (mReader != null) {
             CoroutineScope(Dispatchers.IO).launch {
