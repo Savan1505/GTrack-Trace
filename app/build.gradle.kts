@@ -59,10 +59,9 @@ android {
             buildConfigField(
                 "String",
                 "API_URL",
-                "\"http://gtrackntraceapi.garimasystem.com/\""
-//                "\"https://www.garima.linde-le.com/\""
+//                "\"http://gtrackntraceapi.garimasystem.com/\""
 //                "\"https://gtrackntraceapi.garimasystem.com/\""
-//                "\"https://garimaapi.linde-le.com/\""
+                "\"https://garimaapi.linde-le.com/\""
 
 //            "Instance": "https://login.microsoftonline.com/",
 //
@@ -94,7 +93,7 @@ android {
 }
 
 dependencies {
-  //  implementation(project(":RFIDAPI3Library", "default"))
+    //  implementation(project(":RFIDAPI3Library", "default"))
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")

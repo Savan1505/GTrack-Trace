@@ -104,7 +104,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             ex.printStackTrace()
             return
         }
-
+        mapView.getMapAsync(this)
         if (mReader != null) {
             CoroutineScope(Dispatchers.IO).launch {
                 mReader?.init()
@@ -134,10 +134,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             )
         }
         binding.btnStop.setOnClickListener {
-            onResume()
             if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
-
+                trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
                 trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
                 trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(newInsertRFIDDataRequest.distinctBy { it.rfid })
 
@@ -303,7 +302,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     super.onLocationResult(locationResult)
                 }
 
-                Handler().postDelayed(Runnable {
+                Handler().postDelayed({
                     if (!isStopClick) {
                         for (location in locationResult.locations) {
                             // Use latitude and longitude
@@ -431,9 +430,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
     override fun onMapReady(map: GoogleMap) {
         if (map != null) {
             googleMap = map
@@ -444,6 +440,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             if (locationRequest != null) {
                 if (ActivityCompat.checkSelfPermission(
                         this, Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     ActivityCompat.requestPermissions(
@@ -453,12 +451,20 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     )
 //                    return
                 }
-                googleMap.isMyLocationEnabled = true
-                // Zoom controls
-                googleMap.uiSettings.isZoomControlsEnabled = true
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest, locationCallback, Looper.getMainLooper()
-                )
+
+                if (ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    googleMap.isMyLocationEnabled = true
+                    // Zoom controls
+                    googleMap.uiSettings.isZoomControlsEnabled = true
+                    fusedLocationClient.requestLocationUpdates(
+                        locationRequest, locationCallback, Looper.getMainLooper()
+                    )
+                }
             }
         }
     }
