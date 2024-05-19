@@ -112,7 +112,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         MapsInitializer.initialize(this@TrackMaterialActivity)
         //mapView = binding.mapView
-//        binding.mapView.onCreate(savedInstanceState)
+        binding.mapView.onCreate(savedInstanceState)
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound()
         mReader = try {
@@ -499,6 +499,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         if (map != null) {
             googleMap = map
             if (::googleMap.isInitialized) {
+
                 googleMap.isMyLocationEnabled = true
                 // Zoom controls
                 googleMap.uiSettings.isZoomControlsEnabled = true
