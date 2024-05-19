@@ -26,7 +26,6 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -37,7 +36,7 @@ import com.google.gson.Gson
 import com.rscja.deviceapi.RFIDWithUHFUART
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
-import com.trace.gtrack.common.utils.hide
+import com.trace.gtrack.common.utils.invisible
 import com.trace.gtrack.common.utils.makeSuccessToast
 import com.trace.gtrack.common.utils.makeWarningToast
 import com.trace.gtrack.common.utils.show
@@ -61,16 +60,17 @@ import javax.inject.Inject
 class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityTrackMaterialBinding
-    private lateinit var mapView: MapView
+
+    //    private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private var currentLocationMarker: Marker? = null
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val trackMaterialViewModel: TrackMaterialViewModel by viewModels()
-    private var startTime: Long = 0
-    private var stopTime: Long = 0
-    private var isRunning: Boolean = false
+//    private var startTime: Long = 0
+//    private var stopTime: Long = 0
+    // private var isRunning: Boolean = false
 
     var mReader: RFIDWithUHFUART? = null
     private var am: AudioManager? = null
@@ -80,11 +80,15 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var handHeldDeviceId = ""
     val newInsertRFIDDataRequest = mutableListOf<InsertHandHeldDataRequest>()
-    val newInsertHandHeldRequest = mutableListOf<InsertHandHeldDataRequest>()
-    var isStopClick = false
+    //var isStopClick = false
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
+
+    override fun onStart() {
+        super.onStart()
+        AppProgressDialog.show(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,10 +96,23 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
         window.statusBarColor = resources.getColor(R.color.colorPrimary)
         handHeldDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        MapsInitializer.initialize(this@TrackMaterialActivity)
         observe()
-        mapView = binding.mapView
-        mapView.onCreate(savedInstanceState)
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+//                    return
+        }
+        MapsInitializer.initialize(this@TrackMaterialActivity)
+        //mapView = binding.mapView
+//        binding.mapView.onCreate(savedInstanceState)
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
         initSound()
         mReader = try {
@@ -104,12 +121,13 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             ex.printStackTrace()
             return
         }
-//        mapView.getMapAsync(this)
+        binding.mapView.getMapAsync(this)
         if (mReader != null) {
             CoroutineScope(Dispatchers.IO).launch {
                 mReader?.init()
             }
         }
+        binding.btnStart.isClickable = false
         binding.mainToolbar.ivBackButton.show()
         binding.mainToolbar.ivBackButton.setOnClickListener {
             finish()
@@ -121,10 +139,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         binding.btnStart.setOnClickListener {
-            startTimer()
+            //startTimer()
             am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
             initSound()
-            isStopClick = false
+            //isStopClick = false
             trackMaterialViewModel.postSearchMaterialCodeAPI(
                 this@TrackMaterialActivity,
                 persistenceManager.getAPIKeys(),
@@ -133,6 +151,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 binding.edtSearchMaterialCode.text.toString(),
             )
         }
+
         binding.btnStop.setOnClickListener {
             if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
                 Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
@@ -153,24 +172,25 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     )
                 }
 
-            } else {
-                mapView.hide()
-                mReader?.stopInventory()
-                releaseSoundPool()
-                isStopClick = true
-                stopTimer()
-                trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
-                trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-                trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
-                binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
-                binding.btnStart.isClickable = false
-                binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
-                binding.btnStop.isClickable = false
-                binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                    ""
-                )
             }
-            trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())/*if (persistenceManager != null) {
+            binding.mapView.invisible()
+            mReader?.stopInventory()
+            releaseSoundPool()
+            //isStopClick = true
+            //stopTimer()
+            trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
+            trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+            trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+            binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.btnStart.isClickable = false
+            binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.btnStop.isClickable = false
+            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                ""
+            )
+
+            /*trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
+            if (persistenceManager != null) {
                 trackMaterialViewModel.postInsertMAPSearchResultAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
@@ -192,6 +212,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
                 if (binding.edtSearchMaterialCode.text.toString().isNotEmpty()) {
                     binding.btnStart.isClickable = true
+                    binding.btnStart.isEnabled = true
                     binding.btnStart.background = getDrawable(R.drawable.app_button_background)
                 }
                 // Handle the Intent
@@ -205,6 +226,13 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 is TrackMaterialMaterialState.Error -> {
                     AppProgressDialog.hide()
                     makeWarningToast(it.msg)
+                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStart.isClickable = false
+                    binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+                    binding.btnStop.isClickable = false
+                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
                 }
 
                 TrackMaterialMaterialState.Loading -> {
@@ -213,16 +241,20 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is TrackMaterialMaterialState.Success -> {
                     AppProgressDialog.hide()
-                    mapView.show()
+                    binding.mapView.show()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
                     binding.btnStop.isClickable = true
                     binding.btnStop.background = getDrawable(R.drawable.app_button_red_background)
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
-                    mapView.getMapAsync(this)
+                    binding.mapView.getMapAsync(this)
                     if (mReader != null) {
                         rfidReaderConnection()
                         mReader?.startInventoryTag()!!
+                    }
+
+                    if (::googleMap.isInitialized) {
+                        setMapLocation()
                     }
                 }
             }
@@ -250,11 +282,11 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertRFIDMapState.Error -> {
                     AppProgressDialog.hide()
-                    mapView.hide()
+                    binding.mapView.invisible()
                     mReader?.stopInventory()
                     releaseSoundPool()
-                    isStopClick = true
-                    stopTimer()
+                    //isStopClick = true
+                    //stopTimer()
                     trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
@@ -273,11 +305,11 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 is InsertRFIDMapState.Success -> {
                     AppProgressDialog.hide()
-                    mapView.hide()
+                    binding.mapView.invisible()
                     mReader?.stopInventory()
                     releaseSoundPool()
-                    isStopClick = true
-                    stopTimer()
+                    //isStopClick = true
+                    //stopTimer()
                     trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
@@ -326,126 +358,122 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            try {
-                if (locationResult != null) {
-                    super.onLocationResult(locationResult)
-                }
+            if (::googleMap.isInitialized) {
+                try {
+                    if (locationResult != null) {
+                        super.onLocationResult(locationResult)
 
-                Handler().postDelayed({
-                    if (!isStopClick) {
-                        for (location in locationResult.locations) {
-                            // Use latitude and longitude
+                        Handler().postDelayed({
+                            // if (!isStopClick) {
+                            for (location in locationResult.locations) {
+                                // Use latitude and longitude
 //                googleMap.clear()
-                            val currentLatLng = LatLng(location!!.latitude, location.longitude)
+                                val currentLatLng = LatLng(location!!.latitude, location.longitude)
 
 
-                            /*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                /*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                             newInsertRFIDDataRequest
                         )*/
-                            for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
-                                if (currentLocationMarker == null) {
-                                    // If marker doesn't exist, create a new marker
-                                    currentLocationMarker = googleMap.addMarker(
-                                        MarkerOptions().position(currentLatLng)
-                                            .title(handHeldDeviceId)
-                                            .icon(
-                                                BitmapDescriptorFactory.defaultMarker(
-                                                    BitmapDescriptorFactory.HUE_GREEN
+                                for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
+                                    if (currentLocationMarker == null) {
+                                        // If marker doesn't exist, create a new marker
+                                        currentLocationMarker = googleMap.addMarker(
+                                            MarkerOptions().position(currentLatLng)
+                                                .title(handHeldDeviceId)
+                                                .icon(
+                                                    BitmapDescriptorFactory.defaultMarker(
+                                                        BitmapDescriptorFactory.HUE_GREEN
+                                                    )
                                                 )
-                                            )
-                                    )
-                                } else {
-                                    // If marker exists, update its position
-                                    currentLocationMarker?.position = currentLatLng
-                                }
+                                        )
+                                    } else {
+                                        // If marker exists, update its position
+                                        currentLocationMarker?.position = currentLatLng
+                                    }
 
-                                googleMap.addMarker(
-                                    MarkerOptions().position(
-                                        LatLng(
-                                            searchMaterialResponse.Latitude!!.toDouble(),
-                                            searchMaterialResponse.Longitude!!.toDouble()
-                                        )
-                                    ).title(searchMaterialResponse.QRCode.toString()).icon(
-                                        BitmapDescriptorFactory.defaultMarker(
-                                            BitmapDescriptorFactory.HUE_RED
+                                    googleMap.addMarker(
+                                        MarkerOptions().position(
+                                            LatLng(
+                                                searchMaterialResponse.Latitude!!.toDouble(),
+                                                searchMaterialResponse.Longitude!!.toDouble()
+                                            )
+                                        ).title(searchMaterialResponse.QRCode.toString()).icon(
+                                            BitmapDescriptorFactory.defaultMarker(
+                                                BitmapDescriptorFactory.HUE_RED
+                                            )
                                         )
                                     )
-                                )
-                                if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
-                                    trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
-                                        if (it.latitude == 0.0 && it.longitude == 0.0) {
-                                            newInsertRFIDDataRequest.add(
-                                                InsertHandHeldDataRequest(
-                                                    location.latitude,
-                                                    location.longitude,
-                                                    it.rfid
-                                                )
-                                            )/*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                    if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                                        trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
+                                            if (it.latitude == 0.0 && it.longitude == 0.0) {
+                                                newInsertRFIDDataRequest.add(
+                                                    InsertHandHeldDataRequest(
+                                                        location.latitude,
+                                                        location.longitude,
+                                                        it.rfid
+                                                    )
+                                                )/*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                             listOf(
                                                 InsertHandHeldDataRequest(
                                                     location.latitude, location.longitude, it.rfid
                                                 )
                                             )
                                         )*/
+                                            }
                                         }
                                     }
-                                }
 
-                                newInsertHandHeldRequest.add(
-                                    InsertHandHeldDataRequest(
-                                        location.latitude, location.longitude, handHeldDeviceId
+                                    trackMaterialViewModel.lstHandHeldDataRequest = listOf(
+                                        InsertHandHeldDataRequest(
+                                            location.latitude, location.longitude, handHeldDeviceId
+                                        )
                                     )
-                                )
-
-                                if (newInsertHandHeldRequest.isNotEmpty()) {
-                                    trackMaterialViewModel.lstHandHeldDataRequest =
-                                        newInsertHandHeldRequest.distinctBy {
-                                            it.latitude ?: it.longitude
-                                        }
 
                                     if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
                                         insertHandHeldDataAPICall()
                                     }
+
+                                    //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                                 }
 
-                                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                             }
-
-                        }
+                            //}
+                        }, 3000)
                     }
-                }, 3000)
 
-
-            } catch (e: NumberFormatException) {
-                println("Error parsing string to double: ${e.message}")
+                } catch (e: NumberFormatException) {
+                    println("Error parsing string to double: ${e.message}")
+                }
             }
         }
     }
 
     private fun setMapLocation() {
-        try {
-            for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
-                googleMap.addMarker(
-                    MarkerOptions().position(
-                        LatLng(
-                            searchMaterialResponse.Latitude!!.toDouble(),
-                            searchMaterialResponse.Longitude!!.toDouble()
+        if (::googleMap.isInitialized) {
+            try {
+                for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
+                    googleMap.addMarker(
+                        MarkerOptions().position(
+                            LatLng(
+                                searchMaterialResponse.Latitude!!.toDouble(),
+                                searchMaterialResponse.Longitude!!.toDouble()
+                            )
+                        ).title(searchMaterialResponse.QRCode.toString()).icon(
+                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
                         )
-                    ).title(searchMaterialResponse.QRCode.toString()).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
                     )
-                )
-                googleMap.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        LatLng(
-                            searchMaterialResponse.Latitude.toDouble(),
-                            searchMaterialResponse.Longitude.toDouble()
-                        ), 15f
+                    googleMap.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(
+                                searchMaterialResponse.Latitude.toDouble(),
+                                searchMaterialResponse.Longitude.toDouble()
+                            ), 15f
+                        )
                     )
-                )
+                }
+            } catch (e: NumberFormatException) {
+                println("Error parsing string to double: ${e.message}")
             }
-        } catch (e: NumberFormatException) {
-            println("Error parsing string to double: ${e.message}")
         }
     }
 
@@ -470,43 +498,52 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         if (map != null) {
             googleMap = map
-            setMapLocation()
-            am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
-            initSound();
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            if (locationRequest != null) {
-                if (ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        LOCATION_PERMISSION_REQUEST_CODE
-                    )
-//                    return
-                }
-
-                if (ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    googleMap.isMyLocationEnabled = true
-                    // Zoom controls
-                    googleMap.uiSettings.isZoomControlsEnabled = true
-                    fusedLocationClient.requestLocationUpdates(
-                        locationRequest, locationCallback, Looper.getMainLooper()
-                    )
+            if (::googleMap.isInitialized) {
+                googleMap.isMyLocationEnabled = true
+                // Zoom controls
+                googleMap.uiSettings.isZoomControlsEnabled = true
+                am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+                initSound();
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+                if (locationRequest != null) {
+                    if (ActivityCompat.checkSelfPermission(
+                            this, Manifest.permission.ACCESS_FINE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            this, Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        fusedLocationClient.requestLocationUpdates(
+                            locationRequest, locationCallback, Looper.getMainLooper()
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun startTimer() {
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppProgressDialog.hide()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseSoundPool()
+        //stopTimer()
+        if (::googleMap.isInitialized) {
+            googleMap.clear()
+        }
+        if (mReader != null) {
+            mReader?.stopInventory()
+            mReader!!.free()
+        }
+    }
+
+    /*private fun startTimer() {
         if (!isRunning) {
             startTime = System.currentTimeMillis()
             isRunning = true
@@ -533,7 +570,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             stopTime - startTime
         }
-    }
+    }*/
 
     private fun epochToTime(elapsed: Long): String {
         val seconds = (elapsed / 1000) % 60
@@ -587,7 +624,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 trackMaterialViewModel.lstTrackMaterialResponse.forEach {
                     if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            playSound(1)
+                            playSound(2)
                         }
 
                     }
@@ -596,14 +633,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //releaseSoundPool()
-        if (mReader != null) {
-            mReader!!.free()
         }
     }
 }

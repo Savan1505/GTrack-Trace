@@ -5,8 +5,7 @@
     android:layout_height="@dimen/height_140dp"
     android:background="@color/colorPrimary"
     android:paddingLeft="@dimen/margin_big"
-    android:paddingTop="@dimen/margin_big"
-    android:paddingRight="@dimen/margin_big">
+    android:paddingTop="@dimen/margin_big">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_nav_profile"
@@ -24,7 +23,7 @@
         android:layout_height="match_parent"
         android:gravity="start|center_vertical"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/margin_tiny"
+        android:paddingLeft="@dimen/margin_extra_tiny"
         app:layout_constraintStart_toEndOf="@id/iv_nav_profile"
         app:layout_constraintTop_toTopOf="parent">
 
