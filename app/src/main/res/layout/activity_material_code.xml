@@ -37,7 +37,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:paddingTop="@dimen/size_back_button"
-                        android:paddingBottom="@dimen/height_140dp"
+                        android:paddingBottom="@dimen/height_185dp"
                         android:text="@string/assign_qr_to_material_code"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>

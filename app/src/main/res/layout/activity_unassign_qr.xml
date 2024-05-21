@@ -37,7 +37,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:paddingTop="@dimen/size_back_button"
-                        android:paddingBottom="@dimen/height_140dp"
+                        android:paddingBottom="@dimen/height_185dp"
                         android:text="@string/unassign_qr"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -119,7 +119,7 @@
                             android:layout_marginBottom="@dimen/input_field_radius"
                             android:hint="@string/material_code"
                             android:textColorHint="@color/grey_100"
-                            android:visibility="invisible"
+                            android:visibility="gone"
                             app:boxBackgroundColor="@color/colorSecondary"
                             app:boxBackgroundMode="outline"
                             app:boxCornerRadiusBottomEnd="@dimen/input_field_radius"

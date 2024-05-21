@@ -37,7 +37,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:paddingTop="@dimen/size_back_button"
-                        android:paddingBottom="@dimen/height_140dp"
+                        android:paddingBottom="@dimen/height_185dp"
                         android:text="@string/search_material"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -124,7 +124,7 @@
                             app:boxCornerRadiusTopStart="@dimen/input_field_radius"
                             app:boxStrokeColor="@color/colorPrimary"
                             app:boxStrokeWidth="@dimen/divider_width"
-                            android:visibility="invisible"
+                            android:visibility="gone"
                             app:cursorColor="@color/colorPrimary"
                             app:hintTextColor="@color/colorPrimary"
                             app:layout_constraintBottom_toTopOf="@id/til_scan_qr_here"
