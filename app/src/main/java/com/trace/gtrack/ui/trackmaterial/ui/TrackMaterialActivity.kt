@@ -14,6 +14,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -94,113 +95,136 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackMaterialBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window.statusBarColor = resources.getColor(R.color.colorPrimary)
-        handHeldDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        observe()
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-//                    return
-        }
-        MapsInitializer.initialize(this@TrackMaterialActivity)
-        //mapView = binding.mapView
-        binding.mapView.onCreate(savedInstanceState)
-        am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
-        initSound()
-        mReader = try {
-            RFIDWithUHFUART.getInstance()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            return
-        }
-        binding.mapView.getMapAsync(this)
-        if (mReader != null) {
-            CoroutineScope(Dispatchers.IO).launch {
-                mReader?.init()
-            }
-        }
-        binding.btnStart.isClickable = false
-        binding.mainToolbar.ivBackButton.show()
-        binding.mainToolbar.ivBackButton.setOnClickListener {
-            finish()
-        }
-        binding.edtSearchMaterialCode.setOnClickListener {
-            Intent(this@TrackMaterialActivity, SearchActivity::class.java).apply {
-                materialCodeActivityForResult.launch(this)
-            }
-        }
 
-        binding.btnStart.setOnClickListener {
-            //startTimer()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            window.statusBarColor = resources.getColor(R.color.colorPrimary)
+            handHeldDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+            observe()
+            if (ActivityCompat.checkSelfPermission(
+                    this, Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                    this, Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    LOCATION_PERMISSION_REQUEST_CODE
+                )
+//                    return
+            }
+            MapsInitializer.initialize(this@TrackMaterialActivity)
+            //mapView = binding.mapView
+            binding.mapView.onCreate(savedInstanceState)
             am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
             initSound()
-            //isStopClick = false
-            trackMaterialViewModel.postSearchMaterialCodeAPI(
-                this@TrackMaterialActivity,
-                persistenceManager.getAPIKeys(),
-                persistenceManager.getProjectId(),
-                persistenceManager.getSiteId(),
-                binding.edtSearchMaterialCode.text.toString(),
-            )
-        }
-
-        binding.btnStop.setOnClickListener {
-            if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
-                Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
-                trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
-                trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-                newInsertRFIDDataRequest.forEach { it1 ->
-                    if (it1.latitude != 0.0 && it1.longitude != 0.0) {
-                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                            newInsertRFIDDataRequest.distinctBy { it.rfid })
-                    }
-                }
-                if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
-                    trackMaterialViewModel.postInsertRFIDDataAPI(
-                        this@TrackMaterialActivity,
-                        persistenceManager.getAPIKeys(),
-                        persistenceManager.getProjectId(),
-                        persistenceManager.getSiteId(),
-                    )
-                }
-
+            mReader = try {
+                RFIDWithUHFUART.getInstance()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                return@postDelayed
             }
-            binding.mapView.invisible()
-            mReader?.stopInventory()
-            releaseSoundPool()
-            //isStopClick = true
-            //stopTimer()
-            trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
-            trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-            trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
-            binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.mapView.getMapAsync(this)
+            if (mReader != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    mReader?.init()
+                }
+            }
             binding.btnStart.isClickable = false
-            binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
-            binding.btnStop.isClickable = false
-            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                ""
-            )
+            binding.mainToolbar.ivBackButton.show()
+            binding.mainToolbar.ivBackButton.setOnClickListener {
+                finish()
+            }
+            binding.edtSearchMaterialCode.setOnClickListener {
+                Intent(this@TrackMaterialActivity, SearchActivity::class.java).apply {
+                    materialCodeActivityForResult.launch(this)
+                }
+            }
 
-            /*trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
-            if (persistenceManager != null) {
-                trackMaterialViewModel.postInsertMAPSearchResultAPI(
+            binding.btnStart.setOnClickListener {
+                //startTimer()
+                am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+                initSound()
+                //isStopClick = false
+                trackMaterialViewModel.postSearchMaterialCodeAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
                     persistenceManager.getProjectId(),
                     persistenceManager.getSiteId(),
-                    persistenceManager.getUserId(),
                     binding.edtSearchMaterialCode.text.toString(),
                 )
-            }*/
-        }
+            }
+
+            binding.btnStop.setOnClickListener {
+                if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
+                    Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
+
+                    if (newInsertRFIDDataRequest.isEmpty()
+                    ) {
+                        Toast.makeText(this, "No Data Available", Toast.LENGTH_SHORT).show()
+                    } else {
+                        trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
+                        trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+
+                        newInsertRFIDDataRequest.distinct()
+
+                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(newInsertRFIDDataRequest)
+
+                        Log.e("newInsertRFIDDataRequest size", newInsertRFIDDataRequest.size.toString())
+
+//                    newInsertRFIDDataRequest.forEach { it1 ->
+//                        if (it1.latitude != 0.0 && it1.longitude != 0.0) {
+//                            trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+//                                newInsertRFIDDataRequest.distinctBy { it.rfid })
+//                        }
+//                    }
+                        if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                            trackMaterialViewModel.postInsertRFIDDataAPI(
+                                this@TrackMaterialActivity,
+                                persistenceManager.getAPIKeys(),
+                                persistenceManager.getProjectId(),
+                                persistenceManager.getSiteId(),
+                            )
+                        }
+
+                    }
+
+
+                }
+                binding.mapView.invisible()
+                mReader?.stopInventory()
+                releaseSoundPool()
+                //isStopClick = true
+                //stopTimer()
+                trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
+                trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+                trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+                binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+                binding.btnStart.isClickable = false
+                binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+                binding.btnStop.isClickable = false
+                binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                    ""
+                )
+
+                /*trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
+                if (persistenceManager != null) {
+                    trackMaterialViewModel.postInsertMAPSearchResultAPI(
+                        this@TrackMaterialActivity,
+                        persistenceManager.getAPIKeys(),
+                        persistenceManager.getProjectId(),
+                        persistenceManager.getSiteId(),
+                        persistenceManager.getUserId(),
+                        binding.edtSearchMaterialCode.text.toString(),
+                    )
+                }*/
+            }
+        }, 500)
+
+
+
+
     }
 
     private val materialCodeActivityForResult =
@@ -304,22 +328,28 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 is InsertRFIDMapState.Success -> {
+
+
                     AppProgressDialog.hide()
-                    binding.mapView.invisible()
-                    mReader?.stopInventory()
-                    releaseSoundPool()
-                    //isStopClick = true
-                    //stopTimer()
-                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
-                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
-                    binding.btnStart.isClickable = false
-                    binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
-                    binding.btnStop.isClickable = false
-                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                        ""
-                    )
+//                    binding.mapView.invisible()
+//                    mReader?.stopInventory()
+//                    releaseSoundPool()
+//                    //isStopClick = true
+//                    //stopTimer()
+//                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+//                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+//                    binding.btnStart.isClickable = false
+//                    binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+//                    binding.btnStop.isClickable = false
+//                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+//                        ""
+//                    )
+
                     makeSuccessToast(it.rfidMsg)
-                    finish()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        this@TrackMaterialActivity.finish()
+                    }, 2000)
                 }
             }
         }
@@ -500,9 +530,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             googleMap = map
             if (::googleMap.isInitialized) {
 
-                googleMap.isMyLocationEnabled = true
-                // Zoom controls
-                googleMap.uiSettings.isZoomControlsEnabled = true
+
                 am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
                 initSound();
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -513,6 +541,12 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                             this, Manifest.permission.ACCESS_COARSE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
+
+
+                        googleMap.isMyLocationEnabled = true
+                        // Zoom controls
+                        googleMap.uiSettings.isZoomControlsEnabled = true
+
                         fusedLocationClient.requestLocationUpdates(
                             locationRequest, locationCallback, Looper.getMainLooper()
                         )
@@ -617,11 +651,20 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun rfidReaderConnection() {
         mReader?.setInventoryCallback { uhftagInfo ->
             try {
-                trackMaterialViewModel.lstInsertRFIDDataRequest.add(
-                    InsertHandHeldDataRequest(
-                        rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
-                    )
+
+                val item = InsertHandHeldDataRequest(
+                    rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
                 )
+
+                if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
+                    trackMaterialViewModel.lstInsertRFIDDataRequest.add(item)
+                }
+
+//                trackMaterialViewModel.lstInsertRFIDDataRequest.add(
+//                    InsertHandHeldDataRequest(
+//                        rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
+//                    )
+//                )
                 trackMaterialViewModel.lstTrackMaterialResponse.forEach {
                     if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
                         CoroutineScope(Dispatchers.Main).launch {

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -82,6 +83,7 @@ class HomeActivity : AppCompatActivity() {
                     }
 
                     R.id.nav_track_material -> {
+
                         TrackMaterialActivity.launch(this@HomeActivity)
                     }
 

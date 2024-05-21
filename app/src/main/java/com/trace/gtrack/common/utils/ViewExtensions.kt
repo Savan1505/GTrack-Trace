@@ -35,6 +35,8 @@ fun Activity.makeSuccessToast(message: String) {
         .gravity(Gravity.BOTTOM).show()
 }
 
+
+
 fun Activity?.showLongToast(message: String) {
     this?.let {
         StyleableToast.Builder(it).text(message).textColor(Color.WHITE).font(R.font.hellix_medium)
