@@ -1,6 +1,7 @@
 package com.trace.gtrack.ui.home.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,9 @@ class HomeFragment : Fragment() {
             SearchMaterialActivity.launch(requireActivity())
         }
         binding.cvTrackMaterial.setOnClickListener {
+
+            Log.e("binding","cvTrackMaterial" )
+
             TrackMaterialActivity.launch(requireActivity())
         }
     }
