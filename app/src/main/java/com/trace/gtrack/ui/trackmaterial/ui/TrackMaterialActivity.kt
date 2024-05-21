@@ -624,7 +624,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 trackMaterialViewModel.lstTrackMaterialResponse.forEach {
                     if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            playSound(2)
+                            playSound(1)
                         }
 
                     }

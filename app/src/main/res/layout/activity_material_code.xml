@@ -37,7 +37,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:paddingTop="@dimen/size_back_button"
-                        android:paddingBottom="@dimen/height_140dp"
+                        android:paddingBottom="@dimen/height_185dp"
                         android:text="@string/assign_qr_to_material_code"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -45,7 +45,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/margin_small"
                     app:cardBackgroundColor="@color/colorSecondary"
                     app:cardCornerRadius="@dimen/app_button_radius"
