@@ -168,7 +168,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
                         trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
 
-                        newInsertRFIDDataRequest.distinct()
+                        /*newInsertRFIDDataRequest.distinct()
 
                         trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                             newInsertRFIDDataRequest
@@ -177,14 +177,14 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         Log.e(
                             "newInsertRFIDDataRequest size",
                             newInsertRFIDDataRequest.size.toString()
-                        )
+                        )*/
 
-//                    newInsertRFIDDataRequest.forEach { it1 ->
-//                        if (it1.latitude != 0.0 && it1.longitude != 0.0) {
-//                            trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-//                                newInsertRFIDDataRequest.distinctBy { it.rfid })
-//                        }
-//                    }
+                        newInsertRFIDDataRequest.forEach { it1 ->
+                            if (it1.latitude != 0.0 && it1.longitude != 0.0) {
+                                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
+                                    newInsertRFIDDataRequest.distinctBy { it.rfid })
+                            }
+                        }
                         if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
                             trackMaterialViewModel.postInsertRFIDDataAPI(
                                 this@TrackMaterialActivity,

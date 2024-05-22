@@ -62,6 +62,7 @@
     <dimen name="height_195dp">195dp</dimen>
     <dimen name="height_205dp">205dp</dimen>
     <dimen name="height_215dp">215dp</dimen>
+    <dimen name="height_225dp">225dp</dimen>
     <dimen name="height_games_play_poster">155dp</dimen>
     <dimen name="height165">165dp</dimen>
     <dimen name="height_166dp">166dp</dimen>

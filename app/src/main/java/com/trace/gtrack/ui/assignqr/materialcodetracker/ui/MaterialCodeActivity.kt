@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -48,6 +49,7 @@ class MaterialCodeActivity : AppCompatActivity() {
         }
         binding.edtSearchMaterialCode.setOnClickListener {
             if (binding.edtScanQrHere.text.toString().isNotEmpty()) {
+                binding.edtScanQrHere.focusable = View.NOT_FOCUSABLE
                 Intent(this@MaterialCodeActivity, SearchActivity::class.java).apply {
                     materialCodeActivityForResult.launch(this)
                 }

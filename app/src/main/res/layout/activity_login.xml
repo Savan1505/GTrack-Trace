@@ -2,34 +2,41 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/ll_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
 
-        <androidx.core.widget.NestedScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_weight="0.5">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/login_header"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:background="@color/colorPrimary">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/AuthHeaderTextWhite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawableTop="@mipmap/ic_launcher_round"
                         android:gravity="center"
-                        android:paddingTop="@dimen/size_back_button"
-                        android:paddingBottom="@dimen/height_205dp"
+                        android:paddingTop="@dimen/image_width_height_game_score"
+                        android:paddingBottom="@dimen/height_225dp"
                         android:text="@string/app_name"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -169,40 +176,42 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            <LinearLayout
+                android:id="@+id/llBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/regularText"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/margin_bottom_register_button"
-                android:layout_weight="1"
-                android:drawablePadding="@dimen/margin_tiny"
-                android:gravity="start"
-                android:padding="@dimen/margin_tiny"
-                android:text="Version 1.0.0" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/regularText"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/margin_bottom_register_button"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/margin_tiny"
+                    android:gravity="start"
+                    android:padding="@dimen/margin_tiny"
+                    android:text="Version 1.0.0" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_get_in_touch"
-                style="@style/regularTextBlack"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/margin_bottom_register_button"
-                android:layout_weight="1"
-                android:drawableEnd="@drawable/drawable_icon_hw"
-                android:drawablePadding="@dimen/margin_tiny"
-                android:gravity="end"
-                android:padding="@dimen/margin_tiny"
-                android:text="@string/powered_by"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_get_in_touch"
+                    style="@style/regularTextBlack"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/margin_bottom_register_button"
+                    android:layout_weight="1"
+                    android:drawableEnd="@drawable/drawable_icon_hw"
+                    android:drawablePadding="@dimen/margin_tiny"
+                    android:gravity="end"
+                    android:padding="@dimen/margin_tiny"
+                    android:text="@string/powered_by"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </LinearLayout>
+
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-    </LinearLayout>
 
 </layout>

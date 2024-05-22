@@ -99,6 +99,7 @@ class SearchActivity : AppCompatActivity() {
         linearLayoutManager =
             binding.rvMaterialCode.layoutManager as LinearLayoutManager?
         binding.rvMaterialCode.isNestedScrollingEnabled = false
+        binding.rvMaterialCode.layoutManager?.scrollToPosition(assignViewModel.lstMaterialCode.size - 1)
         materialCodeAdapter = MaterialItemAdapter({
             binding.rvMaterialCode.isGone
             val intentCode: Intent = intent
