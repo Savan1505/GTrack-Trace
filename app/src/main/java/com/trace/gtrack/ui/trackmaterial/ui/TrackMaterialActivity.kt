@@ -656,9 +656,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         mReader?.setInventoryCallback { uhftagInfo ->
             try {
 
-                if (uhftagInfo?.epc != null) {
-                    playSound(1)
-                }
+//                if (uhftagInfo?.epc != null) {
+//                    playSound(1)
+//                }
 
                 val item = InsertHandHeldDataRequest(
                     rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
@@ -673,15 +673,17 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                        rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
 //                    )
 //                )
-                /* trackMaterialViewModel.lstTrackMaterialResponse.forEach {
+                 trackMaterialViewModel.lstTrackMaterialResponse.forEach {
                      if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
-                         CoroutineScope(Dispatchers.Main).launch {
-                             playSound(1)
-                         }
+
+                         playSound(1)
+//                         CoroutineScope(Dispatchers.Main).launch {
+//                             playSound(1)
+//                         }
 
                      }
 
-                 }*/
+                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
