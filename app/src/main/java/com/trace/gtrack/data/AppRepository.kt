@@ -370,6 +370,8 @@ class AppRepository @Inject constructor(
             } catch (e: JSONException) {
                 e.printStackTrace()
             }*/
+
+
             val copyOfList: List<InsertHandHeldDataRequest> =
                 ArrayList(lstInsertHandHeldData) // Iterate over the copy of the list
             val data = Gson().toJson(copyOfList)
