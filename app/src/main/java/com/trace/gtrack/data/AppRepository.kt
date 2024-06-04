@@ -351,7 +351,7 @@ class AppRepository @Inject constructor(
 
     override suspend fun postInsertRFIDDataAPI(
         apiKey: String, projectId: String, siteId: String,
-        lstInsertHandHeldData: List<InsertHandHeldDataRequest>,
+        lstInsertHandHeldData: MutableList<InsertHandHeldDataRequest>,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> = safeApiCall(dispatcher) {
             /* // lstInsertHandHeldData = InsertHandHeldDataRequest(latitude: 123.456, longitude: 789.012, RFID: RFID123)
@@ -370,7 +370,9 @@ class AppRepository @Inject constructor(
             } catch (e: JSONException) {
                 e.printStackTrace()
             }*/
-            val data = Gson().toJson(lstInsertHandHeldData)
+            val copyOfList: List<InsertHandHeldDataRequest> =
+                ArrayList(lstInsertHandHeldData) // Iterate over the copy of the list
+            val data = Gson().toJson(copyOfList)
             apiService.postInsertRFIDDataAPI(
                 apiKey,
                 Integer.parseInt(projectId),

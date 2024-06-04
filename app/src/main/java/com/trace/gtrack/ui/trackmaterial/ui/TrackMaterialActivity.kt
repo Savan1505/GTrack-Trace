@@ -13,7 +13,6 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,7 +32,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.gson.Gson
 import com.rscja.deviceapi.RFIDWithUHFUART
 import com.trace.gtrack.R
 import com.trace.gtrack.common.AppProgressDialog
@@ -159,33 +157,19 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
             binding.btnStop.setOnClickListener {
                 if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
-                    Log.e("TAG", "onCreate: STOP " + Gson().toJson(newInsertRFIDDataRequest))
 
-                    if (newInsertRFIDDataRequest.isEmpty()
-                    ) {
+
+                    if (newInsertRFIDDataRequest.isEmpty()) {
                         Toast.makeText(this, "No Data Available", Toast.LENGTH_SHORT).show()
                     } else {
                         trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
                         trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
 
-                        /*newInsertRFIDDataRequest.distinct()
+                        val uniqueRFIDData = newInsertRFIDDataRequest.distinctBy { it.rfid }
+                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(uniqueRFIDData)
 
-                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                            newInsertRFIDDataRequest
-                        )
-
-                        Log.e(
-                            "newInsertRFIDDataRequest size",
-                            newInsertRFIDDataRequest.size.toString()
-                        )*/
-
-                        newInsertRFIDDataRequest.forEach { it1 ->
-                            if (it1.latitude != 0.0 && it1.longitude != 0.0) {
-                                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                                    newInsertRFIDDataRequest.distinctBy { it.rfid })
-                            }
-                        }
                         if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+
                             trackMaterialViewModel.postInsertRFIDDataAPI(
                                 this@TrackMaterialActivity,
                                 persistenceManager.getAPIKeys(),
@@ -195,7 +179,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
 
                     }
-
 
                 }
                 binding.mapView.invisible()
@@ -413,8 +396,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                         // If marker doesn't exist, create a new marker
                                         currentLocationMarker = googleMap.addMarker(
                                             MarkerOptions().position(currentLatLng)
-                                                .title(handHeldDeviceId)
-                                                .icon(
+                                                .title(handHeldDeviceId).icon(
                                                     BitmapDescriptorFactory.defaultMarker(
                                                         BitmapDescriptorFactory.HUE_GREEN
                                                     )
@@ -438,7 +420,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                         )
                                     )
                                     if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
-                                        trackMaterialViewModel.lstInsertRFIDDataRequest.forEach {
+                                        // ...
+                                        val copyOfList: List<InsertHandHeldDataRequest> =
+                                            ArrayList(trackMaterialViewModel.lstInsertRFIDDataRequest) // Iterate over the copy of the list
+                                        copyOfList.forEach {
                                             if (it.latitude == 0.0 && it.longitude == 0.0) {
                                                 newInsertRFIDDataRequest.add(
                                                     InsertHandHeldDataRequest(
@@ -536,7 +521,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
                 am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
-                initSound();
+                initSound()
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
                 if (locationRequest != null) {
                     if (ActivityCompat.checkSelfPermission(
@@ -558,10 +543,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     override fun onResume() {
@@ -664,6 +645,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
                 )
 
+
                 if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
                     trackMaterialViewModel.lstInsertRFIDDataRequest.add(item)
                 }
@@ -673,17 +655,17 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                        rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
 //                    )
 //                )
-                 trackMaterialViewModel.lstTrackMaterialResponse.forEach {
-                     if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
+                trackMaterialViewModel.lstTrackMaterialResponse.forEach {
+                    if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
 
-                         playSound(1)
+                        playSound(1)
 //                         CoroutineScope(Dispatchers.Main).launch {
 //                             playSound(1)
 //                         }
 
-                     }
+                    }
 
-                 }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

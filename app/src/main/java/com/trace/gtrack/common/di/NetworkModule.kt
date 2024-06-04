@@ -60,8 +60,10 @@ class NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
         chuckInterceptor: ChuckerInterceptor,
     ): OkHttpClient {
-        return OkHttpClient.Builder().readTimeout(2, TimeUnit.MINUTES)
-            .connectTimeout(2, TimeUnit.MINUTES).writeTimeout(2, TimeUnit.MINUTES)
+        return OkHttpClient.Builder()
+            .readTimeout(5, TimeUnit.MINUTES)
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
             .addInterceptor(loggingInterceptor).addInterceptor(chuckInterceptor)
             .protocols(Collections.singletonList(Protocol.HTTP_1_1))
             .build()

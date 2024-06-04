@@ -20,49 +20,27 @@ interface IAppRepository {
     suspend fun postAppLogin(userName: String, password: String): LoginResult?
     suspend fun postAzureLogin(azureUserID: String): LoginAzureResult?
     suspend fun postSearchMaterialCodeAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        materialCode: String
+        apiKey: String, projectId: String, siteId: String, materialCode: String
     ): SearchMaterialResult?
 
     suspend fun postRfidQRCodeMappingAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        qRCode: String,
-        rfidCode: String
+        apiKey: String, projectId: String, siteId: String, qRCode: String, rfidCode: String
     ): CommonResult?
 
     suspend fun postRfidQRCodeReMappingAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        qRCode: String,
-        rfidCode: String
+        apiKey: String, projectId: String, siteId: String, qRCode: String, rfidCode: String
     ): CommonResult?
 
     suspend fun postAssignMaterialTagAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        qRCode: String,
-        materialCode: String
+        apiKey: String, projectId: String, siteId: String, qRCode: String, materialCode: String
     ): CommonResult?
 
     suspend fun postDeAssignMaterialTagAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        userId: String,
-        materialCode: String
+        apiKey: String, projectId: String, siteId: String, userId: String, materialCode: String
     ): CommonResult?
 
     suspend fun postMaterialCodeByQRCodeAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        qRCode: String
+        apiKey: String, projectId: String, siteId: String, qRCode: String
     ): MaterialCodeResult?
 
     suspend fun postAssignedMaterialListAPI(
@@ -78,7 +56,7 @@ interface IAppRepository {
         apiKey: String,
         projectId: String,
         siteId: String,
-        lstInsertHandHeldData: List<InsertHandHeldDataRequest>
+        lstInsertHandHeldData: MutableList<InsertHandHeldDataRequest>
     ): CommonResult?
 
     suspend fun postInsertHandheldDataAPI(
@@ -90,25 +68,15 @@ interface IAppRepository {
 
     suspend fun getIOTCodeAPI(apiKey: String): ListResult?
     suspend fun postIotQRCodeMappingAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        iotCode: String,
-        qRCode: String
+        apiKey: String, projectId: String, siteId: String, iotCode: String, qRCode: String
     ): CommonResult?
 
     suspend fun postIotQRCodeReMappingAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        iotCode: String,
-        qRCode: String
+        apiKey: String, projectId: String, siteId: String, iotCode: String, qRCode: String
     ): CommonResult?
 
     suspend fun postSiteDetailByProjectAPI(
-        apiKey: String,
-        projectId: String,
-        userId: String
+        apiKey: String, projectId: String, userId: String
     ): SiteDetailByProjectResult?
 
     suspend fun postSendMaterialAPI(
@@ -119,10 +87,7 @@ interface IAppRepository {
     ): SendMaterialResult?
 
     suspend fun postAssignedMaterialAPI(
-        apiKey: String,
-        projectId: String,
-        siteId: String,
-        qRCode: String
+        apiKey: String, projectId: String, siteId: String, qRCode: String
     ): AssignedMaterialResult?
 
     suspend fun getLocationOfAllMaterialsAPI(
@@ -142,7 +107,9 @@ interface IAppRepository {
     suspend fun getProjectKeysAPI(): ProjectKeysResult?
     suspend fun postInsertMAPSearchResultAPI(
 
-        apiKey: String, projectId: String, siteId: String,
+        apiKey: String,
+        projectId: String,
+        siteId: String,
         userId: String,
         materialCode: String,
         totalSearchTime: String

@@ -1,12 +1,10 @@
 package com.trace.gtrack.ui.trackmaterial.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.trace.gtrack.R
 import com.trace.gtrack.common.utils.safeLaunch
 import com.trace.gtrack.data.IAppRepository
@@ -85,9 +83,7 @@ class TrackMaterialViewModel @Inject constructor(
     }
 
     fun postInsertRFIDDataAPI(
-        context: Context, apiKey: String,
-        projectId: String,
-        siteId: String
+        context: Context, apiKey: String, projectId: String, siteId: String
     ) {
         mStateRFID.value = InsertRFIDMapState.Loading
         viewModelScope.safeLaunch {
