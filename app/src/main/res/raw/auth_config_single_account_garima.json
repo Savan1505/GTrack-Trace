@@ -1,5 +1,5 @@
 {
-  "client_id" : "3785cdc6-bc30-4204-9f6f-eed31412fb67",
+  "client_id" : "828119da-6946-4389-8f16-73930463cc09",
   "authorization_user_agent" : "WEBVIEW",
   "redirect_uri" : "msauth://com.trace.gtrack/qvN2Ha%2BVW%2BfhJR4fdJlzLDkkkS4%3D",
   "account_mode" : "SINGLE",
@@ -11,7 +11,7 @@
       "authority_url": "https://login.microsoftonline.com/",
       "audience": {
         "type": "AzureADMyOrg",
-        "tenant_id": "1562f007-09a4-4fcb-936b-e79246571fc7"
+        "tenant_id": "a9fa6622-2e54-4be3-96c8-90188b4dadd4"
       }
     }
   ]
