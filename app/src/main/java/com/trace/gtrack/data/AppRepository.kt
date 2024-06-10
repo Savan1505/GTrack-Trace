@@ -29,7 +29,6 @@ import com.trace.gtrack.data.network.request.DeAssignMaterialCodeRequest
 import com.trace.gtrack.data.network.request.IOTCodeRequest
 import com.trace.gtrack.data.network.request.InsertHandHeldDataRequest
 import com.trace.gtrack.data.network.request.InsertHandheldRequest
-import com.trace.gtrack.data.network.request.InsertRFIDRequest
 import com.trace.gtrack.data.network.request.LoginAzureRequest
 import com.trace.gtrack.data.network.request.LoginRequest
 import com.trace.gtrack.data.network.request.MapSearchResultRequest
@@ -56,6 +55,8 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -370,14 +371,30 @@ class AppRepository @Inject constructor(
             } catch (e: JSONException) {
                 e.printStackTrace()
             }*/
-            val copyOfList: List<InsertHandHeldDataRequest> =
-                ArrayList(lstInsertHandHeldData) // Iterate over the copy of the list
-            val data = Gson().toJson(copyOfList)
+            var jsonArrayRFID = JSONArray()
+            try {
+                for (rfidData in lstInsertHandHeldData) {
+                    val jsonObjSendMaterial = JSONObject()
+                    val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+                    val resultDate = Date(System.currentTimeMillis())
+                    jsonObjSendMaterial.put("RFIDNumber", rfidData.rfid)
+                    jsonObjSendMaterial.put("Latitude", rfidData.latitude)
+                    jsonObjSendMaterial.put("Longitude", rfidData.longitude)
+                    jsonObjSendMaterial.put("Timestamp", sdf.format(resultDate))
+                    jsonArrayRFID = JSONArray(jsonObjSendMaterial.toString())
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+//            val copyOfList: List<InsertHandHeldDataRequest> =
+//                ArrayList(lstInsertHandHeldData) // Iterate over the copy of the list
+//            val data = Gson().toJson(copyOfList)
             apiService.postInsertRFIDDataAPI(
                 apiKey,
                 Integer.parseInt(projectId),
                 Integer.parseInt(siteId),
-                InsertRFIDRequest(data)
+                jsonArrayRFID,
+//                InsertRFIDRequest(data)
             )
         }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(

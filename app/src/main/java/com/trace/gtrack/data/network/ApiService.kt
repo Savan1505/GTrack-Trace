@@ -124,7 +124,8 @@ interface ApiService {
         @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
-        @Body insertRFIDRequest: InsertRFIDRequest,
+        @Body insertRFIDRequest: JSONArray,
+//        @Body insertRFIDRequest: InsertRFIDRequest,
     ): CommonResponse
 
     @Headers("Accept: application/json")

@@ -232,7 +232,7 @@ class LoginActivity : AppCompatActivity() {
     private fun mSingleAccountApp() {
         PublicClientApplication.createSingleAccountPublicClientApplication(
             this@LoginActivity,
-            R.raw.auth_config_single_account_garima,
+            R.raw.auth_config_single_account,
             object : ISingleAccountApplicationCreatedListener {
                 override fun onCreated(application: ISingleAccountPublicClientApplication) {
                     /**
