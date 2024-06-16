@@ -1,6 +1,5 @@
 package com.trace.gtrack.data
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.trace.gtrack.data.model.AssignedMaterialResult
@@ -55,8 +54,6 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -355,46 +352,8 @@ class AppRepository @Inject constructor(
         lstInsertHandHeldData: MutableList<InsertHandHeldDataRequest>,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> = safeApiCall(dispatcher) {
-            /* // lstInsertHandHeldData = InsertHandHeldDataRequest(latitude: 123.456, longitude: 789.012, RFID: RFID123)
-             *//*var jsonObjData = JSONObject()
-
-            try {
-                for (insertHandHeldData in lstInsertHandHeldData) {
-                    val jsonObjInsertHandHeldData = JSONObject()
-                    jsonObjInsertHandHeldData.put("latitude", insertHandHeldData.latitude)
-                    jsonObjInsertHandHeldData.put("longitude", insertHandHeldData.longitude)
-                    jsonObjInsertHandHeldData.put(
-                        "RFID", insertHandHeldData.rfid?.uppercase(Locale.ROOT)
-                    )
-                    jsonObjData = JSONObject(jsonObjInsertHandHeldData.toString())
-                }
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }*/
-            var jsonArrayRFID = JSONArray()
-            try {
-                for (rfidData in lstInsertHandHeldData) {
-                    val jsonObjSendMaterial = JSONObject()
-                    val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-                    val resultDate = Date(System.currentTimeMillis())
-                    jsonObjSendMaterial.put("RFIDNumber", rfidData.rfid)
-                    jsonObjSendMaterial.put("Latitude", rfidData.latitude)
-                    jsonObjSendMaterial.put("Longitude", rfidData.longitude)
-                    jsonObjSendMaterial.put("Timestamp", sdf.format(resultDate))
-                    jsonArrayRFID = JSONArray(jsonObjSendMaterial.toString())
-                }
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-//            val copyOfList: List<InsertHandHeldDataRequest> =
-//                ArrayList(lstInsertHandHeldData) // Iterate over the copy of the list
-//            val data = Gson().toJson(copyOfList)
             apiService.postInsertRFIDDataAPI(
-                apiKey,
-                Integer.parseInt(projectId),
-                Integer.parseInt(siteId),
-                jsonArrayRFID,
-//                InsertRFIDRequest(data)
+                apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId), lstInsertHandHeldData
             )
         }) {
             is ResponseWrapper.GenericError -> CommonResult.Error(
@@ -419,26 +378,7 @@ class AppRepository @Inject constructor(
         lstInsertHandHeldData: List<InsertHandHeldDataRequest>,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> = safeApiCall(dispatcher) {
-            // lstInsertHandHeldData = InsertHandHeldDataRequest(latitude: 123.456, longitude: 789.012, RFID: RFID123)
-            /*var jsonObjData = JSONObject()
-
-            Log.d("Savan", Gson().toJson(lstInsertHandHeldData))
-//                Log.d("Savan", lstInsertHandHeldData.toString().length.toString())
-            try {
-                for (insertHandHeldData in lstInsertHandHeldData) {
-                    val jsonObjInsertHandHeldData = JSONObject()
-                    Log.d("Savan", "insertHandHeldData : "+insertHandHeldData.toString())
-                    jsonObjInsertHandHeldData.put("latitude", insertHandHeldData.latitude)
-                    jsonObjInsertHandHeldData.put("longitude", insertHandHeldData.longitude)
-                    jsonObjInsertHandHeldData.put("RFID", insertHandHeldData.rfid?.toUpperCase(Locale.ROOT))
-                    jsonObjData = JSONObject(jsonObjInsertHandHeldData.toString())
-                }
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-            Log.d("Savan", "jsonObjData : "+jsonObjData.toString())*/
             val str = Gson().toJson(lstInsertHandHeldData)
-            Log.d("Savan", "jsonObjData : " + str)
             apiService.postInsertHandheldDataAPI(
                 apiKey,
                 Integer.parseInt(projectId),

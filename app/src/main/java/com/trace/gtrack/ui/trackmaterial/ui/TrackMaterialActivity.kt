@@ -13,6 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,6 +53,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -79,7 +83,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var handHeldDeviceId = ""
     val newInsertRFIDDataRequest = mutableListOf<InsertHandHeldDataRequest>()
+
     //var isStopClick = false
+    // Create a SimpleDateFormat object with the desired format
+    var sdf: SimpleDateFormat? = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ROOT)
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
@@ -165,7 +172,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                         trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
                         trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
 
-                        val uniqueRFIDData = newInsertRFIDDataRequest.distinctBy { it.rfid }
+                        val uniqueRFIDData = newInsertRFIDDataRequest.distinctBy { it.rfidNumber }
                         trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(uniqueRFIDData)
 
                         if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
@@ -375,6 +382,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
+
+
             if (::googleMap.isInitialized) {
                 try {
                     if (locationResult != null) {
@@ -387,10 +396,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                googleMap.clear()
                                 val currentLatLng = LatLng(location!!.latitude, location.longitude)
 
-
-                                /*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
-                            newInsertRFIDDataRequest
-                        )*/
                                 for (searchMaterialResponse in trackMaterialViewModel.lstTrackMaterialResponse) {
                                     if (currentLocationMarker == null) {
                                         // If marker doesn't exist, create a new marker
@@ -429,7 +434,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                                     InsertHandHeldDataRequest(
                                                         location.latitude,
                                                         location.longitude,
-                                                        it.rfid
+                                                        it.rfidNumber,
+                                                        sdf?.format(Date(System.currentTimeMillis()))
                                                     )
                                                 )/*trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(
                                             listOf(
@@ -463,6 +469,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 } catch (e: NumberFormatException) {
                     println("Error parsing string to double: ${e.message}")
                 }
+            } else {
+                Log.e("TAG", "onLocationResult: " + "ELSE GOOGLE MAP ")
             }
         }
     }
@@ -642,19 +650,25 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                }
 
                 val item = InsertHandHeldDataRequest(
-                    rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
+                    rfidNumber = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
                 )
 
 
-                if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
+                /*if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
                     trackMaterialViewModel.lstInsertRFIDDataRequest.add(item)
-                }
+                }*/
 
-//                trackMaterialViewModel.lstInsertRFIDDataRequest.add(
-//                    InsertHandHeldDataRequest(
-//                        rfid = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
-//                    )
-//                )
+                trackMaterialViewModel.lstInsertRFIDDataRequest.add(
+                    InsertHandHeldDataRequest(
+                        rfidNumber = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00,
+                    )
+                )
+
+                val uniqueRFIDData =
+                    trackMaterialViewModel.lstInsertRFIDDataRequest.distinctBy { it.rfidNumber }
+                trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+                trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(uniqueRFIDData)
+
                 trackMaterialViewModel.lstTrackMaterialResponse.forEach {
                     if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
 
@@ -671,4 +685,5 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
 }

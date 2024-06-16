@@ -8,6 +8,7 @@ import com.trace.gtrack.data.network.base.CommonSendMaterialResponse
 import com.trace.gtrack.data.network.request.AssignMaterialCodeRequest
 import com.trace.gtrack.data.network.request.DeAssignMaterialCodeRequest
 import com.trace.gtrack.data.network.request.IOTCodeRequest
+import com.trace.gtrack.data.network.request.InsertHandHeldDataRequest
 import com.trace.gtrack.data.network.request.InsertHandheldRequest
 import com.trace.gtrack.data.network.request.InsertRFIDRequest
 import com.trace.gtrack.data.network.request.LoginAzureRequest
@@ -124,7 +125,7 @@ interface ApiService {
         @Header("APIKey") apiKey: String,
         @Header("ProjectId") projectId: Int,
         @Header("SiteId") siteId: Int,
-        @Body insertRFIDRequest: JSONArray,
+        @Body insertRFIDRequest: List<InsertHandHeldDataRequest>,
 //        @Body insertRFIDRequest: InsertRFIDRequest,
     ): CommonResponse
 

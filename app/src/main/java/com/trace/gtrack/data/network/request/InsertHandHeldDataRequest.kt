@@ -9,6 +9,8 @@ data class InsertHandHeldDataRequest(
     val latitude: Double? = 0.0,
     @Json(name = "longitude")
     val longitude: Double? = 0.0,
-    @Json(name = "RFID")
-    val rfid: String? = "",
+    @Json(name = "RFIDNumber")
+    val rfidNumber: String? = "",
+    @Json(name = "Timestamp")
+    val timeStamp: String? = "",
 )

@@ -5,6 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class InsertRFIDRequest(
-    @Json(name = "Data")
-    val data: String? = "",
+//    val data: String? = "",
+    @Json(name = "Data") val data: List<InsertHandHeldDataRequest>
 )
