@@ -102,121 +102,119 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            window.statusBarColor = resources.getColor(R.color.colorPrimary)
-            handHeldDeviceId =
-                Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-            observe()
-            if (ActivityCompat.checkSelfPermission(
-                    this, Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                    this, Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
+//        Handler(Looper.getMainLooper()).postDelayed({
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
+        handHeldDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        observe()
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
 //                    return
+        }
+        MapsInitializer.initialize(this@TrackMaterialActivity)
+        //mapView = binding.mapView
+        binding.mapView.onCreate(savedInstanceState)
+        am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+        initSound()
+        mReader = try {
+            RFIDWithUHFUART.getInstance()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return
+        }
+        binding.mapView.getMapAsync(this)
+        if (mReader != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mReader?.init()
             }
-            MapsInitializer.initialize(this@TrackMaterialActivity)
-            //mapView = binding.mapView
-            binding.mapView.onCreate(savedInstanceState)
+        }
+        binding.btnStart.isClickable = false
+        binding.mainToolbar.ivBackButton.show()
+        binding.mainToolbar.ivBackButton.setOnClickListener {
+            finish()
+        }
+        binding.edtSearchMaterialCode.setOnClickListener {
+            Intent(this@TrackMaterialActivity, SearchActivity::class.java).apply {
+                materialCodeActivityForResult.launch(this)
+            }
+        }
+
+        binding.btnStart.setOnClickListener {
+            //startTimer()
+
             am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
             initSound()
-            mReader = try {
-                RFIDWithUHFUART.getInstance()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                return@postDelayed
-            }
-            binding.mapView.getMapAsync(this)
-            if (mReader != null) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    mReader?.init()
-                }
-            }
-            binding.btnStart.isClickable = false
-            binding.mainToolbar.ivBackButton.show()
-            binding.mainToolbar.ivBackButton.setOnClickListener {
-                finish()
-            }
-            binding.edtSearchMaterialCode.setOnClickListener {
-                Intent(this@TrackMaterialActivity, SearchActivity::class.java).apply {
-                    materialCodeActivityForResult.launch(this)
-                }
-            }
+            //isStopClick = false
+            trackMaterialViewModel.postSearchMaterialCodeAPI(
+                this@TrackMaterialActivity,
+                persistenceManager.getAPIKeys(),
+                persistenceManager.getProjectId(),
+                persistenceManager.getSiteId(),
+                binding.edtSearchMaterialCode.text.toString(),
+            )
+        }
 
-            binding.btnStart.setOnClickListener {
-                //startTimer()
-                am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
-                initSound()
-                //isStopClick = false
-                trackMaterialViewModel.postSearchMaterialCodeAPI(
+        binding.btnStop.setOnClickListener {
+            if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
+                Toast.makeText(this, "Uploading data to server!!!", Toast.LENGTH_LONG).show()
+                if (newInsertRFIDDataRequest.isEmpty()) {
+                    Toast.makeText(this, "No Data Available", Toast.LENGTH_LONG).show()
+                } else {
+                    mReader?.stopInventory()
+                    trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
+                    trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+                    val uniqueRFIDData = newInsertRFIDDataRequest.distinctBy { it.rfidNumber }
+                    trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(uniqueRFIDData)
+
+                    if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
+                        trackMaterialViewModel.postInsertRFIDDataAPI(
+                            this@TrackMaterialActivity,
+                            persistenceManager.getAPIKeys(),
+                            persistenceManager.getProjectId(),
+                            persistenceManager.getSiteId(),
+                        )
+                    }
+
+                }
+
+            }
+            binding.mapView.invisible()
+            mReader?.stopInventory()
+            releaseSoundPool()
+            //isStopClick = true
+            //stopTimer()
+            trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
+            trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
+            trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
+            binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.btnStart.isClickable = false
+            binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
+            binding.btnStop.isClickable = false
+            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                ""
+            )
+
+            /*trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
+            if (persistenceManager != null) {
+                trackMaterialViewModel.postInsertMAPSearchResultAPI(
                     this@TrackMaterialActivity,
                     persistenceManager.getAPIKeys(),
                     persistenceManager.getProjectId(),
                     persistenceManager.getSiteId(),
+                    persistenceManager.getUserId(),
                     binding.edtSearchMaterialCode.text.toString(),
                 )
-            }
-
-            binding.btnStop.setOnClickListener {
-                if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty() && persistenceManager != null) {
-
-
-                    if (newInsertRFIDDataRequest.isEmpty()) {
-                        Toast.makeText(this, "No Data Available", Toast.LENGTH_SHORT).show()
-                    } else {
-                        trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
-                        trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-
-                        val uniqueRFIDData = newInsertRFIDDataRequest.distinctBy { it.rfidNumber }
-                        trackMaterialViewModel.lstInsertRFIDDataRequest.addAll(uniqueRFIDData)
-
-                        if (trackMaterialViewModel.lstInsertRFIDDataRequest.isNotEmpty()) {
-
-                            trackMaterialViewModel.postInsertRFIDDataAPI(
-                                this@TrackMaterialActivity,
-                                persistenceManager.getAPIKeys(),
-                                persistenceManager.getProjectId(),
-                                persistenceManager.getSiteId(),
-                            )
-                        }
-
-                    }
-
-                }
-                binding.mapView.invisible()
-                mReader?.stopInventory()
-                releaseSoundPool()
-                //isStopClick = true
-                //stopTimer()
-                trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
-                trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
-                trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
-                binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
-                binding.btnStart.isClickable = false
-                binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
-                binding.btnStop.isClickable = false
-                binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                    ""
-                )
-
-                /*trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
-                if (persistenceManager != null) {
-                    trackMaterialViewModel.postInsertMAPSearchResultAPI(
-                        this@TrackMaterialActivity,
-                        persistenceManager.getAPIKeys(),
-                        persistenceManager.getProjectId(),
-                        persistenceManager.getSiteId(),
-                        persistenceManager.getUserId(),
-                        binding.edtSearchMaterialCode.text.toString(),
-                    )
-                }*/
-            }
-        }, 500)
+            }*/
+        }
+//        },   500)
 
 
     }
@@ -429,7 +427,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                         val copyOfList: List<InsertHandHeldDataRequest> =
                                             ArrayList(trackMaterialViewModel.lstInsertRFIDDataRequest) // Iterate over the copy of the list
                                         copyOfList.forEach {
-                                            if (it.latitude == 0.0 && it.longitude == 0.0) {
+                                            if (it.latitude == null && it.longitude == null || it.latitude == 0.0 && it.longitude == 0.0) {
                                                 newInsertRFIDDataRequest.add(
                                                     InsertHandHeldDataRequest(
                                                         location.latitude,
@@ -454,16 +452,16 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                                         )
                                     )
 
-                                    if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
+                                    /*if (trackMaterialViewModel.lstHandHeldDataRequest.isNotEmpty()) {
                                         insertHandHeldDataAPICall()
-                                    }
+                                    }*/
 
                                     //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                                 }
 
                             }
                             //}
-                        }, 3000)
+                        }, 5000)
                     }
 
                 } catch (e: NumberFormatException) {
@@ -562,9 +560,17 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onDestroy()
         releaseSoundPool()
         //stopTimer()
+        clearGoogleMaps()
+        stopReader()
+    }
+
+    private fun clearGoogleMaps() {
         if (::googleMap.isInitialized) {
             googleMap.clear()
         }
+    }
+
+    private fun stopReader() {
         if (mReader != null) {
             mReader?.stopInventory()
             mReader!!.free()
@@ -619,8 +625,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 soundMap.get(id)!!, volumnRatio,  // 左声道音量
                 volumnRatio,  // 右声道音量
                 1,  // 优先级，0为最低
-                0,  // 循环次数，0不循环，-1永远循环
-                1F // 回放速度 ，该值在0.5-2.0之间，1为正常速度
+                1,  // 循环次数，0不循环，-1永远循环
+                1f // 回放速度 ，该值在0.5-2.0之间，1为正常速度
             )
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
@@ -645,9 +651,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         mReader?.setInventoryCallback { uhftagInfo ->
             try {
 
-//                if (uhftagInfo?.epc != null) {
-//                    playSound(1)
-//                }
+                /*if (uhftagInfo?.epc != null) {
+                    playSound(1)
+                }*/
 
                 val item = InsertHandHeldDataRequest(
                     rfidNumber = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
@@ -673,9 +679,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (it.RFIDCode.equals(uhftagInfo?.epc!!)) {
 
                         playSound(1)
-//                         CoroutineScope(Dispatchers.Main).launch {
-//                             playSound(1)
-//                         }
+
+                        /*CoroutineScope(Dispatchers.Main).launch {
+                            playSound(1)
+                        }*/
 
                     }
 
@@ -685,5 +692,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
+    fun calculateRange(rssi: Double, txPower: Double, n: Double): Double {
+        return Math.pow(10.0, (txPower - rssi) / (10.0 * n))
+    }
+
 
 }

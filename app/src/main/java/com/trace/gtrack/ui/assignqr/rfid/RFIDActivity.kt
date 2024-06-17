@@ -61,8 +61,7 @@ class RFIDActivity : AppCompatActivity() {
         binding = ActivityRfidBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.statusBarColor = resources.getColor(R.color.colorPrimary)
-        observe()
-        /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        observe()/*fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -82,7 +81,7 @@ class RFIDActivity : AppCompatActivity() {
         )*/
         binding.mainToolbar.ivBackButton.show()
         am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
-        initSound();
+        initSound()
         mReader = try {
             RFIDWithUHFUART.getInstance()
         } catch (ex: Exception) {
@@ -99,22 +98,19 @@ class RFIDActivity : AppCompatActivity() {
             finish()
         }
         binding.ivScanQr.setOnClickListener {
-            scanQrCode.launch(
-                ScannerConfig.build {
-                    setHapticSuccessFeedback(true) // enable (default) or disable haptic feedback when a barcode was detected
-                    setShowTorchToggle(true) // show or hide (default) torch/flashlight toggle button
-                    setShowCloseButton(true) // show or hide (default) close button
-                    setUseFrontCamera(false) // use the front camera
-                }
-            )
-        }
-        if (intent.extras?.getBoolean(OPEN_SCANNER) == true) scanQrCode.launch(
-            ScannerConfig.build {
+            scanQrCode.launch(ScannerConfig.build {
                 setHapticSuccessFeedback(true) // enable (default) or disable haptic feedback when a barcode was detected
                 setShowTorchToggle(true) // show or hide (default) torch/flashlight toggle button
                 setShowCloseButton(true) // show or hide (default) close button
                 setUseFrontCamera(false) // use the front camera
             })
+        }
+        if (intent.extras?.getBoolean(OPEN_SCANNER) == true) scanQrCode.launch(ScannerConfig.build {
+            setHapticSuccessFeedback(true) // enable (default) or disable haptic feedback when a barcode was detected
+            setShowTorchToggle(true) // show or hide (default) torch/flashlight toggle button
+            setShowCloseButton(true) // show or hide (default) close button
+            setUseFrontCamera(false) // use the front camera
+        })
 
         binding.btnStartScan.setOnClickListener {
             if (binding.btnStartScan.text == resources.getString(R.string.assign_RFID)) {
@@ -133,29 +129,23 @@ class RFIDActivity : AppCompatActivity() {
 
         //Scanner Initializations
         if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 ACCESS_FINE_LOCATION_REQUEST_CODE
-            );
+            )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                )
-                != PackageManager.PERMISSION_GRANTED
+                    this, Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.BLUETOOTH_SCAN,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ),
-                    BLUETOOTH_PERMISSION_REQUEST_CODE
+                    this, arrayOf(
+                        Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT
+                    ), BLUETOOTH_PERMISSION_REQUEST_CODE
                 )
             } else {
                 // configureDevice()
@@ -166,9 +156,7 @@ class RFIDActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String?>, grantResults: IntArray
     ) {
         if (requestCode == BLUETOOTH_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -202,12 +190,11 @@ class RFIDActivity : AppCompatActivity() {
     private fun scanQRCodeResult(result: QRResult) {
         when (result) {
             is QRResult.QRSuccess -> {
-                binding.edtScanQrHere.text =
-                    Editable.Factory.getInstance().newEditable(
-                        result.content.rawValue
-                        // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
-                            ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
-                    )
+                binding.edtScanQrHere.text = Editable.Factory.getInstance().newEditable(
+                    result.content.rawValue
+                    // decoding with default UTF-8 charset when rawValue is null will not result in meaningful output, demo purpose
+                        ?: result.content.rawBytes?.let { String(it) }.orEmpty().toString()
+                )
             }
 
             QRResult.QRUserCanceled -> "User canceled"
@@ -264,10 +251,7 @@ class RFIDActivity : AppCompatActivity() {
     private fun rfidReaderConnection() {
         var result = false
         val data = mReader?.readData(
-            "00000000",
-            IUHF.Bank_EPC,
-            Integer.parseInt("2"),
-            Integer.parseInt("6")
+            "00000000", IUHF.Bank_EPC, Integer.parseInt("2"), Integer.parseInt("6")
         )
         if (data != null) {
             binding.tilRfidCode.show()
@@ -283,15 +267,15 @@ class RFIDActivity : AppCompatActivity() {
 
 
         if (!TextUtils.isEmpty(data)) {
-            result = true;
+            result = true
 
         } else {
-            result = false;
+            result = false
         }
         if (!result) {
-            playSound(2);
+            playSound(2)
         } else {
-            playSound(1);
+            playSound(1)
 
         }
     }

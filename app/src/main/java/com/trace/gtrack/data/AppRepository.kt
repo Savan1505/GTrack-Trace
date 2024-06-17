@@ -1,5 +1,6 @@
 package com.trace.gtrack.data
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.trace.gtrack.data.model.AssignedMaterialResult
@@ -352,6 +353,8 @@ class AppRepository @Inject constructor(
         lstInsertHandHeldData: MutableList<InsertHandHeldDataRequest>,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> = safeApiCall(dispatcher) {
+
+
             apiService.postInsertRFIDDataAPI(
                 apiKey, Integer.parseInt(projectId), Integer.parseInt(siteId), lstInsertHandHeldData
             )

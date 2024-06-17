@@ -23,7 +23,7 @@ class TrackMaterialViewModel @Inject constructor(
     val state: LiveData<TrackMaterialMaterialState> = mState
     private val mStateHH = MutableLiveData<HandHeldDataState>()
     val stateHH: LiveData<HandHeldDataState> = mStateHH
-    private val mStateRFID = MutableLiveData<InsertRFIDMapState>()
+    val mStateRFID = MutableLiveData<InsertRFIDMapState>()
     val stateRFID: LiveData<InsertRFIDMapState> = mStateRFID
     private val mStateMapResult = MutableLiveData<InsertMapResultState>()
     val stateMapResult: LiveData<InsertMapResultState> = mStateMapResult
@@ -80,6 +80,12 @@ class TrackMaterialViewModel @Inject constructor(
                     HandHeldDataState.Error(context.getString(R.string.error_message))
             }
         }
+    }
+
+
+    fun showLoadingWhileStopInventory() {
+        mStateRFID.value = InsertRFIDMapState.Loading
+
     }
 
     fun postInsertRFIDDataAPI(
