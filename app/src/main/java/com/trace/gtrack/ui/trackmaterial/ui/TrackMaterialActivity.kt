@@ -660,6 +660,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
 
 
+
+
+
                 /*if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
                     trackMaterialViewModel.lstInsertRFIDDataRequest.add(item)
                 }*/
