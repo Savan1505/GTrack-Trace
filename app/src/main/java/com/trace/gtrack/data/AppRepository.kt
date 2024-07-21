@@ -1,6 +1,5 @@
 package com.trace.gtrack.data
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.trace.gtrack.data.model.AssignedMaterialResult
@@ -325,7 +324,7 @@ class AppRepository @Inject constructor(
                     apiKey,
                     Integer.parseInt(projectId),
                     Integer.parseInt(siteId),
-                    SearchStrRequest(searchString.uppercase(Locale.ROOT), pageNumber, pageSize)
+                    SearchStrRequest(searchString, pageNumber, pageSize)
                 )
             }) {
             is ResponseWrapper.GenericError -> ListResult.Error(
@@ -732,7 +731,8 @@ class AppRepository @Inject constructor(
         siteId: String,
         userId: String,
         materialCode: String,
-        totalSearchTime: String
+        totalSearchTime: String,
+        createdDate: String,
     ): CommonResult {
         return when (val response: ResponseWrapper<CommonResponse> = safeApiCall(dispatcher) {
             apiService.postInsertMAPSearchResultAPI(
@@ -740,7 +740,7 @@ class AppRepository @Inject constructor(
                 Integer.parseInt(projectId),
                 Integer.parseInt(siteId),
                 MapSearchResultRequest(
-                    userId, materialCode.uppercase(Locale.ROOT), totalSearchTime
+                    userId, materialCode.uppercase(Locale.ROOT), totalSearchTime, createdDate
                 )
             )
         }) {

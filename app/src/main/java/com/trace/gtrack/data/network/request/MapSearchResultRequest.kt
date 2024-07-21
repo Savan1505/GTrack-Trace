@@ -11,4 +11,6 @@ data class MapSearchResultRequest(
     val materialCode: String? = "",
     @Json(name = "TotalSearchTime")
     val totalSearchTime: String? = "",
+    @Json(name = "CreatedDate")
+    val createdDate: String? = "",
 )

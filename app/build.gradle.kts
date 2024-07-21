@@ -18,7 +18,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.1.0"
 
         manifestPlaceholders.putIfAbsent("appAuthRedirectScheme", "com.trace.gtrack")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -60,6 +60,8 @@ android {
                 "String",
                 "API_URL",
                 "\"http://gtrackntraceapi.garimasystem.com/\""
+//                "\"http://gtrackntrace.garimasystem.com/\""
+//                "\"https://gtrackntrace.garimasystem.com/\""
 //                "\"https://gtrackntraceapi.garimasystem.com/\""
 //                "\"https://garimaapi.linde-le.com/\""
 

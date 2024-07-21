@@ -31,6 +31,7 @@ class TrackMaterialViewModel @Inject constructor(
     var lstTrackMaterialResponse: List<SearchMaterialResponse> = ArrayList()
     var lstHandHeldDataRequest: List<InsertHandHeldDataRequest> = ArrayList()
     var totalSearchTime: String = ""
+    var createdDate: String = ""
     fun postSearchMaterialCodeAPI(
         context: Context, apiKey: String, projectId: String, siteId: String, materialCode: String
     ) {
@@ -123,7 +124,7 @@ class TrackMaterialViewModel @Inject constructor(
         mStateMapResult.value = InsertMapResultState.Loading
         viewModelScope.safeLaunch {
             when (val result = iAppRepository.postInsertMAPSearchResultAPI(
-                apiKey, projectId, siteId, userId, materialCode, totalSearchTime
+                apiKey, projectId, siteId, userId, materialCode, totalSearchTime, createdDate
             )) {
                 is CommonResult.Error -> {
                     mStateMapResult.value = InsertMapResultState.Error(result.message)

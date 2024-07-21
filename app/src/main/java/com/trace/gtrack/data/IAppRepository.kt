@@ -112,7 +112,8 @@ interface IAppRepository {
         siteId: String,
         userId: String,
         materialCode: String,
-        totalSearchTime: String
+        totalSearchTime: String,
+        createdDate: String
     ): CommonResult?
 
     suspend fun logout(): Boolean

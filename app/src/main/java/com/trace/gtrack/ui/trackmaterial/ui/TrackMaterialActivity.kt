@@ -14,6 +14,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,6 +57,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import javax.inject.Inject
 
 
@@ -71,9 +74,13 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val trackMaterialViewModel: TrackMaterialViewModel by viewModels()
-//    private var startTime: Long = 0
-//    private var stopTime: Long = 0
-    // private var isRunning: Boolean = false
+    private var startTime: Long = 0
+
+    //    private var stopTime: Long = 0
+    private var timer: Timer? = Timer()
+    private var timerTask: TimerTask? = null
+    private var time = 0.0
+    private var isRunning: Boolean = false
 
     var mReader: RFIDWithUHFUART? = null
     private var am: AudioManager? = null
@@ -84,9 +91,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     var handHeldDeviceId = ""
     val newInsertRFIDDataRequest = mutableListOf<InsertHandHeldDataRequest>()
 
-    //var isStopClick = false
+    var isStopClick = false
+
     // Create a SimpleDateFormat object with the desired format
-    var sdf: SimpleDateFormat? = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ROOT)
+    var sdf: SimpleDateFormat? = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ROOT)
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
@@ -148,11 +156,11 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         binding.btnStart.setOnClickListener {
-            //startTimer()
-
+            startTimer()
+            binding.tvSearchTime.visibility = View.VISIBLE
             am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
             initSound()
-            //isStopClick = false
+            isStopClick = false
             trackMaterialViewModel.postSearchMaterialCodeAPI(
                 this@TrackMaterialActivity,
                 persistenceManager.getAPIKeys(),
@@ -189,8 +197,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.mapView.invisible()
             mReader?.stopInventory()
             releaseSoundPool()
-            //isStopClick = true
-            //stopTimer()
+            isStopClick = true
+            stopTimer()
             trackMaterialViewModel.lstHandHeldDataRequest = ArrayList()
             trackMaterialViewModel.lstInsertRFIDDataRequest.clear()
             trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
@@ -198,11 +206,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.btnStart.isClickable = false
             binding.btnStop.background = getDrawable(R.drawable.app_btn_grey_background)
             binding.btnStop.isClickable = false
-            binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
-                ""
-            )
 
-            /*trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
+//            trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
+            trackMaterialViewModel.totalSearchTime = binding.tvSearchTime.text.toString()
+            trackMaterialViewModel.createdDate = sdf?.format(Date(System.currentTimeMillis())).toString()
             if (persistenceManager != null) {
                 trackMaterialViewModel.postInsertMAPSearchResultAPI(
                     this@TrackMaterialActivity,
@@ -212,7 +219,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     persistenceManager.getUserId(),
                     binding.edtSearchMaterialCode.text.toString(),
                 )
-            }*/
+            }
         }
 //        },   500)
 
@@ -301,8 +308,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.mapView.invisible()
                     mReader?.stopInventory()
                     releaseSoundPool()
-                    //isStopClick = true
-                    //stopTimer()
+                    isStopClick = true
+                    stopTimer()
                     trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
                     binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
                     binding.btnStart.isClickable = false
@@ -326,8 +333,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 //                    binding.mapView.invisible()
 //                    mReader?.stopInventory()
 //                    releaseSoundPool()
-//                    //isStopClick = true
-//                    //stopTimer()
+                    isStopClick = true
+                    stopTimer()
 //                    trackMaterialViewModel.lstTrackMaterialResponse = ArrayList()
 //                    binding.btnStart.background = getDrawable(R.drawable.app_btn_grey_background)
 //                    binding.btnStart.isClickable = false
@@ -366,6 +373,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
                         ""
                     )*/
+                    binding.tvSearchTime.text = formatTime(0, 0, 0);
+                    binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
+                        ""
+                    )
                     makeSuccessToast(it.mapResultMsg)
                 }
             }
@@ -577,9 +588,18 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    /*private fun startTimer() {
+    private fun startTimer() {
         if (!isRunning) {
-            startTime = System.currentTimeMillis()
+//            startTime = System.currentTimeMillis()
+            timerTask = object : TimerTask() {
+                override fun run() {
+                    runOnUiThread {
+                        time++
+                        binding.tvSearchTime.text = getTimerText()
+                    }
+                }
+            }
+            timer?.scheduleAtFixedRate(timerTask, 0, 1000)
             isRunning = true
             println("Timer started")
         } else {
@@ -589,8 +609,13 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun stopTimer() {
         if (isRunning) {
-            stopTime = System.currentTimeMillis()
-            isRunning = false
+            //stopTime = System.currentTimeMillis()
+            if (timerTask != null) {
+                timerTask!!.cancel();
+                isRunning = false
+                binding.tvSearchTime.visibility = View.GONE
+                time = 0.0;
+            }
 
             println("Timer stopped")
         } else {
@@ -598,13 +623,13 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getElapsedTime(): Long {
+    /*private fun getElapsedTime(): Long {
         return if (isRunning) {
             System.currentTimeMillis() - startTime
         } else {
             stopTime - startTime
         }
-    }*/
+    }
 
     private fun epochToTime(elapsed: Long): String {
         val seconds = (elapsed / 1000) % 60
@@ -612,7 +637,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         val hours = ((elapsed / (1000 * 60 * 60)) % 24)
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
-    }
+    }*/
 
     private fun playSound(id: Int) {
         val audioMaxVolume =
@@ -660,9 +685,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
 
 
-
-
-
                 /*if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
                     trackMaterialViewModel.lstInsertRFIDDataRequest.add(item)
                 }*/
@@ -696,9 +718,22 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun calculateRange(rssi: Double, txPower: Double, n: Double): Double {
+    /*fun calculateRange(rssi: Double, txPower: Double, n: Double): Double {
         return Math.pow(10.0, (txPower - rssi) / (10.0 * n))
+    }*/
+    private fun getTimerText(): String {
+        val rounded = Math.round(time).toInt()
+        val seconds = rounded % 86400 % 3600 % 60
+        val minutes = rounded % 86400 % 3600 / 60
+        val hours = rounded % 86400 / 3600
+        return formatTime(seconds, minutes, hours)
     }
 
-
+    private fun formatTime(seconds: Int, minutes: Int, hours: Int): String {
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        /*return String.format("%02d", hours) + " : " + String.format(
+            "%02d",
+            minutes
+        ) + " : " + String.format("%02d", seconds)*/
+    }
 }

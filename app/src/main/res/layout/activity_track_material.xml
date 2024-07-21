@@ -82,6 +82,17 @@
                     android:text="@string/stop" />
             </LinearLayout>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_search_time"
+                style="@style/regularTextBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_extra_small"
+                android:gravity="end"
+                android:visibility="gone"
+                app:layout_constraintVertical_bias="1.0" />
+
             <com.google.android.gms.maps.MapView
                 android:id="@+id/mapView"
                 android:layout_width="match_parent"
