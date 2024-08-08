@@ -94,7 +94,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     var isStopClick = false
 
     // Create a SimpleDateFormat object with the desired format
-    var sdf: SimpleDateFormat? = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ROOT)
+    var sdf: SimpleDateFormat? = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.ROOT)
 
     @Inject
     internal lateinit var persistenceManager: IPersistenceManager
@@ -156,7 +156,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         binding.btnStart.setOnClickListener {
-            startTimer()
+
+//            startTimer()
             binding.tvSearchTime.visibility = View.VISIBLE
             am = this.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
             initSound()
@@ -209,7 +210,8 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
 //            trackMaterialViewModel.totalSearchTime = epochToTime(getElapsedTime())
             trackMaterialViewModel.totalSearchTime = binding.tvSearchTime.text.toString()
-            trackMaterialViewModel.createdDate = sdf?.format(Date(System.currentTimeMillis())).toString()
+            trackMaterialViewModel.createdDate =
+                sdf?.format(Date(System.currentTimeMillis())).toString()
             if (persistenceManager != null) {
                 trackMaterialViewModel.postInsertMAPSearchResultAPI(
                     this@TrackMaterialActivity,
@@ -271,6 +273,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.btnStop.background = getDrawable(R.drawable.app_button_red_background)
                     trackMaterialViewModel.lstTrackMaterialResponse = it.lstTrackMaterialResponse
                     binding.mapView.getMapAsync(this)
+                    startTimer()
                     if (mReader != null) {
                         rfidReaderConnection()
                         mReader?.startInventoryTag()!!
@@ -373,7 +376,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
                         ""
                     )*/
-                    binding.tvSearchTime.text = formatTime(0, 0, 0);
+                    binding.tvSearchTime.text = formatTime(0, 0, 0)
                     binding.edtSearchMaterialCode.text = Editable.Factory.getInstance().newEditable(
                         ""
                     )
@@ -391,8 +394,6 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-
-
             if (::googleMap.isInitialized) {
                 try {
                     if (locationResult != null) {
@@ -611,10 +612,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
         if (isRunning) {
             //stopTime = System.currentTimeMillis()
             if (timerTask != null) {
-                timerTask!!.cancel();
+                timerTask!!.cancel()
                 isRunning = false
                 binding.tvSearchTime.visibility = View.GONE
-                time = 0.0;
+                time = 0.0
             }
 
             println("Timer stopped")
@@ -680,9 +681,9 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
                     playSound(1)
                 }*/
 
-                val item = InsertHandHeldDataRequest(
-                    rfidNumber = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
-                )
+//                val item = InsertHandHeldDataRequest(
+//                    rfidNumber = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00
+//                )
 
 
                 /*if (!trackMaterialViewModel.lstInsertRFIDDataRequest.contains(item)) {
@@ -691,7 +692,10 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 trackMaterialViewModel.lstInsertRFIDDataRequest.add(
                     InsertHandHeldDataRequest(
-                        rfidNumber = uhftagInfo?.epc, longitude = 0.00, latitude = 0.00,
+                        rfidNumber = uhftagInfo?.epc,
+                        longitude = 0.00,
+                        latitude = 0.00,
+                        timeStamp = sdf?.format(Date(System.currentTimeMillis())).toString()
                     )
                 )
 
@@ -730,8 +734,7 @@ class TrackMaterialActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun formatTime(seconds: Int, minutes: Int, hours: Int): String {
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
-        /*return String.format("%02d", hours) + " : " + String.format(
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)/*return String.format("%02d", hours) + " : " + String.format(
             "%02d",
             minutes
         ) + " : " + String.format("%02d", seconds)*/

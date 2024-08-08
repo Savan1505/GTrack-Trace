@@ -20,9 +20,15 @@ import okhttp3.Protocol
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util.Collections
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 
 @Module
@@ -60,13 +66,29 @@ class NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
         chuckInterceptor: ChuckerInterceptor,
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .readTimeout(5, TimeUnit.MINUTES)
-            .connectTimeout(5, TimeUnit.MINUTES)
-            .writeTimeout(5, TimeUnit.MINUTES)
+
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+        })
+
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCerts, SecureRandom())
+
+        val sslSocketFactory = sslContext.socketFactory
+        val hostnameVerifier = HostnameVerifier { hostname, session ->
+            // Verify the hostname here
+            // For example, you can use the following code to allow any hostname
+
+            hostname.contains("garimasystem.com")
+        }
+        return OkHttpClient.Builder().readTimeout(5, TimeUnit.MINUTES)
+            .connectTimeout(5, TimeUnit.MINUTES).writeTimeout(5, TimeUnit.MINUTES)
             .addInterceptor(loggingInterceptor).addInterceptor(chuckInterceptor)
-            .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-            .build()
+            .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+            .hostnameVerifier(hostnameVerifier)
+            .protocols(Collections.singletonList(Protocol.HTTP_1_1)).build()
     }
 
 
